@@ -1,4 +1,7 @@
 
+using Microsoft.EntityFrameworkCore;
+using SmartGriev.Models;
+
 namespace SmartGriev
 {
     public class Program
@@ -13,6 +16,10 @@ namespace SmartGriev
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            builder.Services.AddDbContext<Ict2smartGrievDbContext>(
+                option => option.UseSqlServer(builder.Configuration.GetConnectionString("smartGrievConnectionString"))
+                );
 
             var app = builder.Build();
 
