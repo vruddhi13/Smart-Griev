@@ -1,4 +1,7 @@
 
+using Microsoft.EntityFrameworkCore;
+using SmartGriev.Models;
+
 namespace SmartGriev
 {
     public class Program
@@ -7,6 +10,17 @@ namespace SmartGriev
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll", policy =>
+                {
+                    policy.AllowAnyOrigin()
+                          .AllowAnyHeader()
+                          .AllowAnyMethod();
+                });
+            });
+
+
             // Add services to the container.
 
             builder.Services.AddControllers();
@@ -14,7 +28,13 @@ namespace SmartGriev
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            builder.Services.AddDbContext<Ict2smartGrievDbContext>(
+                option => option.UseSqlServer(builder.Configuration.GetConnectionString("smartGrievConnectionString"))
+                );
+
             var app = builder.Build();
+
+            app.UseCors("AllowAll");
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
