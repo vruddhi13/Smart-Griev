@@ -1,13 +1,15 @@
 ﻿import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { theme } from "../../services/theme";
+import { registerUser } from "../../services/accountservice";
+
 
 const Register = () => {
 
     const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
-        full_name: "",
+        fullName: "",
         email: "",
         mobile_no: "",
         password: ""
@@ -57,17 +59,29 @@ const Register = () => {
         });
 
     };
-
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
 
         e.preventDefault();
 
-        console.log(formData);
+        try {
 
-        // later connect .NET API
+            const result = await registerUser(formData);
+
+            console.log(result);
+
+            alert("Registration successful");
+
+            navigate("/login");
+
+        } catch (error) {
+
+            console.log(error);
+
+            alert("Registration failed");
+
+        }
 
     };
-
     return (
 
         <div style={container}>
@@ -83,7 +97,7 @@ const Register = () => {
                     <label>Full Name</label>
                     <input
                         type="text"
-                        name="full_name"
+                        name="fullName"
                         style={input}
                         onChange={handleChange}
                     />
@@ -96,10 +110,10 @@ const Register = () => {
                         onChange={handleChange}
                     />
 
-                    <label>Mobile Number</label>
+                    <label>Mobile No</label>
                     <input
                         type="text"
-                        name="mobile_no"
+                        name="mobileNo"
                         style={input}
                         onChange={handleChange}
                     />

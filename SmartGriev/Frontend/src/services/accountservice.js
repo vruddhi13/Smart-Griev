@@ -1,11 +1,27 @@
-﻿import axios from "axios";
-
-const API_URL = "https://localhost:5001/api/account";
+﻿const API = "https://localhost:7224/api/identity/account";
 
 export const registerUser = async (data) => {
 
-    const response = await axios.post(`${API_URL}/register`, data);
+    const response = await fetch(`${API}/register`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+    });
 
-    return response.data;
+    return response.json();
+};
 
+export const loginUser = async (data) => {
+
+    const response = await fetch(`${API}/login`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+    });
+
+    return response.json();
 };

@@ -1,13 +1,14 @@
 ﻿import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { theme } from "../../services/theme";
+import { loginUser } from "../../services/accountservice";
 
 const Login = () => {
 
     const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
-        email: "",
+        emailOrMobile: "",
         password: ""
     });
 
@@ -54,12 +55,28 @@ const Login = () => {
         });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
+
         e.preventDefault();
 
-        console.log(formData);
+        try {
 
-        // Later call .NET API
+            const result = await loginUser(formData);
+
+            console.log(result);
+
+            alert("Login Successful");
+
+            navigate("/");
+
+        } catch (error) {
+
+                console.log(error);
+
+                alert("Login failed");
+
+            }
+
     };
 
     return (
@@ -73,12 +90,12 @@ const Login = () => {
 
                 <form onSubmit={handleSubmit}>
 
-                    <label>Email</label>
+                    <label>Email or Mobile</label>
                     <input
-                        type="email"
-                        name="email"
+                        type="text"
+                        name="emailOrMobile"
                         style={input}
-                        value={formData.email}
+                        value={formData.emailOrMobile}
                         onChange={handleChange}
                     />
 
