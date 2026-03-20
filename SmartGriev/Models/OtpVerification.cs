@@ -13,9 +13,9 @@ public partial class OtpVerification
 
     public DateTime ExpiryTime { get; set; }
 
-    public bool IsVerified { get; set; }
+    public bool IsVerified { get; set; } = false;
 
-    public int AttemptCount { get; set; }
+    public int AttemptCount { get; set; } = 0;
 
     public DateTime CreatedAt { get; set; }
 
