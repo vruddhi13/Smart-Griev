@@ -63,6 +63,9 @@ const Login = () => {
 
             const result = await loginUser(formData);
 
+            //save user
+            localStorage.setItem("user", JSON.stringify(result));
+
             console.log(result);
 
             alert("Login Successful");
