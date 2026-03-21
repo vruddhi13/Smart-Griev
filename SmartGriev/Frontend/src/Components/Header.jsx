@@ -5,6 +5,9 @@ import { useNavigate } from "react-router-dom";
 const Header = () => {
 
     const navigate = useNavigate();
+    const user = JSON.parse(localStorage.getItem("user"));
+    const firstLetter = user?.name ? user.name.charAt(0).toUpperCase() : ""; 
+
 
     const headerStyle = {
         backgroundColor: theme.colors.primary[600],
@@ -64,30 +67,97 @@ const Header = () => {
 
             </div>
 
-            <div style={{ display: "flex", alignItems: "center", gap: "30px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "28px" }}>
 
                 <button onClick={() => navigate("/")}
-                    style={{ background: "none", border: "none", color: "white", cursor: "pointer", fontSize: "1.1rem" }}>
+                    style={{ background: "none", border: "none", color: "white", cursor: "pointer", fontSize: "1.05rem" }}>
                     Home
                 </button>
 
-                <button onClick={() => navigate("/login")}
-                    style={{ background: "none", border: "none", color: "white", cursor: "pointer", fontSize: "1.1rem" }}>
-                    Login
-                </button>
+                {user && (
+                    <>
+                        <button onClick={() => navigate("/CitizenComplaintStatus")}
+                            style={{ background: "none", border: "none", color: "white", cursor: "pointer", fontSize: "1.05rem" }}>
+                            Dashboard
+                        </button>
 
-                <button onClick={() => navigate("/register")}
-                    style={{
-                        backgroundColor: theme.colors.white.pure,
-                        color: theme.colors.primary[600],
-                        padding: "10px 25px",
-                        borderRadius: "8px",
-                        fontWeight: "700",
-                        border: "none",
-                        cursor: "pointer"
-                    }}>
-                    Sign Up
-                </button>
+                        <button onClick={() => navigate("/CitizenComplaint")}
+                            style={{ background: "none", border: "none", color: "white", cursor: "pointer", fontSize: "1.05rem" }}>
+                            Submit Complaint
+                        </button>
+
+                        <button onClick={() => navigate("/my-complaints")}
+                            style={{ background: "none", border: "none", color: "white", cursor: "pointer", fontSize: "1.05rem" }}>
+                            My Complaints
+                        </button>
+                    </>
+                )}
+
+                {!user ? (
+                    <>
+                        <button onClick={() => navigate("/login")}
+                            style={{ background: "none", border: "none", color: "white", cursor: "pointer" }}>
+                            Login
+                        </button>
+
+                        <button onClick={() => navigate("/register")}
+                            style={{
+                                background: "white",
+                                color: theme.colors.primary[600],
+                                padding: "8px 20px",
+                                borderRadius: "8px",
+                                border: "none",
+                                cursor: "pointer",
+                                fontWeight: "600"
+                            }}>
+                            Sign Up
+                        </button>
+                    </>
+                ) : (
+                    <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                        {/* Avatar */}
+                        <div style={{
+                            width: "38px",
+                            height: "38px",
+                            borderRadius: "50%",
+                            background: "white",
+                            color: theme.colors.primary[600],
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            fontWeight: "800",
+                            fontSize: "16px",
+                            flexShrink: 0,
+                            lineHeight:1
+                        }}>
+                            {firstLetter}
+                        </div>
+
+                        {/* Name */}
+                            <span style={{
+                                fontWeight: "600", fontSize: "1rem",color: "white" }}>
+                            {user?.name}
+                        </span>
+
+                        {/* Logout */}
+                        <button
+                            onClick={() => {
+                                localStorage.removeItem("user");
+                                window.location.reload();
+                            }}
+                            style={{
+                                border: "2px solid white",
+                                background: "transparent",
+                                color: "white",
+                                padding: "8px 18px",
+                                borderRadius: "8px",
+                                cursor: "pointer",
+                                fontWeight: "600"
+                            }}>
+                            Logout
+                        </button>
+                    </div>
+                )}
 
             </div>
 

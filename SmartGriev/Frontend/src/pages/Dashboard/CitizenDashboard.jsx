@@ -1,7 +1,10 @@
 ﻿import React from "react";
 import { theme } from "../../services/theme";
+import { useNavigate } from "react-router-dom";
 
 const CitizenDashboard = () => {
+
+    const navigate = useNavigate();
 
     const pageStyle = {
         background: "#f3f4f6",
@@ -131,7 +134,7 @@ const CitizenDashboard = () => {
                             🤖 Try AI Chatbot
                         </button>
 
-                        <button style={outlineButton}>
+                        <button style={outlineButton} onClick={() => navigate("/CitizenComplaint") }>
                             📝 Submit Complaint
                         </button>
 
