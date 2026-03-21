@@ -24,7 +24,7 @@ namespace SmartGriev.Controllers.Identity
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginDTO model)
         {
-            if (model == null)
+            if (model == null || string.IsNullOrEmpty(model.EmailOrMobile) || string.IsNullOrEmpty(model.Password))
                 return BadRequest(new { message = "Invalid request" });
 
             var user = await _userRepository
@@ -35,7 +35,12 @@ namespace SmartGriev.Controllers.Identity
             if (user.PasswordHash != model.Password)
                 return Unauthorized(new { message = "Invalid password" });
 
+            if (string.IsNullOrEmpty(user.MobileNo))
+                return BadRequest(new { message = "Mobile number missing for user" });
+
             string otp = new Random().Next(100000, 999999).ToString();
+
+            Console.WriteLine("OTP Generated: " + otp);
 
             _otpRepository.SaveOtp(user.MobileNo, otp);
 
@@ -68,7 +73,8 @@ namespace SmartGriev.Controllers.Identity
             {
                 message = "Login successful",
                 userId = user.UserId,
-                roleId = user.RoleId   // 🔥 IMPORTANT for role-based redirect
+                roleId = user.RoleId,   // 🔥 IMPORTANT for role-based redirect
+                name = user.FullName
             });
         }
 

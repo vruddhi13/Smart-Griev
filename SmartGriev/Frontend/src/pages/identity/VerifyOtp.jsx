@@ -25,6 +25,12 @@ const VerifyOtp = () => {
 
             showSuccessToast("Login Successful");
 
+            localStorage.setItem("user", JSON.stringify({
+                userId: result.userId,
+                roleId: result.roleId,
+                name: result.name || 'User'
+            }));
+
             localStorage.setItem("roleId", result.roleId);
 
             // 🔥 ROLE BASED REDIRECT

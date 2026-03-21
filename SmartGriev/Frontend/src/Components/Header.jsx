@@ -5,7 +5,18 @@ import { useNavigate } from "react-router-dom";
 const Header = () => {
 
     const navigate = useNavigate();
-    const user = JSON.parse(localStorage.getItem("user"));
+    let user = null;
+
+    const storedUser = localStorage.getItem("user");
+
+    if (storedUser && storedUser !== "undefined") {
+        try {
+            user = JSON.parse(storedUser);
+        } catch (error) {
+            console.log(error)
+            user = null;
+        }
+    }
     const firstLetter = user?.name ? user.name.charAt(0).toUpperCase() : ""; 
 
 
@@ -143,7 +154,7 @@ const Header = () => {
                         <button
                             onClick={() => {
                                 localStorage.removeItem("user");
-                                window.location.reload();
+                                navigate("/")
                             }}
                             style={{
                                 border: "2px solid white",
