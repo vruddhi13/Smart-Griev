@@ -1,6 +1,8 @@
 
 using Microsoft.EntityFrameworkCore;
 using SmartGriev.Models;
+using SmartGriev.Repositories.Implementations;
+using SmartGriev.Repositories.Interfaces;
 
 namespace SmartGriev
 {
@@ -24,6 +26,10 @@ namespace SmartGriev
             // Add services to the container.
 
             builder.Services.AddControllers();
+
+            builder.Services.AddScoped<IUserRepository, UserRepository>();
+            builder.Services.AddScoped<IOtpRepository, OtpRepository>();
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();

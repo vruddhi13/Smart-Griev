@@ -2,7 +2,7 @@
 import { useNavigate } from "react-router-dom";
 import { theme } from "../../services/theme";
 import { registerUser } from "../../services/accountservice";
-
+import { showSuccessToast, showError } from "../../services/alertService";
 
 const Register = () => {
 
@@ -11,7 +11,7 @@ const Register = () => {
     const [formData, setFormData] = useState({
         fullName: "",
         email: "",
-        mobile_no: "",
+        mobileNo: "",
         password: ""
     });
 
@@ -65,22 +65,17 @@ const Register = () => {
 
         try {
 
-            const result = await registerUser(formData);
+            await registerUser(formData);
 
-            console.log(result);
-
-            alert("Registration successful");
+            showSuccessToast("Registration Successful");
 
             navigate("/login");
 
         } catch (error) {
 
-            console.log(error);
-
-            alert("Registration failed");
+            showError(error.message);
 
         }
-
     };
     return (
 

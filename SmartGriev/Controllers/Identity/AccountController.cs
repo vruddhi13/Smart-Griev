@@ -1,111 +1,119 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity.Data;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
 using SmartGriev.DTOs;
 using SmartGriev.Models;
+using SmartGriev.Repositories.Interfaces;
 
 namespace SmartGriev.Controllers.Identity
 {
-    [Route("api/Identity/[controller]")]
+    [Route("api/identity/[controller]")]
     [ApiController]
     public class AccountController : ControllerBase
     {
-        //[HttpPost("login")]
-        //public IActionResult Login(LoginRequest model)
-        //{
-        //    return Ok("Login API Working");
-        //}
-        private readonly Ict2smartGrievDbContext _context;
+        private readonly IUserRepository _userRepository;
+        private readonly IOtpRepository _otpRepository;
 
-        public AccountController(Ict2smartGrievDbContext context)
+        public AccountController(
+            IUserRepository userRepository,
+            IOtpRepository otpRepository)
         {
-            _context = context;
+            _userRepository = userRepository;
+            _otpRepository = otpRepository;
         }
 
-        // -----------------------------
-        // REGISTER USER
-        // -----------------------------
-        [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterDto model)
+        // LOGIN
+        [HttpPost("login")]
+        public async Task<IActionResult> Login(LoginDTO model)
         {
-            if (!ModelState.IsValid)
+            if (model == null)
+                return BadRequest(new { message = "Invalid request" });
+
+            var user = await _userRepository
+                .GetUserByEmailOrMobile(model.EmailOrMobile);
+            if (user == null)
+                return Unauthorized(new { message = "User not found" });
+
+            if (user.PasswordHash != model.Password)
+                return Unauthorized(new { message = "Invalid password" });
+
+            string otp = new Random().Next(100000, 999999).ToString();
+
+            _otpRepository.SaveOtp(user.MobileNo, otp);
+
+            return Ok(new
             {
-                return BadRequest(ModelState);
-            }
+                message = "OTP sent successfully",
+                mobile = user.MobileNo
+            });
+        }
 
-            // Check if email already exists
-            if (await _context.Users.AnyAsync(x => x.Email == model.Email))
+        // VERIFY OTP
+        [HttpPost("verify-otp")]
+        public async Task<IActionResult> VerifyOtp(VerifyOtpDTO model)
+        {
+            if (model == null)
+                return BadRequest(new { message = "Invalid request" });
+
+            var valid = _otpRepository.VerifyOtp(model.MobileNo, model.Otp);
+
+            if (!valid)
+                return BadRequest(new { message = "Invalid OTP or maximum attempts reached" });
+
+            var user = await _userRepository
+                .GetUserByEmailOrMobile(model.MobileNo);
+
+            if (user == null)
+                return Unauthorized(new { message = "User not found" });
+
+            return Ok(new
             {
-                return BadRequest(new { message = "Email already registered" });
-            }
+                message = "Login successful",
+                userId = user.UserId,
+                roleId = user.RoleId   // 🔥 IMPORTANT for role-based redirect
+            });
+        }
 
-            // Check if mobile already exists
-            if (await _context.Users.AnyAsync(x => x.MobileNo == model.MobileNo))
+        // ===============================
+        // REGISTER API
+        // ===============================
+        [HttpPost("register")]
+        public async Task<IActionResult> Register(RegisterDto model)
+        {
+            if (model == null)
+                return BadRequest(new { message = "Invalid request" });
+
+            int roleId = 4; // Default = Citizen
+
+            if (!string.IsNullOrEmpty(model.Email) &&
+              model.Email.EndsWith("_admin@smartgriev.com"))
             {
-                return BadRequest(new { message = "Mobile number already registered" });
-            }
-
-            int roleId = 4; // Citizen default
-
-            if (model.Email.EndsWith("_admin@smartgriev.com"))
                 roleId = 1;
-            else if (model.Email.EndsWith("_dept@smartgriev.com"))
-                roleId = 2;
-            else if (model.Email.EndsWith("_officer@smartgriev.com"))
-                roleId = 3;
+            }
+            else if (!string.IsNullOrEmpty(model.Email) &&
+                      (model.Email.EndsWith("_dept@smartgriev.com") ||
+                       model.Email.EndsWith("_officer@smartgriev.com")))
+            {
+                return BadRequest(new
+                {
+                    message = "Department Head and Officer accounts can only be created by Admin."
+                });
+            }
 
             var user = new User
             {
                 FullName = model.FullName,
                 Email = model.Email,
                 MobileNo = model.MobileNo,
-                PasswordHash = model.Password,   // later we will hash it
-                RoleId = roleId,
-                DepartmentId = null,
-                IsActive = true,
-                IsDeleted = false,
-                CreatedAt = DateTime.Now
+                PasswordHash = model.Password,
+                RoleId = roleId
             };
 
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
+            await _userRepository.CreateUser(user);
 
             return Ok(new
             {
-                message = "User registered successfully"
-            });
-        }
-
-        // -----------------------------
-        // LOGIN USER
-        // -----------------------------
-        [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginDTO model)
-        {
-            if (string.IsNullOrEmpty(model.EmailOrMobile) || string.IsNullOrEmpty(model.Password))
-            {
-                return BadRequest(new { message = "Email/Mobile and password required" });
-            }
-
-            var user = await _context.Users.FirstOrDefaultAsync(x =>
-                (x.Email == model.EmailOrMobile || x.MobileNo == model.EmailOrMobile) &&
-                x.PasswordHash == model.Password &&
-                x.IsActive == true &&
-                x.IsDeleted == false
-            );
-
-            if (user == null)
-            {
-                return Unauthorized(new { message = "Invalid credentials" });
-            }
-
-            return Ok(new
-            {
-                message = "Login successful",
-                userId = user.UserId,
-                name = user.FullName,
-                roleId = user.RoleId
+                message = "User registered successfully",
+                roleId = roleId,
+                role = roleId == 1 ? "Admin" : "Citizen"
             });
         }
     }

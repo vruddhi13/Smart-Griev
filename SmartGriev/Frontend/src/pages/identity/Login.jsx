@@ -2,6 +2,7 @@
 import { useNavigate } from "react-router-dom";
 import { theme } from "../../services/theme";
 import { loginUser } from "../../services/accountservice";
+import { showError, showSuccessToast } from "../../services/alertService";
 
 const Login = () => {
 
@@ -63,23 +64,17 @@ const Login = () => {
 
             const result = await loginUser(formData);
 
-            //save user
-            localStorage.setItem("user", JSON.stringify(result));
+            showSuccessToast("OTP Sent Successfully");
 
-            console.log(result);
+            localStorage.setItem("mobileNo", result.mobile);
 
-            alert("Login Successful");
-
-            navigate("/");
+            navigate("/verify-otp");
 
         } catch (error) {
 
-                console.log(error);
+            showError(error.message);
 
-                alert("Login failed");
-
-            }
-
+        }
     };
 
     return (
