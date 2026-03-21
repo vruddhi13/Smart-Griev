@@ -10,7 +10,13 @@ export const registerUser = async (data) => {
         body: JSON.stringify(data)
     });
 
-    const result = await response.json();
+    let result;
+    try {
+        result = await response.json();
+    }
+    catch {
+        throw new Error("Server returned invalid response");
+    }
 
     if (!response.ok) {
         throw new Error(result.message || "Registration failed");
@@ -29,7 +35,15 @@ export const loginUser = async (data) => {
         body: JSON.stringify(data)
     });
 
-    const result = await response.json();
+    let result;
+
+    try {
+        result = await response.json();
+    } catch {
+        throw new Error("Server error. Please check backend.");
+    }
+
+    //const result = await response.json();
 
     if (!response.ok) {
         throw new Error(result.message || "Login failed");
