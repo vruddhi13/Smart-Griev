@@ -126,8 +126,14 @@ const CitizenComplaint = () => {
                     Submit your complaint using text, images, or audio. AI will process your submission automatically.
                 </div>
 
-                <label style={styles.label}>Complaint Title *</label>
-                <input style={styles.input} placeholder="Brief title for your complaint" />
+                <label style={styles.label}>Complaint Category *</label>
+                <select style={styles.input}>
+                    <option value="">Select Category</option>
+                    <option value="1">Road Damage</option>
+                    <option value="2">Water Leakage</option>
+                    <option value="3">Garbage Issue</option>
+                    <option value="4">Street Light Problem</option>
+                </select>
 
                 <label style={styles.label}>Description (optional if uploading media)</label>
                 <textarea
@@ -164,14 +170,14 @@ const CitizenComplaint = () => {
                             <option>Low</option>
                         </select>
                     </div>
-                    <div style={styles.col}>
-                        <label style={styles.label}>Urgency Level</label>
-                        <select style={styles.input}>
-                            <option>Medium</option>
-                            <option>Immediate</option>
-                            <option>Routine</option>
-                        </select>
-                    </div>
+                    {/*<div style={styles.col}>*/}
+                    {/*    <label style={styles.label}>Urgency Level</label>*/}
+                    {/*    <select style={styles.input}>*/}
+                    {/*        <option>Medium</option>*/}
+                    {/*        <option>Immediate</option>*/}
+                    {/*        <option>Routine</option>*/}
+                    {/*    </select>*/}
+                    {/*</div>*/}
                 </div>
 
                 <label style={styles.label}>📍 Incident Address</label>
