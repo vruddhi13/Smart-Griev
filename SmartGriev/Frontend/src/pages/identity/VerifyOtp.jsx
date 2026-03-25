@@ -25,19 +25,33 @@ const VerifyOtp = () => {
 
             showSuccessToast("Login Successful");
 
-            localStorage.setItem("user", JSON.stringify({
+            sessionStorage.setItem("user", JSON.stringify({
                 userId: result.userId,
                 roleId: result.roleId,
                 name: result.name || 'User'
             }));
 
-            localStorage.setItem("roleId", result.roleId);
+            sessionStorage.setItem("roleId", result.roleId);
+            localStorage.removeItem("mobileNo");
 
             // 🔥 ROLE BASED REDIRECT
-            if (result.roleId == 4) {
-                navigate("/dashboard"); // Citizen
-            } else {
-                navigate("/admin"); // Admin Panel
+            //if (result.roleId == 4) {
+            //    navigate("/dashboard"); // Citizen
+            //} else {
+            //    navigate("/admin"); // Admin Panel
+            //}
+
+            switch (result.roleId)
+            {
+                case 1:
+                    navigate("/admin"); // Admin
+                    break;
+                case 4:
+                    navigate("/dashboard"); // Citizen
+                    break;
+                default:
+                    navigate("/login"); // Unknown role
+                    break;
             }
 
         } catch (error) {
