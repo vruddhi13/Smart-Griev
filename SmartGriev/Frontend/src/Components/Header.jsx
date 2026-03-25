@@ -7,7 +7,7 @@ const Header = () => {
     const navigate = useNavigate();
     let user = null;
 
-    const storedUser = localStorage.getItem("user");
+    const storedUser = sessionStorage.getItem("user");
 
     if (storedUser && storedUser !== "undefined") {
         try {
@@ -19,6 +19,10 @@ const Header = () => {
     }
     const firstLetter = user?.name ? user.name.charAt(0).toUpperCase() : ""; 
 
+    const roleId = sessionStorage.getItem("roleId");
+    if (roleId !== "4") {
+        return null;
+    }
 
     const headerStyle = {
         backgroundColor: theme.colors.primary[600],
@@ -153,7 +157,7 @@ const Header = () => {
                         {/* Logout */}
                         <button
                             onClick={() => {
-                                localStorage.removeItem("user");
+                                sessionStorage.removeItem("user");
                                 navigate("/")
                             }}
                             style={{
