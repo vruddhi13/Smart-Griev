@@ -9,5 +9,10 @@ namespace SmartGriev.Repositories.Interfaces
         Task<bool> UserExists(string email, string mobile);
 
         Task<User> CreateUser(User user);
+
+        Task<object> GetAdminStatsAsync();
+        Task<List<object>> GetAllUsersAsync();
+        Task<User> GetUserById(int id);
+        Task UpdateUser(User user);
     }
 }

@@ -85,3 +85,18 @@ export const forgotPassword = async (data) => {
 
     return response.json();
 };
+
+export const getAdminStats = async () => {
+    const response = await fetch(`${API}/admin-stats`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json"
+        }
+    });
+
+    if (!response.ok) {
+        throw new Error("Failed to fetch admin statistics");
+    }
+
+    return await response.json();
+};

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SmartGriev.DTOs;
 using SmartGriev.Models;
 using SmartGriev.Repositories.Interfaces;
@@ -121,6 +122,14 @@ namespace SmartGriev.Controllers.Identity
                 roleId = roleId,
                 role = roleId == 1 ? "Admin" : "Citizen"
             });
+        }
+
+        [HttpGet("admin-stats")]
+        public async Task<IActionResult> GetAdminStats()
+        {
+            // Uses the repository instead of direct _context
+            var stats = await _userRepository.GetAdminStatsAsync();
+            return Ok(stats);
         }
     }
 }
