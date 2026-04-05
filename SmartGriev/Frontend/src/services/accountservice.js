@@ -100,3 +100,27 @@ export const getAdminStats = async () => {
 
     return await response.json();
 };
+export const resetPassword = async (data) => {
+
+    const response = await fetch(`${API}/reset-password`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+    });
+
+    let result;
+
+    try {
+        result = await response.json();
+    } catch {
+        throw new Error("Server error");
+    }
+
+    if (!response.ok) {
+        throw new Error(result.message || "Reset password failed");
+    }
+
+    return result.data;
+};
