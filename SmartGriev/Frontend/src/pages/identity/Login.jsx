@@ -66,14 +66,14 @@ const Login = () => {
 
             showSuccessToast("OTP Sent Successfully");
 
-            localStorage.setItem("mobileNo", result.mobile);
+//            console.log("LOGIN RESULT:", result); 
 
+            // 🔥 store correct mobile from backend
+            localStorage.setItem("mobileNo", result.data.mobile_no);
             navigate("/verify-otp");
 
         } catch (error) {
-
             showError(error.message);
-
         }
     };
 
@@ -105,6 +105,20 @@ const Login = () => {
                         value={formData.password}
                         onChange={handleChange}
                     />
+
+                    <p
+                        onClick={() => navigate("/forgot-password")}
+                        style={{
+                            textAlign: "right",
+                            color: theme.colors.primary[600],
+                            cursor: "pointer",
+                            fontSize: "14px",
+                            marginTop: "-10px",
+                            marginBottom: "15px"
+                        }}
+                    >
+                        Forgot Password?
+                    </p>
 
                     <button style={button}>Login</button>
 

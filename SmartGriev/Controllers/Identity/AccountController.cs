@@ -80,11 +80,11 @@ namespace SmartGriev.Controllers.Identity
                 Status = true,
                 StatusCode = 200,
                 Message = "OTP sent successfully",
-                //Data = new
-                //{
+                Data = new
+                {
                 //    //otp = otp, // remove in production
-                //    //mobile_no = user.MobileNo
-                //}
+                    mobile_no = user.MobileNo
+                }
             });
         }
 
@@ -119,14 +119,13 @@ namespace SmartGriev.Controllers.Identity
         public async Task<ActionResult<ApiResponse<object>>> VerifyOtp(ForgotPasswordDTO model)
         {
             if (string.IsNullOrEmpty(model.MobileNo) ||
-                string.IsNullOrEmpty(model.Otp) ||
-                string.IsNullOrEmpty(model.Purpose))
+     string.IsNullOrEmpty(model.Otp))
             {
                 return BadRequest(new ApiResponse<object>
                 {
                     Status = false,
                     StatusCode = 400,
-                    Message = "Mobile, OTP and Purpose required",
+                    Message = "Mobile and OTP required",
                     Data = null
                 });
             }
@@ -157,7 +156,25 @@ namespace SmartGriev.Controllers.Identity
                 });
             }
 
-            if (model.Purpose.ToLower() == "login")
+
+            // 🔥 CHECK RESET FLOW
+            if (ResetRequests.Contains(model.MobileNo))
+            {
+                ResetRequests.Remove(model.MobileNo);
+
+                return Ok(new ApiResponse<object>
+                {
+                    Status = true,
+                    Message = "OTP verified for password reset",
+                    Data = new
+                    {
+                        type = "reset"
+                    }
+                });
+            }
+
+            // 👉 If password exists → LOGIN
+            if (!string.IsNullOrEmpty(user.PasswordHash))
             {
                 var token = GenerateJwtToken(user);
 
@@ -170,25 +187,29 @@ namespace SmartGriev.Controllers.Identity
                     {
                         token = token,
                         userId = user.UserId,
-                        roleId = user.RoleId
+                        roleId = user.RoleId,
+                        type = "login"   // 👈 IMPORTANT
                     }
                 });
             }
 
-            // forgot password case
+            // 👉 Otherwise → RESET FLOW
             return Ok(new ApiResponse<object>
             {
                 Status = true,
                 StatusCode = 200,
                 Message = "OTP verified for password reset",
-                Data = null
+                Data = new
+                {
+                    type = "reset"   // 👈 IMPORTANT
+                }
             });
         }
 
-        // ===============================
-        // REGISTER API
-        // ===============================
-        [HttpPost("register")]
+            // ===============================
+            // REGISTER API
+            // ===============================
+            [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterDto model)
         {
             if (model == null)
@@ -281,14 +302,21 @@ namespace SmartGriev.Controllers.Identity
 
             _otpRepository.SaveOtp(model.MobileNo, otp);
 
+            ResetRequests.Add(model.MobileNo);
+
             return Ok(new ApiResponse<object>
             {
                 Status = true,
                 StatusCode = 200,
                 Message = "OTP sent successfully",
-                Data = new { otp = otp } // remove later
+                Data = new
+                {
+                    mobileNo = user.MobileNo
+                }
             });
         }
+
+        private static HashSet<string> ResetRequests = new HashSet<string>();
 
         [HttpPost("reset-password")]
         public async Task<ActionResult<ApiResponse<object>>> ResetPassword(ForgotPasswordDTO model)
