@@ -13,13 +13,8 @@ namespace SmartGriev.Repositories.Implementations
             _context = context;
         }
 
-        public void SaveOtp(string mobile, string otp)
+        public async Task SaveOtpAsync(string mobile, string otp)
         {
-            var oldOtps = _context.OtpVerifications
-                .Where(x => x.MobileNo == mobile && x.IsVerified == false);
-
-            _context.OtpVerifications.RemoveRange(oldOtps);
-
             var newOtp = new OtpVerification
             {
                 MobileNo = mobile,
@@ -30,16 +25,16 @@ namespace SmartGriev.Repositories.Implementations
                 IsVerified = false
             };
 
-            _context.OtpVerifications.Add(newOtp);
-            _context.SaveChanges();
+            await _context.OtpVerifications.AddAsync(newOtp);
+            await _context.SaveChangesAsync();
         }
 
-        public bool VerifyOtp(string mobile, string otp)
+        public async Task<bool> VerifyOtpAsync(string mobile, string otp)
         {
-            var record = _context.OtpVerifications
+            var record = await _context.OtpVerifications
                 .Where(x => x.MobileNo == mobile && x.IsVerified == false)
                 .OrderByDescending(x => x.CreatedAt)
-                .FirstOrDefault();
+                .FirstOrDefaultAsync();
 
             if (record == null)
                 return false;
@@ -55,13 +50,13 @@ namespace SmartGriev.Repositories.Implementations
                 record.IsVerified = true;
                 record.VerifiedAt = DateTime.Now;
 
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
                 return true;
             }
 
             record.AttemptCount += 1;
+            await _context.SaveChangesAsync();
 
-            _context.SaveChanges();
             return false;
         }
     }

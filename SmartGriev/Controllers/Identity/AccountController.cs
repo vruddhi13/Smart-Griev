@@ -73,7 +73,7 @@ namespace SmartGriev.Controllers.Identity
             Console.WriteLine($"Mobile: {user.MobileNo}");
             Console.WriteLine("=================================");
 
-            _otpRepository.SaveOtp(user.MobileNo, otp);
+            await _otpRepository.SaveOtpAsync(user.MobileNo, otp);
 
             return Ok(new ApiResponse<object>
             {
@@ -130,7 +130,7 @@ namespace SmartGriev.Controllers.Identity
                 });
             }
 
-            var valid = _otpRepository.VerifyOtp(model.MobileNo, model.Otp);
+            var valid = await _otpRepository.VerifyOtpAsync(model.MobileNo, model.Otp);
 
             if (!valid)
             {
@@ -188,7 +188,8 @@ namespace SmartGriev.Controllers.Identity
                         token = token,
                         userId = user.UserId,
                         roleId = user.RoleId,
-                        type = "login"   // 👈 IMPORTANT
+                        type = "login" ,  // 👈 IMPORTANT
+                        name = user.FullName
                     }
                 });
             }
@@ -300,7 +301,7 @@ namespace SmartGriev.Controllers.Identity
 
             string otp = new Random().Next(100000, 999999).ToString();
 
-            _otpRepository.SaveOtp(model.MobileNo, otp);
+            await _otpRepository.SaveOtpAsync(user.MobileNo, otp);
 
             ResetRequests.Add(model.MobileNo);
 

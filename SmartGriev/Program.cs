@@ -42,6 +42,19 @@ namespace SmartGriev
 
             var app = builder.Build();
 
+            app.Lifetime.ApplicationStarted.Register(() =>
+            {
+                Task.Run(async () =>
+                {
+                    using var scope = app.Services.CreateScope();
+                    var db = scope.ServiceProvider.GetRequiredService<Ict2smartGrievDbContext>();
+
+                    await db.Database.CanConnectAsync(); // warm DB
+
+                    // ?? OPTIONAL: run dummy query
+                    await db.Users.FirstOrDefaultAsync();
+                });
+            });
             app.UseCors("AllowAll");
 
             // Configure the HTTP request pipeline.

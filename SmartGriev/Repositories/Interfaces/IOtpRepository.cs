@@ -4,8 +4,7 @@ namespace SmartGriev.Repositories.Interfaces
 {
     public interface IOtpRepository
     {
-        void SaveOtp(string mobile, string otp);
-
-        bool VerifyOtp(string mobile, string otp);
+        Task SaveOtpAsync(string mobile, string otp);
+        Task<bool> VerifyOtpAsync(string mobile, string otp);
     }
 }

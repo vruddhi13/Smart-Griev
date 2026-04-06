@@ -78,9 +78,10 @@ const VerifyOtp = () => {
 
                 sessionStorage.setItem("user", JSON.stringify({
                     userId: data.userId,
-                    roleId: data.roleId
+                    roleId: data.roleId,
+                    name: data.name || 'User'
                 }));
-
+                console.log("OTP Response:", data);
                 sessionStorage.setItem("roleId", data.roleId);
 
                 localStorage.removeItem("mobileNo");
