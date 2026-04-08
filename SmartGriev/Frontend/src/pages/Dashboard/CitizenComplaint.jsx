@@ -1,7 +1,58 @@
-﻿import React from "react";
+﻿import React, { useState } from "react";
 //import { theme } from "../../services/theme";
 
 const CitizenComplaint = () => {
+
+    const [title, setTitle] = useState("");
+    const [description, setDescription] = useState("");
+    const [priority, setPriority] = useState("Medium");
+    const [address, setAddress] = useState("");
+    const [image, setImage] = useState(null);
+
+
+    const handleSubmit = async () => {
+
+        const formData = new FormData();
+
+        formData.append("userId", 1);
+        formData.append("title", title);
+        formData.append("description", description);
+        formData.append("priorityLevel", priority);
+        formData.append("address", address);
+
+        if (image) {
+            formData.append("image", image);
+        }
+
+        try {
+
+            const response = await fetch("https://localhost:7224/api/Complaint", {
+                method: "POST",
+                body: formData
+            });
+
+            if (response.ok) {
+                alert("Complaint submitted successfully!");
+
+                // reset form
+                setTitle("");
+                setDescription("");
+                setPriority("Medium");
+                setAddress("");
+                setImage(null);
+            }
+            else {
+                const errorText = await response.text();
+                console.error(errorText);
+                alert("Error submitting complaint");
+            }
+
+        } catch (error) {
+            console.error(error);
+            alert("Server error");
+        }
+    };
+
     const styles = {
         pageWrapper: {
             backgroundColor: "#e2e8f0", 
@@ -127,18 +178,26 @@ const CitizenComplaint = () => {
                 </div>
 
                 <label style={styles.label}>Complaint Category *</label>
-                <select style={styles.input}>
-                    <option value="">Select Category</option>
-                    <option value="1">Road Damage</option>
-                    <option value="2">Water Leakage</option>
-                    <option value="3">Garbage Issue</option>
-                    <option value="4">Street Light Problem</option>
-                </select>
+                <input
+                    style={styles.input}
+                    placeholder="Example: Garbage not collected for 3 days"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                />
+                {/*<select style={styles.input}>*/}
+                {/*    <option value="">Select Category</option>*/}
+                {/*    <option value="1">Road Damage</option>*/}
+                {/*    <option value="2">Water Leakage</option>*/}
+                {/*    <option value="3">Garbage Issue</option>*/}
+                {/*    <option value="4">Street Light Problem</option>*/}
+                {/*</select>*/}
 
                 <label style={styles.label}>Description (optional if uploading media)</label>
                 <textarea
-                    style={{ ...styles.input, height: "120px", resize: "none" }}
+                    style={{ ...styles.input, height: "120px" }}
                     placeholder="Describe your complaint in detail..."
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
                 />
 
                 <div style={styles.mediaSection}>
@@ -149,7 +208,10 @@ const CitizenComplaint = () => {
                     <div style={{ marginBottom: "15px" }}>
                         <div style={{ fontSize: "0.85rem", fontWeight: "600", marginBottom: "5px" }}>📷 Image Evidence</div>
                         <div style={styles.fileInputContainer}>
-                            <input type="file" />
+                            <input
+                                type="file"
+                                onChange={(e) => setImage(e.target.files[0])}
+                            />
                         </div>
                     </div>
 
@@ -164,7 +226,10 @@ const CitizenComplaint = () => {
                 <div style={styles.row}>
                     <div style={styles.col}>
                         <label style={styles.label}>Priority</label>
-                        <select style={styles.input}>
+                        <select
+                            style={styles.input}
+                            value={priority}
+                            onChange={(e) => setPriority(e.target.value)}>
                             <option>Medium</option>
                             <option>High</option>
                             <option>Low</option>
@@ -181,13 +246,17 @@ const CitizenComplaint = () => {
                 </div>
 
                 <label style={styles.label}>📍 Incident Address</label>
-                <input style={styles.input} placeholder="Enter incident address or location" />
+                <input
+                    style={styles.input}
+                    placeholder="Enter incident address"
+                    value={address}
+                    onChange={(e) => setAddress(e.target.value)}/>
 
-                <button style={styles.locationBtn}>
-                    📍 Get My Current Location
-                </button>
+                {/*<button style={styles.locationBtn} >*/}
+                {/*    📍 Get My Current Location*/}
+                {/*</button>*/}
 
-                <button style={styles.submitBtn}>
+                <button style={styles.submitBtn} onClick={handleSubmit}>
                     📥 Submit Complaint
                 </button>
 
