@@ -1,21 +1,82 @@
 ﻿import React, { useEffect, useState } from "react";
 import AdminLayout from "../../layout/AdminLayout";
 import { adminTheme as theme } from '../../services/AdminServices/AdminTheme';
-import { UserCheck, UserX, Users, Mail, Phone } from 'lucide-react';
-import { getUsers, toggleUserStatus} from "../../services/AdminServices/AdminService";
+import { UserCheck, UserX, Users, Mail, Phone, Edit, Trash2,Plus } from 'lucide-react';
+import { getUsers, toggleUserStatus, deleteUser, updateUser } from "../../services/AdminServices/AdminService";
+import {
+    showError,
+    showSuccessToast,
+    confirmDelete
+} from "../../services/alertService";
+
 
 const AdminUserRolePanel = () => {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
 
+    const [isFormOpen, setIsFormOpen] = useState(false);
+    const [editId, setEditId] = useState(null);
+
+    const [formData, setFormData] = useState({
+        name: '',
+        email: '',
+        phone: '',
+        roleId: 2
+    });
+
+    const handleRoleChange = (roleId) => {
+        if (roleId === 1) {
+            showError("Admin cannot be modified");
+            return;
+        }
+
+        let updatedEmail = formData.email;
+
+        const namePart = formData.name?.toLowerCase().replace(/\s+/g, '');
+
+        if (roleId === 2) {
+            updatedEmail = `${namePart}_dept@smartgriev.com`;
+        }
+        else if (roleId === 3) {
+            updatedEmail = `${namePart}_officer@smartgriev.com`;
+        }
+        else if (roleId === 4) {
+            updatedEmail = `${namePart}_@gmail.com`;
+        }
+
+        setFormData({
+            ...formData,
+            roleId,
+            email: updatedEmail
+        });
+    };
+
+    const handleEmailChange = (value) => {
+        let updatedRole = formData.roleId;
+
+        if (value.endsWith("_dept@smartgriev.com")) {
+            updatedRole = 2;
+        }
+        else if (value.endsWith("_officer@smartgriev.com")) {
+            updatedRole = 3;
+        }
+        // ❌ DO NOT force citizen
+        // keep role as it is
+
+        setFormData({
+            ...formData,
+            email: value,
+            roleId: updatedRole
+        });
+    };
     const loadUsers = async () => {
         try {
             setLoading(true);
             const res = await getUsers();
-            // Checking if res.data exists based on your original snippet
             setUsers(res.data || res);
         } catch (error) {
-            console.error("Error fetching users:", error);
+            console.error(error);
+            showError(error?.message || "Error fetching users");
         } finally {
             setLoading(false);
         }
@@ -24,6 +85,61 @@ const AdminUserRolePanel = () => {
     useEffect(() => {
         loadUsers();
     }, []);
+
+    const handleEdit = (user) => {
+        setFormData({
+            name: user.name,
+            email: user.email, 
+            phone: user.phone,
+            roleId: user.roleId
+        });
+
+        setEditId(user.userId);
+        setIsFormOpen(true);
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        try {
+            await updateUser(editId, formData);
+
+            showSuccessToast("User updated successfully");
+
+            setIsFormOpen(false);
+            setEditId(null);
+            setFormData({
+                name: '',
+                email: '',
+                phone: '',
+                roleId: 2
+            });
+
+            loadUsers();
+
+        } catch (error) {
+            console.error(error);
+            showError(error?.message || "Update failed");
+        }
+    };
+
+    const handleDelete = async (id) => {
+
+        try {
+            const confirmed = await confirmDelete();
+            if (!confirmed) return;
+
+            await deleteUser(id);
+
+            showSuccessToast("User deleted successfully");
+
+            loadUsers();
+
+        } catch (error) {
+            console.error(error);
+            showError(error?.message || "Delete failed");
+        }
+    };
 
     const handleToggleStatus = async (userId) => {
         try {
@@ -57,6 +173,63 @@ const AdminUserRolePanel = () => {
                     </div>
                 </div>
 
+                {/* EDIT FORM */}
+                {isFormOpen && (
+                    <div style={{
+                        background: 'white',
+                        padding: '30px',
+                        borderRadius: theme.radius.card,
+                        boxShadow: theme.shadows.card
+                    }}>
+                        <form onSubmit={handleSubmit} style={{ display: 'flex', gap: '20px', alignItems: 'flex-end' }}>
+
+                            <input
+                                type="text"
+                                value={formData.name}
+                                placeholder="Name"
+                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                required
+                                style={{ padding: '14px', borderRadius: '12px', border: '1px solid #E0E5F2' }}
+                            />
+
+                            <input
+                                type="email"
+                                value={formData.email}
+                                onChange={(e) => handleEmailChange(e.target.value)}
+                                disabled={formData.roleId === 2 || formData.roleId === 3}
+                                style={{ padding: '14px', borderRadius: '12px', border: '1px solid #E0E5F2' }}
+                            />
+                            <input
+                                type="text"
+                                value={formData.phone}
+                                placeholder="Phone"
+                                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                                required
+                                style={{ padding: '14px', borderRadius: '12px', border: '1px solid #E0E5F2' }}
+                            />
+
+                            <select
+                                value={formData.roleId}
+                                onChange={(e) => handleRoleChange(Number(e.target.value))}                                style={{ padding: '10px', borderRadius: '8px' }}>
+                                <option value={1}>Admin</option>
+                                <option value={2}>Department Head</option>
+                                <option value={3}>Officer</option>
+                                <option value={4}>Citizen</option>
+                            </select>
+
+                            <button type="submit" style={{
+                                padding: '14px 24px',
+                                background: theme.colors.brand.primary,
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '12px',
+                                cursor: 'pointer'
+                            }}>
+                                Update User
+                            </button>
+                        </form>
+                    </div>
+                )}
                 {/* USERS TABLE */}
                 <div style={{
                     background: 'white',
@@ -116,27 +289,35 @@ const AdminUserRolePanel = () => {
                                     </td>
 
                                     <td style={{ padding: '20px' }}>
-                                        <div style={{ display: 'flex', justifyContent: 'center' }}>
+                                        <div style={{ display: 'flex', gap: '15px', justifyContent: 'center' }}>
+
+                                            {/* EDIT ICON ONLY */}
+                                            <button
+                                                onClick={() => handleEdit(user)}
+                                                style={{ border: 'none', background: 'none', cursor: 'pointer' }}
+                                                title="Edit"
+                                            >
+                                                <Edit size={20} color="#6C63FF" />
+                                            </button>
+
+                                            {/* DELETE ICON */}
+                                            <button
+                                                onClick={() => handleDelete(user.userId)}
+                                                style={{ border: 'none', background: 'none', cursor: 'pointer' }}
+                                                title="Delete"
+                                            >
+                                                <Trash2 size={20} color="#EE5D50" />
+                                            </button>
+
+                                            {/* STATUS ICON ONLY */}
                                             <button
                                                 onClick={() => handleToggleStatus(user.userId)}
-                                                style={{
-                                                    border: 'none',
-                                                    background: user.isActive ? '#FFF5F5' : '#F0F7FF',
-                                                    padding: '8px 12px',
-                                                    borderRadius: '10px',
-                                                    cursor: 'pointer',
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    gap: '5px',
-                                                    color: user.isActive ? theme.colors.status.error : theme.colors.brand.primary,
-                                                    fontWeight: '600',
-                                                    fontSize: '13px',
-                                                    transition: '0.2s'
-                                                }}
-                                                title={user.isActive ? "Deactivate User" : "Activate User"}
+                                                style={{ border: 'none', background: 'none', cursor: 'pointer' }}
+                                                title={user.isActive ? "Deactivate" : "Activate"}
                                             >
-                                                {user.isActive ? <UserX size={18} /> : <UserCheck size={18} />}
-                                                {user.isActive ? "Deactivate" : "Activate"}
+                                                {user.isActive
+                                                    ? <UserX size={20} color="#EE5D50" />
+                                                    : <UserCheck size={20} color="#22C55E" />}
                                             </button>
                                         </div>
                                     </td>

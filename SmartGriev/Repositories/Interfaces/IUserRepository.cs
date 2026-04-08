@@ -14,5 +14,6 @@ namespace SmartGriev.Repositories.Interfaces
         Task<List<object>> GetAllUsersAsync();
         Task<User> GetUserById(int id);
         Task UpdateUser(User user);
+        Task DeleteUser(User user);
     }
 }
