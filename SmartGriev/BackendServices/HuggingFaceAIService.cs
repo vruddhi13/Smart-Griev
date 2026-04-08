@@ -16,7 +16,7 @@ namespace SmartGriev.BackendServices
         {
             _http = http;
             _bearerToken = config["HuggingFace:ApiKey"]
-                ?? throw new Exception("HuggingFace API key not found in configuration");
+                ?? throw new Exception("HuggingFace API key not found in configuration!");
         }
 
         public async Task<string> DetectCategory(string description)
