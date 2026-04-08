@@ -134,3 +134,13 @@ export const toggleUserStatus = async (userId) => {
 
     return await response.json();
 };
+
+export const submitComplaint = async (data) => {
+
+    const res = await fetch("https://localhost:7224/api/complaints", {
+        method: "POST",
+        body: data
+    });
+
+    return await res.json();
+}

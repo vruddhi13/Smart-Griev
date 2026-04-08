@@ -46,7 +46,7 @@ namespace SmartGriev.Repositories.Implementations
             if (category == null) return;
 
             category.CategoryName = dto.CategoryName ?? category.CategoryName;
-            category.Description = dto.Description ?? category.Description;
+            category.Description = dto.Description ?? category.Description ?? "";
             category.SlaHours = dto.SlaHours;
             category.UpdatedAt = DateTime.Now;
 
