@@ -13,7 +13,7 @@ public partial class ComplaintCategory
 
     public string? Description { get; set; }
 
-    public int SlaHours { get; set; }
+    //public int SlaHours { get; set; }
 
     public bool IsActive { get; set; }
 

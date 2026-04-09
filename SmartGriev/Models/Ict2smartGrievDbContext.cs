@@ -50,6 +50,7 @@ public partial class Ict2smartGrievDbContext : DbContext
     public virtual DbSet<SlaMaster> SlaMasters { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
+    public virtual DbSet<SLA_Tracking> SLA_Trackings { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseSqlServer("Name=smartGrievConnectionString");
@@ -275,9 +276,9 @@ public partial class Ict2smartGrievDbContext : DbContext
             entity.Property(e => e.IsActive)
                 .HasDefaultValue(true)
                 .HasColumnName("is_active");
-            entity.Property(e => e.SlaHours)
-                .HasDefaultValue(48)
-                .HasColumnName("sla_hours");
+            //entity.Property(e => e.SlaHours)
+            //    .HasDefaultValue(48)
+            //    .HasColumnName("sla_hours");
             entity.Property(e => e.UpdatedAt).HasColumnName("updated_at");
 
             entity.HasOne(d => d.Department).WithMany(p => p.ComplaintCategories)
@@ -647,6 +648,50 @@ public partial class Ict2smartGrievDbContext : DbContext
                 .HasForeignKey(d => d.RoleId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_users_role");
+        });
+
+        modelBuilder.Entity<SLA_Tracking>(entity =>
+        {
+            entity.HasKey(e => e.TrackingId).HasName("PK__SLA_Trac__tracking_id");
+
+            entity.ToTable("SLA_Tracking");
+
+            entity.Property(e => e.TrackingId).HasColumnName("tracking_id");
+
+            entity.Property(e => e.ComplaintId)
+                .HasColumnName("complaint_id");
+
+            entity.Property(e => e.SlaId)
+                .HasColumnName("sla_id");
+
+            entity.Property(e => e.AssignedAt)
+                .HasDefaultValueSql("(sysdatetime())")
+                .HasColumnName("assigned_at");
+
+            entity.Property(e => e.ResolutionDue)
+                .HasColumnName("resolution_due");
+
+            entity.Property(e => e.EscalationDue)
+                .HasColumnName("escalation_due");
+
+            entity.Property(e => e.IsEscalated)
+                .HasDefaultValue(false)
+                .HasColumnName("is_escalated");
+
+            entity.Property(e => e.CompletedAt)
+                .HasColumnName("completed_at");
+
+            entity.HasOne(d => d.Complaint)
+                .WithMany(p => p.SlaTrackings)
+                .HasForeignKey(d => d.ComplaintId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_sla_tracking_complaint");
+
+            entity.HasOne(d => d.Sla)
+                .WithMany()
+                .HasForeignKey(d => d.SlaId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_sla_tracking_sla");
         });
 
         OnModelCreatingPartial(modelBuilder);

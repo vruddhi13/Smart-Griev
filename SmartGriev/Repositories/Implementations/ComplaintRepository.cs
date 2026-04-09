@@ -122,6 +122,26 @@ namespace SmartGriev.Repositories.Implementations
 
                 _context.ComplaintImages.Add(image);
             }
+
+            var sla = await _context.SlaMasters.FirstOrDefaultAsync(s => s.DepartmentId == category.DepartmentId && s.CategoryId == category.CategoryId && s.PriorityLevel.ToLower() == (dto.PriorityLevel ?? "Medium").ToLower());
+
+            if (sla != null)
+            {
+                var now = DateTime.Now;
+
+                var slaTracking = new SLA_Tracking
+                {
+                    ComplaintId = complaint.ComplaintId,
+                    SlaId = sla.SlaId,
+                    AssignedAt = now,
+                    ResolutionDue = now.AddHours(sla.ResolutionHours),
+                    EscalationDue = now.AddHours(sla.EscalationHours)
+                };
+
+                _context.SLA_Trackings.Add(slaTracking);
+            }
+
+           
             await _context.SaveChangesAsync();
 
             return new

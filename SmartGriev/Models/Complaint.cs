@@ -60,4 +60,6 @@ public partial class Complaint
     public virtual ICollection<Notification> Notifications { get; set; } = new List<Notification>();
 
     public virtual User User { get; set; } = null!;
+
+    public virtual ICollection<SLA_Tracking> SlaTrackings { get; set; } = new List<SLA_Tracking>();
 }
