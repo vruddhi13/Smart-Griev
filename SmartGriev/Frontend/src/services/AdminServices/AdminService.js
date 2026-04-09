@@ -191,3 +191,72 @@ export const deleteUser = async (id) => {
 
     return await response.json();
 };
+
+// SLA Services
+
+export const getSlas = async () => {
+    const response = await fetch(`${API}/sla`);
+
+    if (!response.ok) {
+        throw new Error("Failed to fetch SLA policies");
+    }
+
+    return await response.json();
+};
+
+export const addSla = async (data) => {
+    const response = await fetch(`${API}/sla`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+    });
+
+    if (!response.ok) {
+        throw new Error("Failed to add SLA policy");
+    }
+
+    return await response.json();
+};
+
+export const updateSla = async (id, data) => {
+    const response = await fetch(`${API}/sla/${id}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+    });
+
+    if (!response.ok) {
+        throw new Error("Failed to update SLA policy");
+    }
+
+    return await response.json();
+};
+
+export const deleteSla = async (id) => {
+    const response = await fetch(`${API}/sla/${id}`, {
+        method: "DELETE"
+    });
+
+    if (!response.ok) {
+        throw new Error("Failed to delete SLA policy");
+    }
+
+    return await response.json();
+};
+
+// Total Complaint Status
+
+export const getDashboardStats = async () => {
+
+    const response = await fetch(`${API}/dashboard`);
+
+    if (!response.ok) {
+        throw new Error("Failed to fetch dashboard stats");
+    }
+
+    return await response.json();
+};

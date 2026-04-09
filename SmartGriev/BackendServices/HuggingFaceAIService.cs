@@ -8,9 +8,18 @@ namespace SmartGriev.BackendServices
     {
         private readonly HttpClient _http;
         private const string HuggingFaceModel = "https://api-inference.huggingface.co/models/MoritzLaurer/deberta-v3-base-zeroshot-v1";
-        private readonly string BearerToken = Environment.GetEnvironmentVariable("HuggingFaceAPI") ?? throw new Exception("HuggingFace API key not found in environment variables"); // Your Hugging Face token
+        //private readonly string BearerToken = Environment.GetEnvironmentVariable("HuggingFaceAPI") ?? throw new Exception("HuggingFace API key not found in environment variables"); // Your Hugging Face token
 
-        public HuggingFaceAIService(HttpClient http) => _http = http;
+        //public HuggingFaceAIService(HttpClient http) => _http = http;
+
+        private readonly string _bearerToken;
+
+        public HuggingFaceAIService(HttpClient http, IConfiguration config)
+        {
+            _http = http;
+            _bearerToken = config["HuggingFace:ApiKey"]
+                ?? throw new Exception("HuggingFace API key not found in configuration");
+        }
 
         public async Task<string> DetectCategory(string description)
         {
@@ -28,7 +37,7 @@ namespace SmartGriev.BackendServices
                 var message = new HttpRequestMessage(HttpMethod.Post, HuggingFaceModel)
                 {
                     Content = content,
-                    Headers = { Authorization = new AuthenticationHeaderValue("Bearer", BearerToken) }
+                    Headers = { Authorization = new AuthenticationHeaderValue("Bearer",_bearerToken) }
                 };
 
                 var start = DateTime.UtcNow;

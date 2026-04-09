@@ -21,8 +21,7 @@ const AdminCategories = () => {
     const [formData, setFormData] = useState({
         categoryName: '',
         departmentId: '',
-        description: '',
-        slaHours: 48
+        description: ''
     });
 
     const fetchData = async () => {
@@ -75,7 +74,7 @@ const AdminCategories = () => {
     };
 
     const resetForm = () => {
-        setFormData({ categoryName: '', departmentId: '', description: '', slaHours: 48 });
+        setFormData({ categoryName: '', departmentId: '', description: ''});
         setEditId(null);
         setIsFormOpen(false);
     };
@@ -84,8 +83,7 @@ const AdminCategories = () => {
         setFormData({
             categoryName: cat.categoryName,
             departmentId: cat.departmentId,
-            description: cat.description,
-            slaHours: cat.slaHours
+            description: cat.description
         });
         setEditId(cat.categoryId);
         setIsFormOpen(true);
@@ -149,18 +147,18 @@ const AdminCategories = () => {
                                     ))}
                                 </select>
                             </div>
-                            <div>
-                                <label style={labelStyle}>SLA Resolution Time (Hours)</label>
-                                <div style={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
-                                    <Clock size={16} style={{ position: 'absolute', left: '12px', color: '#A3AED0' }} />
-                                    <input
-                                        type="number"
-                                        value={formData.slaHours}
-                                        onChange={(e) => setFormData({ ...formData, slaHours: parseInt(e.target.value) })}
-                                        style={{ ...inputStyle, paddingLeft: '40px' }}
-                                    />
-                                </div>
-                            </div>
+                            {/*<div>*/}
+                            {/*    <label style={labelStyle}>SLA Resolution Time (Hours)</label>*/}
+                            {/*    <div style={{ display: 'flex', alignItems: 'center', position: 'relative' }}>*/}
+                            {/*        <Clock size={16} style={{ position: 'absolute', left: '12px', color: '#A3AED0' }} />*/}
+                            {/*        <input*/}
+                            {/*            type="number"*/}
+                            {/*            value={formData.slaHours}*/}
+                            {/*            onChange={(e) => setFormData({ ...formData, slaHours: parseInt(e.target.value) })}*/}
+                            {/*            style={{ ...inputStyle, paddingLeft: '40px' }}*/}
+                            {/*        />*/}
+                            {/*    </div>*/}
+                            {/*</div>*/}
                             <div>
                                 <label style={labelStyle}>Description</label>
                                 <input
@@ -187,7 +185,7 @@ const AdminCategories = () => {
                             <tr style={{ borderBottom: '1px solid #F4F7FE', background: '#FAFCFF' }}>
                                 <th style={thStyle}>CATEGORY NAME</th>
                                 <th style={thStyle}>DEPARTMENT ID</th>
-                                <th style={thStyle}>SLA</th>
+                                {/*<th style={thStyle}>SLA</th>*/}
                                 <th style={thStyle}>STATUS</th>
                                 <th style={thStyle}>ACTIONS</th>
                             </tr>
@@ -199,11 +197,11 @@ const AdminCategories = () => {
                                 <tr key={cat.categoryId} style={{ borderBottom: '1px solid #F4F7FE' }}>
                                     <td style={{ padding: '20px', fontWeight: '600' }}>{cat.categoryName}</td>
                                     <td style={{ padding: '20px', color: theme.colors.text.gray }}>Dept ID: {cat.departmentId}</td>
-                                    <td style={{ padding: '20px' }}>
-                                        <span style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '13px' }}>
-                                            <Clock size={14} /> {cat.slaHours}h
-                                        </span>
-                                    </td>
+                                    {/*<td style={{ padding: '20px' }}>*/}
+                                    {/*    <span style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '13px' }}>*/}
+                                    {/*        <Clock size={14} /> {cat.slaHours}h*/}
+                                    {/*    </span>*/}
+                                    {/*</td>*/}
                                     <td style={{ padding: '20px' }}>
                                         <div style={{
                                             padding: '4px 12px', borderRadius: '6px', fontSize: '12px', fontWeight: 'bold', display: 'inline-block',

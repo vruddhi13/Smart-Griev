@@ -25,10 +25,9 @@ namespace SmartGriev.Repositories.Implementations
         {
             var category = new ComplaintCategory
             {
-                CategoryName = dto.CategoryName,
+                CategoryName = dto.CategoryName ?? "",
                 DepartmentId = dto.DepartmentId,
                 Description = dto.Description,
-                SlaHours = dto.SlaHours,
                 IsActive = true,
                 CreatedAt = DateTime.Now
             };
@@ -47,7 +46,6 @@ namespace SmartGriev.Repositories.Implementations
 
             category.CategoryName = dto.CategoryName ?? category.CategoryName;
             category.Description = dto.Description ?? category.Description ?? "";
-            category.SlaHours = dto.SlaHours;
             category.UpdatedAt = DateTime.Now;
 
             await _context.SaveChangesAsync();
