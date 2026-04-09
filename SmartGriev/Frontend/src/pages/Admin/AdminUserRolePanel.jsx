@@ -1,8 +1,8 @@
 ﻿import React, { useEffect, useState } from "react";
 import AdminLayout from "../../layout/AdminLayout";
 import { adminTheme as theme } from '../../services/AdminServices/AdminTheme';
-import { UserCheck, UserX, Users, Mail, Phone, Edit, Trash2,Plus } from 'lucide-react';
-import { getUsers, toggleUserStatus, deleteUser, updateUser } from "../../services/AdminServices/AdminService";
+import { UserCheck, UserX, Users, Mail, Phone, Edit, Trash2, Plus,X } from 'lucide-react';
+import { getUsers, toggleUserStatus, deleteUser, updateUser, addUser } from "../../services/AdminServices/AdminService";
 import {
     showError,
     showSuccessToast,
@@ -23,6 +23,8 @@ const AdminUserRolePanel = () => {
         phone: '',
         roleId: 2
     });
+
+    const isEditMode = editId !== null;
 
     const handleRoleChange = (roleId) => {
         if (roleId === 1) {
@@ -102,24 +104,31 @@ const AdminUserRolePanel = () => {
         e.preventDefault();
 
         try {
-            await updateUser(editId, formData);
-
-            showSuccessToast("User updated successfully");
+            if (isEditMode) {
+                await updateUser(editId, formData);
+                showSuccessToast("User updated successfully");
+            } else {
+                await addUser(formData);
+                showSuccessToast("User added successfully");
+            }
 
             setIsFormOpen(false);
             setEditId(null);
+
             setFormData({
                 name: '',
                 email: '',
                 phone: '',
-                roleId: 2
+                roleId: 4
             });
 
             loadUsers();
 
         } catch (error) {
             console.error(error);
-            showError(error?.message || "Update failed");
+            showError(error?.message || "Error fetching users");
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -138,6 +147,16 @@ const AdminUserRolePanel = () => {
         } catch (error) {
             console.error(error);
             showError(error?.message || "Delete failed");
+        }
+    };
+
+    const getRoleName = (roleId) => {
+        switch (roleId) {
+            case 1: return "Admin";
+            case 2: return "Department Head";
+            case 3: return "Officer";
+            case 4: return "Citizen";
+            default: return "Unknown";
         }
     };
 
@@ -163,6 +182,41 @@ const AdminUserRolePanel = () => {
                             Manage user permissions and account status
                         </p>
                     </div>
+
+                    <button
+                        onClick={() => {
+                            if (isFormOpen) {
+                                // CANCEL MODE
+                                setIsFormOpen(false);
+                                setEditId(null);
+                                setFormData({
+                                    name: '',
+                                    email: '',
+                                    phone: '',
+                                    roleId: 4
+                                });
+                            } else {
+                                // ADD MODE
+                                setIsFormOpen(true);
+                                setEditId(null);
+                            }
+                        }}
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                            padding: '12px 24px',
+                            background: isFormOpen ? '#FF5B5B' : theme.colors.brand.primary,
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '14px',
+                            cursor: 'pointer',
+                            fontWeight: 'bold'
+                        }}
+                    >
+                        {isFormOpen ? <X size={18} /> : <Plus size={18} />}
+                        {isFormOpen ? "Cancel" : "Add User"}
+                    </button>
                     <div style={{
                         display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 20px',
                         background: 'white', borderRadius: '14px', boxShadow: theme.shadows.card,
@@ -172,6 +226,7 @@ const AdminUserRolePanel = () => {
                         Total: {users.length}
                     </div>
                 </div>
+
 
                 {/* EDIT FORM */}
                 {isFormOpen && (
@@ -274,7 +329,7 @@ const AdminUserRolePanel = () => {
 
                                     {/* Role Column */}
                                     <td style={{ padding: '20px', color: theme.colors.text.main, fontWeight: '500' }}>
-                                        {user.roleId === 1 ? 'Admin' : 'Citizens'}
+                                        {getRoleName(user.roleId)}
                                     </td>
 
                                     {/* Status Column */}

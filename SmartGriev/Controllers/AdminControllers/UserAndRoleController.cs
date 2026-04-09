@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using SmartGriev.Repositories.Interfaces;
 using SmartGriev.DTOs.AdminDTOs;
+using SmartGriev.Models;
+using SmartGriev.Repositories.Interfaces;
 
 namespace SmartGriev.Controllers.AdminControllers
 {
@@ -78,6 +79,24 @@ namespace SmartGriev.Controllers.AdminControllers
             await _userRepository.DeleteUser(user);
 
             return Ok(new { message = "User deleted successfully" });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddUser([FromBody] UserRoleListDTO dto)
+        {
+            var user = new User
+            {
+                FullName = dto.Name,
+                Email = dto.Email,
+                MobileNo = dto.Phone,
+                RoleId = dto.RoleId,
+                IsActive = true,
+                CreatedAt = DateTime.Now
+            };
+
+            await _userRepository.AddUser(user);
+
+            return Ok(new { message = "User added successfully" });
         }
     }
 }
