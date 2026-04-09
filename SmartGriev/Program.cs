@@ -41,6 +41,7 @@ namespace SmartGriev
             builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
             builder.Services.AddHttpClient<HuggingFaceAIService>();
             builder.Services.AddScoped<IComplaintRepository, ComplaintRepository>();
+            builder.Services.AddScoped<ISlaRepository, SlaRepository>();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();

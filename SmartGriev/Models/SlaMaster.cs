@@ -26,4 +26,6 @@ public partial class SlaMaster
     public virtual ComplaintCategory Category { get; set; } = null!;
 
     public virtual Department Department { get; set; } = null!;
+
+    public virtual ICollection<SLA_Tracking> SlaTrackings { get; set; } = new List<SLA_Tracking>();
 }

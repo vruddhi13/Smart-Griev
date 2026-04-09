@@ -29,7 +29,7 @@ namespace SmartGriev.Controllers.AdminControllers
         {
             Console.WriteLine(dto.CategoryName);
             Console.WriteLine(dto.DepartmentId);
-            Console.WriteLine(dto.SlaHours);
+           
             var result = await _categoryRepository.AddCategory(dto);
             return Ok(result);
             
@@ -41,7 +41,7 @@ namespace SmartGriev.Controllers.AdminControllers
             Console.WriteLine("Update Called");
             Console.WriteLine(dto.CategoryName);
             Console.WriteLine(dto.Description);
-            Console.WriteLine(dto.SlaHours);
+            
 
             await _categoryRepository.UpdateCategory(id, dto);
             return Ok(new
