@@ -145,6 +145,53 @@ export const submitComplaint = async (data) => {
     return await res.json();
 }
 
+// ➕ Add User
+export const addUser = async (data) => {
+    const response = await fetch(`${API}/users`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+    });
+
+    if (!response.ok) {
+        throw new Error("Failed to add user");
+    }
+
+    return await response.json();
+};
+
+// ✏️ Update User
+export const updateUser = async (id, data) => {
+    const response = await fetch(`${API}/users/${id}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+    });
+
+    if (!response.ok) {
+        throw new Error("Failed to update user");
+    }
+
+    return await response.json();
+};
+
+// ❌ Delete User
+export const deleteUser = async (id) => {
+    const response = await fetch(`${API}/users/${id}`, {
+        method: "DELETE"
+    });
+
+    if (!response.ok) {
+        throw new Error("Failed to delete user");
+    }
+
+    return await response.json();
+};
+
 // SLA Services
 
 export const getSlas = async () => {

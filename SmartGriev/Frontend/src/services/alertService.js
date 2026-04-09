@@ -21,3 +21,18 @@ export const showSuccessToast = (message) => {
         timerProgressBar: true,
     });
 };
+
+// ❓ Confirm Delete (SweetAlert)
+export const confirmDelete = async () => {
+    const result = await Swal.fire({
+        title: "Are you sure?",
+        text: "This action cannot be undone!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#EE5D50",
+        cancelButtonColor: "#A3AED0",
+        confirmButtonText: "Yes, delete it!"
+    });
+
+    return result.isConfirmed;
+};
