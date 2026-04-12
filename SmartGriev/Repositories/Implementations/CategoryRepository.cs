@@ -14,13 +14,21 @@ namespace SmartGriev.Repositories.Implementations
             _context = context;
         }
 
-        public async Task<List<ComplaintCategory>> GetAllCategories()
+        public async Task<List<CategoryCreateDTO>> GetAllCategories()
         {
             return await _context.ComplaintCategories
-                .Where(c => c.IsActive == true)
+                .Include(c => c.Department)
+                .Where(c => c.IsActive)
+                .Select(c => new CategoryCreateDTO
+                {
+                    CategoryId = c.CategoryId,
+                    CategoryName = c.CategoryName,
+                    DepartmentId = c.DepartmentId,
+                    DepartmentName = c.Department.DepartmentName,
+                    Description = c.Description
+                })
                 .ToListAsync();
         }
-
         public async Task<ComplaintCategory> AddCategory(CategoryCreateDTO dto)
         {
             var category = new ComplaintCategory

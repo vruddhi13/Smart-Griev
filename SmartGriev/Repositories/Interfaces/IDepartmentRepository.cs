@@ -9,5 +9,7 @@ namespace SmartGriev.Repositories.Interfaces
         Task<Department> UpdateDepartment(Department dept);
         Task<bool> DeleteDepartment(int id);
         Task<Department?> GetDepartmentById(int id);
+
+        Task<Department> ToggleDepartmentStatus(int id);
     }
 }

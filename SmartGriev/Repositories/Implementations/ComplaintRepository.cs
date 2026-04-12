@@ -20,19 +20,18 @@ namespace SmartGriev.Repositories.Implementations
 
         public async Task<object> SubmitComplaint(ComplaintDTO dto)
         {
-            var categoryName = await _ai.DetectCategory(dto.Description ?? "");
-            if (string.IsNullOrEmpty(categoryName))
-            {
-                categoryName = "General";
-            }
-
-            var category = await _context.ComplaintCategories.FirstOrDefaultAsync(c => c.CategoryName.ToLower() == categoryName.ToLower());
+            // ✅ Category from dropdown
+            var category = await _context.ComplaintCategories
+                .FirstOrDefaultAsync(c => c.CategoryId == dto.CategoryId);
 
             if (category == null)
             {
-                return new { message = "Category not found from AI classification" };
+                return new { message = "Invalid category" };
             }
-            Console.WriteLine("AI Category: " + categoryName);
+
+            // ✅ AI only for suggestion (not DB)
+            var aiSuggestion = await _ai.DetectCategory(dto.Description ?? "");
+            Console.WriteLine("AI Suggestion: " + aiSuggestion);
 
             var complaint = new Complaint
             {
@@ -41,7 +40,7 @@ namespace SmartGriev.Repositories.Implementations
                 DepartmentId = category.DepartmentId,
                 CategoryId = category.CategoryId,
                 Description = dto.Description ?? "",
-                PriorityLevel = dto.PriorityLevel ?? "",
+                PriorityLevel = dto.PriorityLevel ?? "Medium",
                 Status = "Submitted",
                 IsActive = true,
                 CreatedAt = DateTime.Now
@@ -50,38 +49,26 @@ namespace SmartGriev.Repositories.Implementations
             _context.Complaints.Add(complaint);
             await _context.SaveChangesAsync();
 
-            //var location = new ComplaintLocation
-            //{
-            //    ComplaintId = complaint.ComplaintId,
-            //    Address = dto.Address,
-            //    Latitude = 0,
-            //    Longitude = 0
-            //};
-
-            //location Latitude and logitude storing 
             decimal lat = 0;
             decimal lng = 0;
 
             if (!string.IsNullOrEmpty(dto.Address))
             {
                 using var client = new HttpClient();
-
                 client.DefaultRequestHeaders.UserAgent.ParseAdd("SmartGrievApp");
 
                 var url = $"https://nominatim.openstreetmap.org/search?q={Uri.EscapeDataString(dto.Address)}&format=json&limit=1";
-
                 var response = await client.GetStringAsync(url);
-                Console.WriteLine(url);
-                Console.WriteLine(response);
 
                 var data = JsonDocument.Parse(response).RootElement;
 
                 if (data.GetArrayLength() > 0)
                 {
-                    lat = decimal.Parse(data[0].GetProperty("lat").GetString() ?? "0", System.Globalization.CultureInfo.InvariantCulture);
-                    lng = decimal.Parse(data[0].GetProperty("lon").GetString() ?? "0", System.Globalization.CultureInfo.InvariantCulture);
+                    lat = decimal.Parse(data[0].GetProperty("lat").GetString() ?? "0",
+                        System.Globalization.CultureInfo.InvariantCulture);
+                    lng = decimal.Parse(data[0].GetProperty("lon").GetString() ?? "0",
+                        System.Globalization.CultureInfo.InvariantCulture);
                 }
-                Console.WriteLine($"Latitude: {lat} Longitude: {lng}");
             }
 
             var location = new ComplaintLocation
@@ -100,9 +87,7 @@ namespace SmartGriev.Repositories.Implementations
                 var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "uploads");
 
                 if (!Directory.Exists(uploadPath))
-                {
                     Directory.CreateDirectory(uploadPath);
-                }
 
                 var filePath = Path.Combine(uploadPath, dto.Image.FileName);
 
@@ -123,25 +108,6 @@ namespace SmartGriev.Repositories.Implementations
                 _context.ComplaintImages.Add(image);
             }
 
-            var sla = await _context.SlaMasters.FirstOrDefaultAsync(s => s.DepartmentId == category.DepartmentId && s.CategoryId == category.CategoryId && s.PriorityLevel.ToLower() == (dto.PriorityLevel ?? "Medium").ToLower());
-
-            if (sla != null)
-            {
-                var now = DateTime.Now;
-
-                var slaTracking = new SLA_Tracking
-                {
-                    ComplaintId = complaint.ComplaintId,
-                    SlaId = sla.SlaId,
-                    AssignedAt = now,
-                    ResolutionDue = now.AddHours(sla.ResolutionHours),
-                    EscalationDue = now.AddHours(sla.EscalationHours)
-                };
-
-                _context.SLA_Trackings.Add(slaTracking);
-            }
-
-           
             await _context.SaveChangesAsync();
 
             return new
@@ -150,13 +116,40 @@ namespace SmartGriev.Repositories.Implementations
                 complaintNumber = complaint.ComplaintNumber
             };
         }
-
         public async Task<List<Complaint>> GetComplaints()
         {
             return await _context.Complaints
                 .Include(c => c.ComplaintLocations)
                 .Include(c => c.ComplaintImages)
                 .ToListAsync();
+        }
+
+        public async Task<object> GetAllComplaints()
+        {
+            var data = await _context.Complaints
+                .Include(c => c.User)
+                .Include(c => c.Department)
+                .Include(c => c.Category)
+                .Include(c => c.AssignedToNavigation)
+                .Include(c => c.ComplaintLocations) // Include locations for the frontend
+                .Select(c => new
+                {
+                    complaintId = c.ComplaintId,
+                    complaintNumber = c.ComplaintNumber,
+                    userName = c.User.FullName,
+                    // ADD THESE TWO LINES:
+                    departmentName = c.Department.DepartmentName,
+                    categoryName = c.Category.CategoryName,
+                    assignedTo = c.AssignedToNavigation != null ? c.AssignedToNavigation.FullName : "Not Assigned",
+                    status = c.Status,
+                    priorityLevel = c.PriorityLevel,
+                    createdAt = c.CreatedAt,
+                    // ADD THIS LINE FOR LOCATION:
+                    location = c.ComplaintLocations.Select(l => l.Address).FirstOrDefault() ?? "No Location"
+                })
+                .ToListAsync();
+
+            return data;
         }
     }
 }

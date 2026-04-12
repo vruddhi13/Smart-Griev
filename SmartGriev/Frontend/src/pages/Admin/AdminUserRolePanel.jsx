@@ -8,6 +8,8 @@ import {
     showSuccessToast,
     confirmDelete
 } from "../../services/alertService";
+import usePagination from '../../services/usePagination';
+import Pagination from '../../Components/AdminComponents/Pagination';
 
 
 const AdminUserRolePanel = () => {
@@ -170,6 +172,15 @@ const AdminUserRolePanel = () => {
         }
     };
 
+    const {
+        currentPage,
+        totalPages,
+        currentData,
+        nextPage,
+        prevPage,
+        setCurrentPage
+    } = usePagination(users, 4);
+
     return (
         <AdminLayout pageTitle="Users">
             <div style={{ display: 'flex', flexDirection: 'column', gap: '25px' }}>
@@ -280,7 +291,7 @@ const AdminUserRolePanel = () => {
                                 borderRadius: '12px',
                                 cursor: 'pointer'
                             }}>
-                                Update User
+                                {editId ? "Update Role" : "Save Role"}
                             </button>
                         </form>
                     </div>
@@ -309,7 +320,7 @@ const AdminUserRolePanel = () => {
                                         Loading users...
                                     </td>
                                 </tr>
-                            ) : users.map((user) => (
+                            ) : currentData.map((user) => (
                                 <tr key={user.userId} style={{ borderBottom: '1px solid #F4F7FE', transition: '0.2s' }}>
                                     {/* Name Column */}
                                     <td style={{ padding: '20px' }}>
@@ -339,7 +350,7 @@ const AdminUserRolePanel = () => {
                                             background: user.isActive ? '#E2F9EF' : '#FFE9E9',
                                             color: user.isActive ? theme.colors.status.success : theme.colors.status.error
                                         }}>
-                                            {user.isActive ? "Active" : "Inactive"}
+                                            {user.isActive ? "Active" : "Block"}
                                         </div>
                                     </td>
 
@@ -371,8 +382,8 @@ const AdminUserRolePanel = () => {
                                                 title={user.isActive ? "Deactivate" : "Activate"}
                                             >
                                                 {user.isActive
-                                                    ? <UserX size={20} color="#EE5D50" />
-                                                    : <UserCheck size={20} color="#22C55E" />}
+                                                    ? <UserCheck size={20} color="#22C55E" />
+                                                    : <UserX size={20} color="#EE5D50" />}
                                             </button>
                                         </div>
                                     </td>
@@ -380,6 +391,20 @@ const AdminUserRolePanel = () => {
                             ))}
                         </tbody>
                     </table>
+                </div>
+                <div style={{
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    marginTop: "-12px",
+                    width: "100%"
+                }}>
+                    <Pagination
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        nextPage={nextPage}
+                        prevPage={prevPage}
+                        setCurrentPage={setCurrentPage}
+                    />
                 </div>
             </div>
         </AdminLayout>

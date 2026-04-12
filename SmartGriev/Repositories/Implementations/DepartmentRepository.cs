@@ -51,5 +51,16 @@ namespace SmartGriev.Repositories.Implementations
 
             return true;
         }
+
+        public async Task<Department> ToggleDepartmentStatus(int id)
+        {
+            var dept = await _context.Departments.FindAsync(id);
+            if (dept != null)
+            {
+                dept.IsActive = !dept.IsActive; // Flip the status
+                await _context.SaveChangesAsync();
+            }
+            return dept;
+        }
     }
 }

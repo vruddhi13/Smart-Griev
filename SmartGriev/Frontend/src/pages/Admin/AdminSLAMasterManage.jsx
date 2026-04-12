@@ -10,6 +10,8 @@ import {
     getDepartments,
     getCategories
 } from "../../services/AdminServices/AdminService";
+import usePagination from '../../services/usePagination';
+import Pagination from '../../Components/AdminComponents/Pagination';
 
 const AdminSLAMaster = () => {
     const [slas, setSlas] = useState([]);
@@ -101,6 +103,15 @@ const AdminSLAMaster = () => {
         setEditId(sla.slaId);
         setIsFormOpen(true);
     };
+
+    const {
+        currentPage,
+        totalPages,
+        currentData,
+        nextPage,
+        prevPage,
+        setCurrentPage
+    } = usePagination(slas, 4);
 
     return (
         <AdminLayout pageTitle="SLA Management">
@@ -243,7 +254,7 @@ const AdminSLAMaster = () => {
                                 <tr><td colSpan="5" style={{ padding: '40px', textAlign: 'center' }}>Loading SLA Rules...</td></tr>
                             ) : slas.length === 0 ? (
                                 <tr><td colSpan="5" style={{ padding: '40px', textAlign: 'center' }}>No SLA rules defined.</td></tr>
-                            ) : slas.map((sla) => (
+                                ) : currentData.map((sla) => (
                                 <tr key={sla.slaId} style={{ borderBottom: '1px solid #F4F7FE' }}>
                                     <td style={{ padding: '20px' }}>
                                         <div style={{ fontWeight: '600', color: '#2B3674' }}>{sla.category?.categoryName || `ID: ${sla.categoryId}`}</div>
@@ -278,6 +289,20 @@ const AdminSLAMaster = () => {
                             ))}
                         </tbody>
                     </table>
+                </div>
+                <div style={{
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    marginTop: "-12px",
+                    width: "100%"
+                }}>
+                    <Pagination
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        nextPage={nextPage}
+                        prevPage={prevPage}
+                        setCurrentPage={setCurrentPage}
+                    />
                 </div>
             </div>
         </AdminLayout>

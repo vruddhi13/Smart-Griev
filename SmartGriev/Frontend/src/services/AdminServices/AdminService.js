@@ -260,3 +260,25 @@ export const getDashboardStats = async () => {
 
     return await response.json();
 };
+
+export const toggleDepartmentStatus = async (departmentId) => {
+    const response = await fetch(`${API}/department/${departmentId}/toggle-status`, {
+        method: "PUT"
+    });
+
+    if (!response.ok) {
+        throw new Error("Failed to toggle department status");
+    }
+
+    return await response.json();
+};
+
+export const getComplaints = async () => {
+    const res = await fetch("https://localhost:7224/api/complaint/all");
+
+    if (!res.ok) {
+        throw new Error("Failed to fetch complaints");
+    }
+
+    return await res.json();
+};

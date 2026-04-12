@@ -13,7 +13,9 @@ const AdminSidebar = () => {
         { id: 'depts', label: 'Departments', icon: Building2, path: '/admin/departments' },
         { id: 'category', label: 'Category', icon: Building2, path: '/admin/category' },
         { id: 'sla', label: 'SLA Config', icon: Clock, path: '/admin/sla' },
-        { id: 'analytics', label: 'Analytics', icon: BarChart3, path: '/admin/analytics' },
+        { id: 'complaints', label: 'Complaints', icon: Clock, path: '/admin/complaintdetails' },
+
+    //    { id: 'analytics', label: 'Analytics', icon: BarChart3, path: '/admin/analytics' },
     ];
 
     return (

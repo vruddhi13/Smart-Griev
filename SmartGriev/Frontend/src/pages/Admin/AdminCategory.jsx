@@ -9,6 +9,9 @@ import {
     deleteCategory,
     getDepartments // Needed for the dropdown
 } from "../../services/AdminServices/AdminService";
+import usePagination from '../../services/usePagination';
+import Pagination from '../../Components/AdminComponents/Pagination';
+
 
 const AdminCategories = () => {
     const [categories, setCategories] = useState([]);
@@ -33,7 +36,6 @@ const AdminCategories = () => {
             ]);
             setCategories(catData);
             setDepartments(deptData);
-            console.log(departments);
         } catch (error) {
             console.error("Error fetching data:", error);
         } finally {
@@ -88,6 +90,15 @@ const AdminCategories = () => {
         setEditId(cat.categoryId);
         setIsFormOpen(true);
     };
+
+    const {
+        currentPage,
+        totalPages,
+        currentData,
+        nextPage,
+        prevPage,
+        setCurrentPage
+    } = usePagination(categories, 5);
 
     return (
         <AdminLayout pageTitle="Complaint Categories">
@@ -183,8 +194,8 @@ const AdminCategories = () => {
                     <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
                         <thead>
                             <tr style={{ borderBottom: '1px solid #F4F7FE', background: '#FAFCFF' }}>
-                                <th style={thStyle}>CATEGORY NAME</th>
-                                <th style={thStyle}>DEPARTMENT ID</th>
+                                <th style={thStyle}>CATEGORY</th>
+                                <th style={thStyle}>DEPARTMENT</th>
                                 {/*<th style={thStyle}>SLA</th>*/}
                                 <th style={thStyle}>STATUS</th>
                                 <th style={thStyle}>ACTIONS</th>
@@ -193,10 +204,10 @@ const AdminCategories = () => {
                         <tbody>
                             {loading ? (
                                 <tr><td colSpan="5" style={{ padding: '40px', textAlign: 'center' }}>Loading...</td></tr>
-                            ) : categories.map((cat) => (
+                            ) : currentData.map((cat) => (
                                 <tr key={cat.categoryId} style={{ borderBottom: '1px solid #F4F7FE' }}>
                                     <td style={{ padding: '20px', fontWeight: '600' }}>{cat.categoryName}</td>
-                                    <td style={{ padding: '20px', color: theme.colors.text.gray }}>Dept ID: {cat.departmentId}</td>
+                                    <td style={{ padding: '20px', color: theme.colors.text.gray }}>{cat.departmentName}</td>
                                     {/*<td style={{ padding: '20px' }}>*/}
                                     {/*    <span style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '13px' }}>*/}
                                     {/*        <Clock size={14} /> {cat.slaHours}h*/}
@@ -220,6 +231,20 @@ const AdminCategories = () => {
                             ))}
                         </tbody>
                     </table>
+                </div>
+                <div style={{
+                    display: "flex",
+                    justifyContent: "flex-end", 
+                    marginTop: "-12px",         
+                    width: "100%"
+                }}>
+                    <Pagination
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        nextPage={nextPage}
+                        prevPage={prevPage}
+                        setCurrentPage={setCurrentPage}
+                    />
                 </div>
             </div>
         </AdminLayout>

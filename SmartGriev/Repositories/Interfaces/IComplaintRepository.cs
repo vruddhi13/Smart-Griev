@@ -7,5 +7,7 @@ namespace SmartGriev.Repositories.Interfaces
     {
         Task<object> SubmitComplaint(ComplaintDTO dto);
         Task<List<Complaint>> GetComplaints();
+
+        Task<object> GetAllComplaints();
     }
 }
