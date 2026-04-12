@@ -16,6 +16,7 @@ import AdminDepartments from './pages/Admin/AdminDepartment';
 import AdminCategories from './pages/Admin/AdminCategory';
 import AdminUserRolePanel from './pages/Admin/AdminUserRolePanel';
 import AdminSLAMaster from './pages/Admin/AdminSLAMasterManage';
+import AdminComplaints from './pages/Admin/AdminComplaints';
 
 
 function App() {
@@ -40,7 +41,9 @@ function App() {
                 <Route path="/admin/departments" element={<ProtectedRoute allowedRole="1"><AdminDepartments /></ProtectedRoute>} />
                 <Route path="/admin/category" element={<ProtectedRoute allowedRole="1"><AdminCategories /></ProtectedRoute>} />
                 <Route path="/admin/users" element={<ProtectedRoute allowedRole="1"><AdminUserRolePanel /></ProtectedRoute>} />
-                <Route path="/admin/sla" element={<ProtectedRoute allowedRole="1"><AdminSLAMaster/></ProtectedRoute>} />
+                <Route path="/admin/sla" element={<ProtectedRoute allowedRole="1"><AdminSLAMaster /></ProtectedRoute>} />
+                <Route path="/admin/complaintdetails" element={<ProtectedRoute allowedRole="1"><AdminComplaints /></ProtectedRoute>} />
+
                 {/*<Route path="*" element={<Navigate to="/"/> }/>*/}
             </Routes>
         </BrowserRouter>

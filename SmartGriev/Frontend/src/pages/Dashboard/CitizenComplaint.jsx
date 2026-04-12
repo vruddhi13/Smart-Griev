@@ -1,4 +1,4 @@
-﻿import React, { useState } from "react";
+﻿import React, { useState, useEffect } from "react";
 //import { theme } from "../../services/theme";
 
 const CitizenComplaint = () => {
@@ -8,17 +8,26 @@ const CitizenComplaint = () => {
     const [priority, setPriority] = useState("Medium");
     const [address, setAddress] = useState("");
     const [image, setImage] = useState(null);
+    const [categories, setCategories] = useState([]);
+    const [categoryId, setCategoryId] = useState("");
+
+    useEffect(() => {
+        fetch("https://localhost:7224/api/Complaint/categories")
+            .then(res => res.json())
+            .then(data => setCategories(data));
+    }, []);
 
 
     const handleSubmit = async () => {
 
         const formData = new FormData();
-
-        formData.append("userId", 1);
+        const userId = sessionStorage.getItem("userId");
+        formData.append("userId", userId);
         formData.append("title", title);
         formData.append("description", description);
         formData.append("priorityLevel", priority);
         formData.append("address", address);
+        formData.append("categoryId", categoryId);
 
         if (image) {
             formData.append("image", image);
@@ -178,19 +187,20 @@ const CitizenComplaint = () => {
                 </div>
 
                 <label style={styles.label}>Complaint Category *</label>
-                <input
-                    style={styles.input}
-                    placeholder="Example: Garbage not collected for 3 days"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                />
-                {/*<select style={styles.input}>*/}
-                {/*    <option value="">Select Category</option>*/}
-                {/*    <option value="1">Road Damage</option>*/}
-                {/*    <option value="2">Water Leakage</option>*/}
-                {/*    <option value="3">Garbage Issue</option>*/}
-                {/*    <option value="4">Street Light Problem</option>*/}
-                {/*</select>*/}
+                {/*<input*/}
+                {/*    style={styles.input}*/}
+                {/*    placeholder="Example: Garbage not collected for 3 days"*/}
+                {/*    value={title}*/}
+                {/*    onChange={(e) => setTitle(e.target.value)}*/}
+                {/*/>*/}
+                <select style={styles.input} value={categoryId} onChange={(e) => setCategoryId(e.target.value)}>
+                    <option value="">Select Category</option>
+                    {categories.map(c => (
+                        <option key={c.categoryId} value={c.categoryId}>
+                            {c.categoryName}
+                        </option>
+                    ))}
+                </select>
 
                 <label style={styles.label}>Description (optional if uploading media)</label>
                 <textarea

@@ -77,5 +77,20 @@ namespace SmartGriev.Controllers.AdminControllers
                 message = "Department deleted successfully"
             });
         }
+
+        [HttpPut("{id}/toggle-status")]
+        public async Task<IActionResult> ToggleStatus(int id)
+        {
+            var updatedDept = await _repo.ToggleDepartmentStatus(id);
+
+            if (updatedDept == null)
+                return NotFound("Department not found");
+
+            return Ok(new
+            {
+                message = "Status updated successfully",
+                isActive = updatedDept.IsActive
+            });
+        }
     }
 }

@@ -83,7 +83,7 @@ const VerifyOtp = () => {
                 }));
                 console.log("OTP Response:", data);
                 sessionStorage.setItem("roleId", data.roleId);
-
+                sessionStorage.setItem("userId", data.userId);
                 localStorage.removeItem("mobileNo");
 
                 switch (data.roleId) {
