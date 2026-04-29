@@ -130,7 +130,7 @@ const CitizenDashboard = () => {
 
                     <div style={buttonContainer}>
 
-                        <button style={primaryButton}>
+                        <button style={primaryButton} onClick={() => navigate("/AIChatBotPage")}>
                             🤖 Try AI Chatbot
                         </button>
 

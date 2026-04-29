@@ -7,6 +7,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="wwwroot\uploads\electric wiring loose.jpg" />
+    <Content Remove="wwwroot\uploads\pipline leakage.jpg" />
+    <Content Remove="wwwroot\uploads\road damage.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\uploads\electric wiring loose.jpg" />
+    <None Include="wwwroot\uploads\pipline leakage.jpg" />
+    <None Include="wwwroot\uploads\road damage.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="DotNetEnv" Version="3.1.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.23" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.23">

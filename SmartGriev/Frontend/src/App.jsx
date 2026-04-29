@@ -17,6 +17,8 @@ import AdminCategories from './pages/Admin/AdminCategory';
 import AdminUserRolePanel from './pages/Admin/AdminUserRolePanel';
 import AdminSLAMaster from './pages/Admin/AdminSLAMasterManage';
 import AdminComplaints from './pages/Admin/AdminComplaints';
+import MyComplaints from './pages/Dashboard/MyComplaints';
+import AIChatPage from './pages/Dashboard/AIChatBotPage';
 
 
 function App() {
@@ -28,6 +30,8 @@ function App() {
                 <Route path="/CitizenComplaint" element={<MainLayout><CitizenComplaint /></MainLayout>} />
                 <Route path="/CitizenComplaintStatus" element={<MainLayout><CitizenComplaintStatus /></MainLayout>} />
                 <Route path="/dashboard" element={<ProtectedRoute allowedRole="4"><MainLayout><CitizenDashboard /></MainLayout></ProtectedRoute>} />
+                <Route path="/MyComplaints" element={<ProtectedRoute allowedRole="4"><MainLayout><MyComplaints /></MainLayout></ProtectedRoute>} />
+                <Route path="/AIChatBotPage" element={<ProtectedRoute allowedRole="4"><MainLayout><AIChatPage/></MainLayout></ProtectedRoute>} />
 
                 {/*identity*/}
                 <Route path="/login" element={<Login />} />
