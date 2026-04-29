@@ -101,7 +101,7 @@ const Header = () => {
                             Submit Complaint
                         </button>
 
-                        <button onClick={() => navigate("/my-complaints")}
+                        <button onClick={() => navigate("/MyComplaints")}
                             style={{ background: "none", border: "none", color: "white", cursor: "pointer", fontSize: "1.05rem" }}>
                             My Complaints
                         </button>

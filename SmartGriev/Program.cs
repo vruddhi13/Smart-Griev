@@ -53,6 +53,8 @@ namespace SmartGriev
 
             var app = builder.Build();
 
+            app.UseStaticFiles();
+
             app.Lifetime.ApplicationStarted.Register(() =>
             {
                 Task.Run(async () =>

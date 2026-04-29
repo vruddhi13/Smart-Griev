@@ -29,6 +29,24 @@ namespace SmartGriev.Repositories.Implementations
                 return new { message = "Invalid category" };
             }
 
+            //Duplicate Complaints 
+            var desc = dto.Description?.ToLower().Trim() ?? "";
+
+            var isDuplicate = await _context.Complaints.AnyAsync(c =>
+                c.UserId == dto.UserId &&
+                c.CategoryId == dto.CategoryId &&
+                c.CreatedAt >= DateTime.Now.AddMinutes(-10) && // time window
+                c.Description.ToLower().Contains(desc.Substring(0, Math.Min(20, desc.Length)))
+            );
+
+            if (isDuplicate)
+            {
+                return new
+                {
+                    message = "Similar complaint already submitted recently"
+                };
+            }
+
             // ✅ AI only for suggestion (not DB)
             var aiSuggestion = await _ai.DetectCategory(dto.Description ?? "");
             Console.WriteLine("AI Suggestion: " + aiSuggestion);
@@ -84,12 +102,13 @@ namespace SmartGriev.Repositories.Implementations
 
             if (dto.Image != null)
             {
-                var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "uploads");
+                var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads");
 
                 if (!Directory.Exists(uploadPath))
                     Directory.CreateDirectory(uploadPath);
 
-                var filePath = Path.Combine(uploadPath, dto.Image.FileName);
+                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(dto.Image.FileName);
+                var filePath = Path.Combine(uploadPath, fileName);
 
                 using (var stream = new FileStream(filePath, FileMode.Create))
                 {
@@ -99,8 +118,8 @@ namespace SmartGriev.Repositories.Implementations
                 var image = new ComplaintImage
                 {
                     ComplaintId = complaint.ComplaintId,
-                    FileName = dto.Image.FileName,
-                    FilePath = "uploads/" + dto.Image.FileName,
+                    FileName = fileName,
+                    FilePath = "uploads/" + fileName,
                     ImageType = "Complaint",
                     UploadedBy = dto.UserId
                 };
