@@ -1,58 +1,68 @@
 ﻿import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import {
-    LayoutDashboard,
-    ClipboardList,
-    UserCircle,
-    MessageSquare,
-    LogOut
-} from "lucide-react";
+import { LayoutDashboard, ClipboardList, UserCircle,FileText } from "lucide-react";
+import { officerTheme as theme } from "../../services/OfficerServices/OfficerTheme";
+
 const OfficerSidebar = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
     const menu = [
-        { name: "Dashboard", path: "/officer" },
-        { name: "Complaints", path: "/officer/complaints" },
-        { name: "Account", path: "/officer/account" },
+        { name: "Dashboard", icon: LayoutDashboard, path: "/officer" },
+        { name: "Complaints", icon: ClipboardList, path: "/officer/complaints" },
+        { name: "Report", icon: FileText, path: "/officer/report" },
+        { name: "Account", icon: UserCircle, path: "/officer/account" },
     ];
 
     return (
-        <div style={{
-            width: "240px",
+        <aside style={{
+            width: "290px",
             background: "white",
-            borderRight: "1px solid #e2e8f0",
+            display: "flex",
+            flexDirection: "column",
+            position: "sticky",
+            top: 0,
             height: "100vh",
-            position: "fixed"
+            borderRight: "1px solid #F4F7FE"
         }}>
             <div style={{
-                padding: "20px",
-                fontWeight: "700",
-                fontSize: "18px"
+                padding: "40px 30px",
+                fontSize: "24px",
+                fontWeight: "800",
+                color: theme.colors.text.main
             }}>
-                SMARTGRIEV
+                SMART<span style={{ fontWeight: '300', color: theme.colors.text.gray }}>GRIEV</span>
             </div>
 
-            {menu.map(item => {
-                const active = location.pathname === item.path;
+            <nav>
+                {menu.map(item => {
+                    const active = location.pathname === item.path;
 
-                return (
-                    <div
-                        key={item.name}
-                        onClick={() => navigate(item.path)}
-                        style={{
-                            padding: "12px 20px",
-                            cursor: "pointer",
-                            background: active ? "#eef2ff" : "transparent",
-                            color: active ? "#4f46e5" : "#64748b",
-                            borderLeft: active ? "3px solid #4f46e5" : "none"
-                        }}
-                    >
-                        {item.name}
-                    </div>
-                );
-            })}
-        </div>
+                    return (
+                        <div
+                            key={item.name}
+                            onClick={() => navigate(item.path)}
+                            style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '15px',
+                                padding: '15px 30px',
+                                cursor: 'pointer',
+                                color: active ? theme.colors.text.main : theme.colors.text.gray,
+                                fontWeight: active ? '700' : '500',
+                                borderRight: active
+                                    ? `4px solid ${theme.colors.brand.primary}`
+                                    : '4px solid transparent'
+                            }}
+                        >
+                            <item.icon size={20} color={active ? theme.colors.brand.primary : '#A3AED0'} />
+                            <span>{item.name}</span>
+                        </div>
+                    );
+                })}
+            </nav>
+        </aside>
     );
 };
+
 export default OfficerSidebar;

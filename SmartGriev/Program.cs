@@ -148,7 +148,6 @@ namespace SmartGriev
                     await db.Users.FirstOrDefaultAsync();
                 });
             });
-            app.UseCors("AllowAll");
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
@@ -158,6 +157,8 @@ namespace SmartGriev
             }
 
             app.UseHttpsRedirection();
+
+            app.UseCors("AllowAll");
 
             app.UseAuthentication();
             app.UseAuthorization();

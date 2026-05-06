@@ -1,4 +1,5 @@
 ﻿using SmartGriev.DTOs;
+using SmartGriev.DTOs.AdminDTOs;
 using SmartGriev.Models;
 
 namespace SmartGriev.Repositories.Interfaces

@@ -22,6 +22,7 @@ import AIChatPage from './pages/Dashboard/AIChatBotPage';
 import OfficerDashboard from './pages/Officer/OfficerDashboard';
 import OfficerComplaints from './pages/Officer/OfficerComplaints';
 import OfficerAccount from './pages/Officer/OfficerAccount';
+import StatusPieReport from './pages/Officer/StatusPieReport';
 
 
 
@@ -56,6 +57,8 @@ function App() {
                 <Route path="/officer" element={<ProtectedRoute allowedRole="3"><OfficerDashboard /></ProtectedRoute>} />
                 <Route path="/officer/complaints" element={<OfficerComplaints />} />
                 <Route path="/officer/account" element={<OfficerAccount />} />
+                <Route path="/officer/report" element={<StatusPieReport />} />
+
                 {/*<Route path="/officer/sla" element={<OfficerSLA />} />*/}
                 {/*<Route path="/officer/escalations" element={<OfficerEscalations />} />*/}
                 {/*<Route path="*" element={<Navigate to="/"/> }/>*/}

@@ -282,3 +282,55 @@ export const getComplaints = async () => {
 
     return await res.json();
 };
+
+export const assignComplaint = async (data) => {
+    const res = await fetch("https://localhost:7224/api/Complaint/assign-complaint", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+    });
+
+    const text = await res.text();
+
+    if (!res.ok) {
+        console.error("API ERROR:", text);
+        throw new Error(text || "Assignment failed");
+    }
+
+    return text ? JSON.parse(text) : {};
+};
+
+export const updateStatus = async (complaintId, status) => {
+    const res = await fetch("https://localhost:7224/api/officer/update-status", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            complaintId,
+            status,
+            remarks: "Updated by officer"
+        })
+    });
+
+    return await res.json();
+};
+
+export const getOfficers = async () => {
+    try {
+        const res = await fetch("https://localhost:7224/api/Complaint/get-officers");
+
+        if (!res.ok) {
+            throw new Error("Failed to fetch officers");
+        }
+
+        const data = await res.json();
+        return data;
+
+    } catch (error) {
+        console.error("API ERROR:", error);
+        throw error;
+    }
+};

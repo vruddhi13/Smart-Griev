@@ -3,6 +3,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SmartGriev.DTOs.OfficerDTOs;
 using SmartGriev.Models;
 
@@ -66,41 +67,84 @@ namespace SmartGriev.Controllers.OfficerControllers
 
         // ✅ 2. Update Complaint Status
         [HttpPost("update-status")]
-        public IActionResult UpdateStatus([FromBody] UpdateStatusDTO model)
+        public async Task<IActionResult> UpdateStatus([FromBody] UpdateStatusDTO model)
         {
             var userId = GetUserId();
 
             if (userId == null)
-                return Unauthorized("UserId not found in token");
+                return Unauthorized("Invalid user");
 
-            var complaint = _context.Complaints
-                .FirstOrDefault(c => c.ComplaintId == model.ComplaintId);
+            // ✅ Allowed statuses (no helper class)
+            var validStatuses = new[]
+            {
+        "Submitted",
+        "Assigned",
+        "In Progress",
+        "Resolved",
+        "Rejected",
+        "Closed"
+    };
+
+            if (!validStatuses.Contains(model.Status))
+                return BadRequest("Invalid status value");
+
+            var complaint = await _context.Complaints
+                .FirstOrDefaultAsync(c => c.ComplaintId == model.ComplaintId);
 
             if (complaint == null)
                 return NotFound("Complaint not found");
 
             var oldStatus = complaint.Status;
 
-            // 🔄 Update complaint
+            if (oldStatus == model.Status)
+                return BadRequest("Status already same");
+
+            // ✅ Business rules
+            if ((model.Status == "Assigned" || model.Status == "In Progress") && complaint.AssignedTo == null)
+                return BadRequest("Assign officer first");
+
+            // ✅ Update complaint
             complaint.Status = model.Status;
             complaint.UpdatedAt = DateTime.Now;
 
-            // 📝 Insert log
+            if (model.Status == "Resolved")
+                complaint.ResolvedAt = DateTime.Now;
+
+            if (model.Status == "Closed")
+                complaint.ClosedAt = DateTime.Now;
+
+            // ✅ Insert into status log
             _context.ComplaintStatusLogs.Add(new ComplaintStatusLog
             {
                 ComplaintId = complaint.ComplaintId,
                 OldStatus = oldStatus,
                 NewStatus = model.Status,
                 ChangedBy = userId.Value,
+                Remarks = model.Remarks,
                 ChangedAt = DateTime.Now
             });
 
-            _context.SaveChanges();
+            // ✅ Update assignment table
+            var assignment = await _context.ComplaintAssignments
+                .Where(a => a.ComplaintId == model.ComplaintId)
+                .OrderByDescending(a => a.AssignedAt)
+                .FirstOrDefaultAsync();
 
-            return Ok(new
+            if (assignment != null)
             {
-                message = "Status updated successfully"
-            });
+                if (model.Status == "In Progress")
+                    assignment.AssignmentStatus = "In Progress";
+
+                else if (model.Status == "Resolved")
+                    assignment.AssignmentStatus = "Completed";
+
+                else if (model.Status == "Rejected")
+                    assignment.AssignmentStatus = "Rejected";
+            }
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Status updated successfully" });
         }
 
         // ✅ 3. DEBUG API (Remove later)
@@ -162,6 +206,42 @@ namespace SmartGriev.Controllers.OfficerControllers
                 .ToList();
 
             return Ok(notifications);
+        }
+
+        [HttpGet("complaints")]
+        public IActionResult GetComplaints()
+        {
+            var officerId = GetUserId(); // Get ID of the logged-in officer
+
+            var complaints = _context.Complaints
+                .Where(c => c.AssignedTo == officerId && c.IsActive == true)
+                .Select(c => new
+                {
+                    complaint_id = c.ComplaintId,
+                    complaint_number = c.ComplaintNumber,
+                    description = c.Description,
+                    status = c.Status,
+                    priority_level = c.PriorityLevel,
+                    created_at = c.CreatedAt,
+                    category_name = c.Category.CategoryName,
+                    // 🛑 IMPORTANT: This joins the Users table to get the Citizen Name
+                    citizen_name = c.User.FullName,
+                    // 🛑 IMPORTANT: This joins the Location table for the Map
+                    location_data = _context.ComplaintLocations
+                        .Where(l => l.ComplaintId == c.ComplaintId)
+                        .Select(l => new {
+                            l.Latitude,
+                            l.Longitude,
+                            l.Address
+                        }).FirstOrDefault(),
+                    image = _context.ComplaintImages
+                        .Where(i => i.ComplaintId == c.ComplaintId)
+                        .Select(i => i.FilePath)
+                        .FirstOrDefault()
+                })
+                .ToList();
+
+            return Ok(complaints);
         }
 
     }
