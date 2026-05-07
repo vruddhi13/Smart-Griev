@@ -92,6 +92,9 @@ const VerifyOtp = () => {
                     case 1:
                         navigate("/admin");
                         break;
+                    case 2:
+                        navigate("/depthead");
+                        break;
                     case 3:
                         navigate("/officer");
                         break;

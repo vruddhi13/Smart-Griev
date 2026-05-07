@@ -23,6 +23,8 @@ import OfficerDashboard from './pages/Officer/OfficerDashboard';
 import OfficerComplaints from './pages/Officer/OfficerComplaints';
 import OfficerAccount from './pages/Officer/OfficerAccount';
 import StatusPieReport from './pages/Officer/StatusPieReport';
+import DeptHeadDashboard from './pages/DeptHead/DeptHeadDashboard';
+import DeptHeadAssignComplaint from './pages/DeptHead/DeptHeadAssignComplaint';
 
 
 
@@ -58,6 +60,13 @@ function App() {
                 <Route path="/officer/complaints" element={<OfficerComplaints />} />
                 <Route path="/officer/account" element={<OfficerAccount />} />
                 <Route path="/officer/report" element={<StatusPieReport />} />
+
+                {/*Department Head*/}
+                <Route path="/depthead" element={<ProtectedRoute allowedRole="2"><DeptHeadDashboard /></ProtectedRoute>} />
+                <Route path="/depthead/dept-assign" element={<DeptHeadAssignComplaint/>} />
+                {/*<Route path="/officer/complaints" element={<OfficerComplaints />} />*/}
+                {/*<Route path="/officer/account" element={<OfficerAccount />} />*/}
+                {/*<Route path="/officer/report" element={<StatusPieReport />} />*/}
 
                 {/*<Route path="/officer/sla" element={<OfficerSLA />} />*/}
                 {/*<Route path="/officer/escalations" element={<OfficerEscalations />} />*/}

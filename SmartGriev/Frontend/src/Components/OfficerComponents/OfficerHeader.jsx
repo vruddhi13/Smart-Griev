@@ -8,16 +8,11 @@ const OfficerHeader = ({ title = "Officer Panel" }) => {
     const [showNotifications, setShowNotifications] = useState(false);
 
     const storedUser = sessionStorage.getItem("user");
-    const user = storedUser ? JSON.parse(storedUser) : { full_name: "Officer" };
-
-    const getInitials = (name = "") => {
-        if (!name || typeof name !== "string") return "U";
-        return name
-            .split(" ")
-            .map(n => n?.[0] || "")
-            .join("")
-            .toUpperCase()
-            .substring(0, 2);
+    const user = storedUser
+        ? JSON.parse(storedUser)
+        : { name: "Officer" };
+    const getInitials = (name) => {
+        return name.split(" ").map(n => n[0]).join("").toUpperCase().substring(0, 2);
     };
 
     const handleLogout = () => {
@@ -47,7 +42,7 @@ const OfficerHeader = ({ title = "Officer Panel" }) => {
                     {title}
                 </h2>
                 <p style={{ color: theme.colors.text.gray, margin: 0 }}>
-                    Welcome, {user.full_name}
+                    Welcome, {user.name}
                 </p>
             </div>
 
@@ -151,7 +146,7 @@ const OfficerHeader = ({ title = "Officer Panel" }) => {
                         justifyContent: 'center',
                         fontWeight: 'bold'
                     }}>
-                        {getInitials(user.full_name)}
+                        {getInitials(user.name)}
                     </div>
 
                     <button

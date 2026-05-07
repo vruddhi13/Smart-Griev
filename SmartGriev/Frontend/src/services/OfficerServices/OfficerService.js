@@ -35,6 +35,21 @@ export const updateAccount = async (data) => {
     }
 };
 
+export const getMyProfile = async () => {
+    const token = sessionStorage.getItem("token");
+
+    const res = await axios.get(
+        `${BASE_URL}/Officer/my-profile`,
+        {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+    );
+
+    return res.data;
+};
+
 // ✅ 1. Get Complaints
 export const getMyComplaints = async () => {
     try {

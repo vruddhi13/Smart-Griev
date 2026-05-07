@@ -65,7 +65,7 @@ const OfficerComplaints = () => {
                                 <tr key={c.complaint_id} style={trStyle}>
                                     <td style={{ ...tdStyle, fontWeight: '700', color: theme.colors.brand.primary }}>{c.complaint_number}</td>
                                     {/* Fix: Checking both user_name and userName */}
-                                    <td style={{ ...tdStyle, fontWeight: '600' }}>{c.user_name || c.userName || "Unknown User"}</td>
+                                    <td style={{ ...tdStyle, fontWeight: '600' }}>{c.citizen_name || "Unknown User"}</td>
                                     <td style={tdStyle}>{c.category_name}</td>
                                     <td style={tdStyle}>
                                         <span style={getStatusBadge(c.status)}>{c.status}</span>
@@ -102,7 +102,11 @@ const OfficerComplaints = () => {
 
                         <div style={modalBodyStyle}>
                             <div style={{ flex: 1 }}>
-                                <DetailRow icon={<User size={16} />} label="Citizen" value={selected.user_name || selected.userName} />
+                                <DetailRow
+                                    icon={<User size={16} />}
+                                    label="Citizen"
+                                    value={selected.citizen_name}
+                                />
                                 <DetailRow icon={<Tag size={16} />} label="Category" value={selected.category_name} />
                                 <DetailRow icon={<Clock size={16} />} label="Priority" value={selected.priority_level} />
 
@@ -124,13 +128,22 @@ const OfficerComplaints = () => {
 
                             <div style={{ flex: 1.2 }}>
                                 <p style={labelStyle}>Map Location</p>
-                                {selected.location_data ? (
+                                {selected.location_data?.latitude &&
+                                    selected.location_data?.longitude ? (
                                     <iframe
-                                        title="map" width="100%" height="180"
-                                        style={{ border: 0, borderRadius: '12px', marginBottom: '15px' }}
+                                        title="map"
+                                        width="100%"
+                                        height="180"
+                                        style={{
+                                            border: 0,
+                                            borderRadius: '12px',
+                                            marginBottom: '15px'
+                                        }}
                                         src={`https://maps.google.com/maps?q=${selected.location_data.latitude},${selected.location_data.longitude}&z=16&output=embed`}
-                                    ></iframe>
-                                ) : <div style={noDataBox}>No GPS Data</div>}
+                                    />
+                                ) : (
+                                    <div style={noDataBox}>No GPS Data</div>
+                                )}
 
                                 <p style={labelStyle}>Attachment</p>
                                 {selected.image ? (

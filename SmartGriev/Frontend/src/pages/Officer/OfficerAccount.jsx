@@ -1,32 +1,110 @@
-﻿import React, { useState } from "react";
+﻿import React, { useEffect,useState } from "react";
 import OfficerLayout from "../../layout/OfficerLayout";
-import { updateAccount } from "../../services/OfficerServices/OfficerService";
+import { updateAccount, getMyProfile } from "../../services/OfficerServices/OfficerService";
+import { showError, showSuccessToast } from "../../services/alertService";
 
 const OfficerAccount = () => {
     // Pull current user info from session
     const user = JSON.parse(sessionStorage.getItem("user"));
 
     const [formData, setFormData] = useState({
-        fullName: user?.full_name || "",
+        fullName: user?.name || "",
+        roleName: user?.role_name || "",
         email: user?.email || "",
         mobile: user?.mobile_no || "",
-        password: ""
-    }); 
+        password: "",
+        confirmPassword: ""
+    });
+
+    useEffect(() => {
+        const loadProfile = async () => {
+            try {
+
+                const response = await getMyProfile();
+
+                console.log("Profile API:", response);
+
+                const data = response.data || response;
+
+                setFormData((prev) => ({
+                    ...prev,
+                    fullName: data.full_name || "",
+                    roleName: data.role_name || "",
+                    email: data.email || "",
+                    mobile: data.mobile_no || ""
+                }));
+
+            } catch (error) {
+                console.log(error);
+            }
+        };
+
+        loadProfile();
+    }, []);
 
     const handleUpdate = async (e) => {
+
         e.preventDefault();
 
-        if (formData.password !== formData.confirmPassword) {
-            alert("Passwords do not match!");
+        // ✅ Mobile validation
+        if (!/^[0-9]{10}$/.test(formData.mobile)) {
+            showError("Mobile number must be exactly 10 digits");
             return;
         }
 
-        await updateAccount({
-            email: formData.email,
-            password: formData.password
-        });
+        // ✅ Password validation
+        if (formData.password) {
 
-        alert("Updated successfully");
+            // Minimum 6 characters
+            if (formData.password.length < 6) {
+                showError("Password must be at least 6 characters");
+                return;
+            }
+
+            // Password match
+            if (formData.password !== formData.confirmPassword) {
+                showError("Passwords do not match");
+                return;
+            }
+        }
+
+        try {
+
+            await updateAccount({
+                Email: formData.email,
+                MobileNo: formData.mobile,
+                Password: formData.password
+            });
+
+            // ✅ Update session storage user
+            const oldUser = JSON.parse(sessionStorage.getItem("user"));
+
+            sessionStorage.setItem(
+                "user",
+                JSON.stringify({
+                    ...oldUser,
+                    mobile_no: formData.mobile
+                })
+            );
+
+            showSuccessToast("Profile updated successfully");
+
+            // Clear password fields
+            setFormData((prev) => ({
+                ...prev,
+                password: "",
+                confirmPassword: ""
+            }));
+
+        } catch (error) {
+
+            console.log(error);
+
+            showError(
+                error?.response?.data?.message ||
+                "Failed to update profile"
+            );
+        }
     };
     const inputStyle = {
         width: "100%",
@@ -55,22 +133,37 @@ const OfficerAccount = () => {
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px", marginBottom: "20px" }}>
                         <div>
                             <label style={{ fontSize: "13px", fontWeight: "600", color: "#475569" }}>Full Name</label>
-                            <input value={user?.full_name} readOnly style={readOnlyStyle} />
+                            <input value={formData.fullName} readOnly style={readOnlyStyle} />
                         </div>
                         <div>
                             <label style={{ fontSize: "13px", fontWeight: "600", color: "#475569" }}>Role</label>
-                            <input value="Field Officer" readOnly style={readOnlyStyle} />
-                        </div>
+                            <input value={formData.roleName} readOnly style={readOnlyStyle} />                        </div>
                     </div>
+                    <div style={{ marginBottom: "20px" }}>
+                        <label style={{
+                            fontSize: "13px",
+                            fontWeight: "600",
+                            color: "#475569"
+                        }}>
+                            Mobile Number
+                        </label>
 
+                        <input
+                            type="text"
+                            value={formData.mobile}
+                            onChange={(e) =>
+                                setFormData({
+                                    ...formData,
+                                    mobile: e.target.value
+                                })
+                            }
+                            maxLength={10}
+                            style={inputStyle}
+                        />
+                    </div>
                     <div style={{ marginBottom: "20px" }}>
                         <label style={{ fontSize: "13px", fontWeight: "600", color: "#475569" }}>Email Address</label>
-                        <input
-                            type="email"
-                            value={formData.email}
-                            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                            style={{ ...inputStyle, border: "1px solid #6366f1" }}
-                        />
+                        <input value={formData.email} readOnly style={readOnlyStyle} />
                     </div>
 
                     <div style={{ marginBottom: "20px" }}>

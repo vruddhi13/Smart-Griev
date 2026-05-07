@@ -42,25 +42,39 @@ namespace SmartGriev.Controllers.OfficerControllers
                 return Unauthorized();
 
             var complaints = _context.Complaints
-                .Where(c => c.AssignedTo == userId)
-                .Select(c => new
-                {
-                    complaint_id = c.ComplaintId,
-                    complaint_number = c.ComplaintNumber,
-                    description = c.Description,
-                    status = c.Status,
-                    priority_level = c.PriorityLevel,
-                    created_at = c.CreatedAt,
-                    category_name = c.Category.CategoryName,
+     .Where(c => c.AssignedTo == userId)
+     .Select(c => new
+     {
+         complaint_id = c.ComplaintId,
+         complaint_number = c.ComplaintNumber,
+         description = c.Description,
+         status = c.Status,
+         priority_level = c.PriorityLevel,
+         created_at = c.CreatedAt,
 
-                        image = _context.ComplaintImages
-                .Where(i => i.ComplaintId == c.ComplaintId)
-                .Select(i => i.FilePath)
-                .FirstOrDefault()
-                })
-      
-        
-                .ToList();
+         // ✅ Category
+         category_name = c.Category.CategoryName,
+
+         // ✅ Citizen Name
+         citizen_name = c.User.FullName,
+
+         location_data = _context.ComplaintLocations
+    .Where(l => l.ComplaintId == c.ComplaintId)
+    .Select(l => new
+    {
+        latitude = Convert.ToDouble(l.Latitude),
+        longitude = Convert.ToDouble(l.Longitude),
+        address = l.Address
+    })
+    .FirstOrDefault(),
+
+         // ✅ Image
+         image = _context.ComplaintImages
+             .Where(i => i.ComplaintId == c.ComplaintId)
+             .Select(i => i.FilePath)
+             .FirstOrDefault()
+     })
+     .ToList();
 
             return Ok(complaints);
         }
@@ -242,6 +256,32 @@ namespace SmartGriev.Controllers.OfficerControllers
                 .ToList();
 
             return Ok(complaints);
+        }
+
+        [HttpGet("my-profile")]
+        public IActionResult GetMyProfile()
+        {
+            var userId = GetUserId();
+
+            if (userId == null)
+                return Unauthorized();
+
+            var user = _context.Users
+                .Where(u => u.UserId == userId)
+                .Select(u => new
+                {
+                    full_name = u.FullName,
+                    email = u.Email,
+                    mobile_no = u.MobileNo,
+                    role_name =
+                        u.RoleId == 1 ? "Admin" :
+                        u.RoleId == 2 ? "Department Head" :
+                        u.RoleId == 3 ? "Officer" :
+                        "Citizen"
+                })
+                .FirstOrDefault();
+
+            return Ok(user);
         }
 
     }

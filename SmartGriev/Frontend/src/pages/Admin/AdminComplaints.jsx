@@ -178,7 +178,9 @@ const AdminComplaints = () => {
                                 return (
                                     <tr key={c.complaintId} style={trStyle}>
                                         <td style={{ ...tdStyle, fontWeight: '700', color: theme.colors.brand.primary }}>{c.complaintNumber}</td>
-                                        <td style={{ ...tdStyle, fontWeight: '600' }}>{c.userName}</td>
+                                        <td style={{ ...tdStyle, fontWeight: '600' }}>
+                                            {c.citizen_name || c.userName || c.fullName || c.citizenName || "Unknown User"}
+                                        </td>
                                         <td style={tdStyle}>{c.departmentName}</td>
                                         <td style={tdStyle}>{c.categoryName}</td>
 
