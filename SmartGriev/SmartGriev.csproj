@@ -1,10 +1,21 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Frontend\src\services\NewFolder1\**" />
+    <Compile Remove="Frontend\src\services\NewFolder\**" />
+    <Content Remove="Frontend\src\services\NewFolder1\**" />
+    <Content Remove="Frontend\src\services\NewFolder\**" />
+    <EmbeddedResource Remove="Frontend\src\services\NewFolder1\**" />
+    <EmbeddedResource Remove="Frontend\src\services\NewFolder\**" />
+    <None Remove="Frontend\src\services\NewFolder1\**" />
+    <None Remove="Frontend\src\services\NewFolder\**" />
+  </ItemGroup>
 
   <ItemGroup>
     <Content Remove="wwwroot\uploads\electric wiring loose.jpg" />
@@ -20,6 +31,7 @@
 
   <ItemGroup>
     <PackageReference Include="DotNetEnv" Version="3.1.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.23" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.23" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.23">
       <PrivateAssets>all</PrivateAssets>
