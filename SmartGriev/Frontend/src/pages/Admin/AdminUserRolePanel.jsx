@@ -1,7 +1,7 @@
 ﻿import React, { useEffect, useState } from "react";
 import AdminLayout from "../../layout/AdminLayout";
 import { adminTheme as theme } from '../../services/AdminServices/AdminTheme';
-import { UserCheck, UserX, Users, Mail, Phone, Edit, Trash2, Plus,X } from 'lucide-react';
+import { UserCheck, UserX, Users, Mail, Phone, Edit, Trash2, Plus, X } from 'lucide-react';
 import { getUsers, toggleUserStatus, deleteUser, updateUser, addUser } from "../../services/AdminServices/AdminService";
 import {
     showError,
@@ -93,7 +93,7 @@ const AdminUserRolePanel = () => {
     const handleEdit = (user) => {
         setFormData({
             name: user.name,
-            email: user.email, 
+            email: user.email,
             phone: user.phone,
             roleId: user.roleId
         });
@@ -276,7 +276,7 @@ const AdminUserRolePanel = () => {
 
                             <select
                                 value={formData.roleId}
-                                onChange={(e) => handleRoleChange(Number(e.target.value))}                                style={{ padding: '10px', borderRadius: '8px' }}>
+                                onChange={(e) => handleRoleChange(Number(e.target.value))} style={{ padding: '10px', borderRadius: '8px' }}>
                                 <option value={1}>Admin</option>
                                 <option value={2}>Department Head</option>
                                 <option value={3}>Officer</option>

@@ -1,9 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Text.Json;
+using Microsoft.EntityFrameworkCore;
 using SmartGriev.BackendServices;
 using SmartGriev.DTOs;
 using SmartGriev.Models;
 using SmartGriev.Repositories.Interfaces;
-using System.Text.Json;
 
 namespace SmartGriev.Repositories.Implementations
 {
@@ -176,21 +176,37 @@ namespace SmartGriev.Repositories.Implementations
                 .Include(c => c.Category)
                 .Include(c => c.AssignedToNavigation)
                 .Include(c => c.ComplaintLocations) // Include locations for the frontend
-                .Select(c => new
-                {
-                    complaintId = c.ComplaintId,
-                    complaintNumber = c.ComplaintNumber,
-                    userName = c.User.FullName,
-                    // ADD THESE TWO LINES:
-                    departmentName = c.Department.DepartmentName,
-                    categoryName = c.Category.CategoryName,
-                    assignedTo = c.AssignedToNavigation != null ? c.AssignedToNavigation.FullName : "Not Assigned",
-                    status = c.Status,
-                    priorityLevel = c.PriorityLevel,
-                    createdAt = c.CreatedAt,
-                    // ADD THIS LINE FOR LOCATION:
-                    location = c.ComplaintLocations.Select(l => l.Address).FirstOrDefault() ?? "No Location"
-                })
+               .Select(c => new
+               {
+                   complaintId = c.ComplaintId,
+                   complaintNumber = c.ComplaintNumber,
+                   userName = c.User.FullName,
+
+                   departmentName = c.Department.DepartmentName,
+                   categoryName = c.Category.CategoryName,
+
+                   // ✅ FIX 1: SEND ID (IMPORTANT)
+                   assignedTo = c.AssignedTo,
+
+                   // ✅ FIX 2: SEND NAME SEPARATELY
+                   assignedToName = c.AssignedToNavigation != null
+        ? c.AssignedToNavigation.FullName
+        : null,
+
+                   // ✅ FIX 3: SEND HISTORY (MOST IMPORTANT)
+                   assignedOfficerIds = _context.ComplaintAssignments
+        .Where(a => a.ComplaintId == c.ComplaintId)
+        .Select(a => a.AssignedTo)
+        .ToList(),
+
+                   status = c.Status,
+                   priorityLevel = c.PriorityLevel,
+                   createdAt = c.CreatedAt,
+
+                   location = c.ComplaintLocations
+        .Select(l => l.Address)
+        .FirstOrDefault() ?? "No Location"
+               })
                 .ToListAsync();
 
             return data;

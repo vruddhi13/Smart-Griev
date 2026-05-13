@@ -76,6 +76,8 @@ const VerifyOtp = () => {
 
                 showSuccessToast("Login Successful");
 
+                sessionStorage.setItem("token", data.token);
+
                 sessionStorage.setItem("user", JSON.stringify({
                     userId: data.userId,
                     roleId: data.roleId,
@@ -89,6 +91,12 @@ const VerifyOtp = () => {
                 switch (data.roleId) {
                     case 1:
                         navigate("/admin");
+                        break;
+                    case 2:
+                        navigate("/depthead");
+                        break;
+                    case 3:
+                        navigate("/officer");
                         break;
                     case 4:
                         navigate("/dashboard");

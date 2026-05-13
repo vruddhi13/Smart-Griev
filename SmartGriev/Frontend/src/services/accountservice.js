@@ -67,6 +67,11 @@ export const verifyOtp = async (data) => {
         throw new Error(result.message || "OTP failed");
     }
 
+    if (result.data?.token) {
+        sessionStorage.setItem("token", result.data.token);
+    }
+
+
     return result;
 };
 export const forgotPassword = async (data) => {
