@@ -11,11 +11,13 @@ namespace SmartGriev.Repositories.Implementations
     {
         private readonly Ict2smartGrievDbContext _context;
         private readonly HuggingFaceAIService _ai;
+        private readonly IConfiguration _configuration;
 
-        public ComplaintRepository(Ict2smartGrievDbContext context, HuggingFaceAIService ai)
+        public ComplaintRepository(Ict2smartGrievDbContext context, HuggingFaceAIService ai, IConfiguration configuration)
         {
             _context = context;
             _ai = ai;
+            _configuration = configuration;
         }
 
         public async Task<object> SubmitComplaint(ComplaintDTO dto)
@@ -70,22 +72,45 @@ namespace SmartGriev.Repositories.Implementations
             decimal lat = 0;
             decimal lng = 0;
 
-            if (!string.IsNullOrEmpty(dto.Address))
+            if (!string.IsNullOrWhiteSpace(dto.Address))
             {
-                using var client = new HttpClient();
-                client.DefaultRequestHeaders.UserAgent.ParseAdd("SmartGrievApp");
-
-                var url = $"https://nominatim.openstreetmap.org/search?q={Uri.EscapeDataString(dto.Address)}&format=json&limit=1";
-                var response = await client.GetStringAsync(url);
-
-                var data = JsonDocument.Parse(response).RootElement;
-
-                if (data.GetArrayLength() > 0)
+                try
                 {
-                    lat = decimal.Parse(data[0].GetProperty("lat").GetString() ?? "0",
-                        System.Globalization.CultureInfo.InvariantCulture);
-                    lng = decimal.Parse(data[0].GetProperty("lon").GetString() ?? "0",
-                        System.Globalization.CultureInfo.InvariantCulture);
+                    using var client = new HttpClient();
+
+                    string fullAddress = $"{dto.Address}, Surat, Gujarat, India";
+
+                    string apiKey = _configuration["Geoapify:ApiKey"];
+
+                    var url =
+                        $"https://api.geoapify.com/v1/geocode/search?" +
+                        $"text={Uri.EscapeDataString(fullAddress)}" +
+                        $"&apiKey={apiKey}";
+
+                    var response = await client.GetStringAsync(url);
+
+                    var data = JsonDocument.Parse(response).RootElement;
+
+                    var features = data.GetProperty("features");
+
+                    if (features.GetArrayLength() > 0)
+                    {
+                        var coordinates = features[0]
+                            .GetProperty("geometry")
+                            .GetProperty("coordinates");
+
+                        lng = Convert.ToDecimal(coordinates[0].GetDouble());
+
+                        lat = Convert.ToDecimal(coordinates[1].GetDouble());
+                    }
+                    else
+                    {
+                        Console.WriteLine("Location not found");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Geocoding Error: " + ex.Message);
                 }
             }
 

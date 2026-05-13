@@ -2,6 +2,8 @@
 import { theme } from "../../services/theme";
 import Pagination from "../../Components/AdminComponents/Pagination";
 import usePagination from "../../services/usePagination";
+import { useTranslationContext } from "../../Context/TranslationContext";
+
 
 const MyComplaints = () => {
     const [complaints, setComplaints] = useState([]);
@@ -14,6 +16,7 @@ const MyComplaints = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [statusFilter, setStatusFilter] = useState("All");
     const [priorityFilter, setPriorityFilter] = useState("All");
+    const { t } = useTranslationContext();
 
     const userId = 1; // You can also get this from sessionStorage.getItem("user")
 
@@ -228,8 +231,8 @@ const MyComplaints = () => {
     return (
         <div style={styles.pageWrapper}>
             <div style={styles.blueBanner}>
-                <h1 style={styles.headerText}>My Complaints</h1>
-                <p style={styles.subText}>Track and manage all your submitted complaints effortlessly.</p>
+                <h1 style={styles.headerText}>{t("my_complaints")}</h1>
+                <p style={styles.subText}>{t("track_manage")}</p>
             </div>
 
             <div style={styles.mainContainer}>
@@ -238,17 +241,17 @@ const MyComplaints = () => {
                     <div style={styles.statCard(theme.colors.primary[500])}>
                         <div style={{ fontSize: "1.5rem" }}>📋</div>
                         <h2 style={{ margin: "10px 0 5px" }}>{stats.total}</h2>
-                        <p style={{ color: "#64748b", margin: 0 }}>Total Complaints</p>
+                        <p style={{ color: "#64748b", margin: 0 }}>{t("total_complaints")}</p>
                     </div>
                     <div style={styles.statCard("#f59e0b")}>
                         <div style={{ fontSize: "1.5rem" }}>⏳</div>
                         <h2 style={{ margin: "10px 0 5px" }}>{stats.pending}</h2>
-                        <p style={{ color: "#64748b", margin: 0 }}>Pending</p>
+                        <p style={{ color: "#64748b", margin: 0 }}>{t("pending")}</p>
                     </div>
                     <div style={styles.statCard("#10b981")}>
                         <div style={{ fontSize: "1.5rem" }}>✅</div>
                         <h2 style={{ margin: "10px 0 5px" }}>{stats.resolved}</h2>
-                        <p style={{ color: "#64748b", margin: 0 }}>Resolved</p>
+                        <p style={{ color: "#64748b", margin: 0 }}>{t("resolved")}</p>
                     </div>
                 </div>
 
@@ -260,32 +263,32 @@ const MyComplaints = () => {
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
                     <select style={styles.select} onChange={(e) => setStatusFilter(e.target.value)}>
-                        <option value="All">All Status</option>
-                        <option value="Submitted">Submitted</option>
-                        <option value="In Progress">In Progress</option>
-                        <option value="Resolved">Resolved</option>
+                        <option value="All">{t("all_status")}</option>
+                        <option value="Submitted">{t("submitted")}</option>
+                        <option value="In Progress">{t("in_progress_step")}</option>
+                        <option value="Resolved">{t("resolved_step")}</option>
                     </select>
                     <select style={styles.select} onChange={(e) => setPriorityFilter(e.target.value)}>
-                        <option value="All">All Priority</option>
-                        <option value="High">High</option>
-                        <option value="Medium">Medium</option>
-                        <option value="Low">Low</option>
+                        <option value="All">{t("all_priority")}</option>
+                        <option value="High">{t("high")}</option>
+                        <option value="Medium">{t("medium")}</option>
+                        <option value="Low">{t("low")}</option>
                     </select>
                 </div>
 
                 {/* Table */}
                 <div style={styles.tableCard}>
                     {loading ? (
-                        <p style={{ padding: "40px", textAlign: "center" }}>Loading complaints...</p>
+                        <p style={{ padding: "40px", textAlign: "center" }}>{t("loading_complaints")}</p>
                     ) : (
                         <table style={styles.table}>
                             <thead>
                                 <tr>
-                                    <th style={styles.th}>Complaint Details</th>
-                                    <th style={styles.th}>Status</th>
-                                    <th style={styles.th}>Priority</th>
-                                    <th style={styles.th}>Date</th>
-                                    <th style={styles.th}>Action</th>
+                                        <th style={styles.th}>{t("complaint_details_1")}</th>
+                                        <th style={styles.th}>{t("status")}</th>
+                                        <th style={styles.th}>{t("priority")}</th>
+                                        <th style={styles.th}>{t("date")}</th>
+                                        <th style={styles.th}>{t("action")}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -308,11 +311,11 @@ const MyComplaints = () => {
                                             <button
                                                 style={styles.viewBtn}
                                                 onClick={() => openModal(c)}
-                                            >View</button>
+                                            >{t("view_complaints")}</button>
                                         </td>
                                     </tr>
                                 )) : (
-                                    <tr><td colSpan="5" style={{ padding: "40px", textAlign: "center", color: "#94a3b8" }}>No complaints found.</td></tr>
+                                            <tr><td colSpan="5" style={{ padding: "40px", textAlign: "center", color: "#94a3b8" }}>{t("no_complaints")}</td></tr>
                                 )}
                             </tbody>
                         </table>
@@ -342,37 +345,37 @@ const MyComplaints = () => {
 
                         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
                             <div>
-                                <h4 style={{ margin: "0 0 5px 0", fontSize: "0.8rem", color: "#64748b" }}>Status</h4>
+                                <h4 style={{ margin: "0 0 5px 0", fontSize: "0.8rem", color: "#64748b" }}>{t("status")}</h4>
                                 <span style={styles.badge(selectedComplaint.status)}>{selectedComplaint.status}</span>
                             </div>
                             <div>
-                                <h4 style={{ margin: "0 0 5px 0", fontSize: "0.8rem", color: "#64748b" }}>Priority</h4>
+                                <h4 style={{ margin: "0 0 5px 0", fontSize: "0.8rem", color: "#64748b" }}>{t("priority")}</h4>
                                 <span style={styles.badge(selectedComplaint.priority)}>{selectedComplaint.priority}</span>
                             </div>
                         </div>
 
                         <div style={{ marginTop: "20px" }}>
-                            <h4 style={{ margin: "0 0 5px 0", fontSize: "0.8rem", color: "#64748b" }}>Description</h4>
+                            <h4 style={{ margin: "0 0 5px 0", fontSize: "0.8rem", color: "#64748b" }}>{t("modal_description")}</h4>
                             <p style={{ fontSize: "0.9rem", lineHeight: "1.5" }}>{selectedComplaint.description}</p>
                         </div>
 
                         <div style={{ marginTop: "20px" }}>
-                            <h4 style={{ margin: "0 0 5px 0", fontSize: "0.8rem", color: "#64748b" }}>Address</h4>
+                            <h4 style={{ margin: "0 0 5px 0", fontSize: "0.8rem", color: "#64748b" }}>{t("modal_address")}</h4>
                             <p style={{ fontSize: "0.9rem" }}>{selectedComplaint.address || "No address provided"}</p>
                         </div>
 
                         <div style={{ marginTop: "20px" }}>
-                            <h4 style={{ margin: "0 0 10px 0", fontSize: "0.8rem", color: "#64748b" }}>Evidence</h4>
+                            <h4 style={{ margin: "0 0 10px 0", fontSize: "0.8rem", color: "#64748b" }}>{t("evidence")}</h4>
                             {selectedComplaint.imageUrl ? (
                                 <img src={selectedComplaint.imageUrl} alt="Complaint" style={{ width: "100%", borderRadius: "8px" }} />
                             ) : (
-                                <div style={{ padding: "20px", background: "#f8fafc", textAlign: "center", borderRadius: "8px", color: "#94a3b8" }}>No Image Available</div>
+                                    <div style={{ padding: "20px", background: "#f8fafc", textAlign: "center", borderRadius: "8px", color: "#94a3b8" }}>{t("no_image")}</div>
                             )}
                         </div>
 
                         {/* Progress Tracker */}
                         <div style={{ marginTop: "30px" }}>
-                            <h4 style={{ margin: "0 0 15px 0", fontSize: "0.8rem", color: "#64748b", textAlign: "center" }}>Complaint Progress</h4>
+                            <h4 style={{ margin: "0 0 15px 0", fontSize: "0.8rem", color: "#64748b", textAlign: "center" }}>{t("progress")}</h4>
                             <div style={styles.tracker}>
                                 <div style={{ position: "absolute", top: "15px", left: 0, right: 0, height: "2px", background: "#e2e8f0", zIndex: 0 }}></div>
                                 <div style={{ ...styles.step(getStepStatus(1)) }}>1</div>
@@ -380,9 +383,9 @@ const MyComplaints = () => {
                                 <div style={{ ...styles.step(getStepStatus(3)) }}>3</div>
                             </div>
                             <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.7rem", color: "#64748b", marginTop: "-15px" }}>
-                                <span>Submitted</span>
-                                <span>In Progress</span>
-                                <span>Resolved</span>
+                                <span>{t("submitted")}</span>
+                                <span>{t("in_progress_step")}</span>
+                                <span>{t("resolved_step")}</span>
                             </div>
                         </div>
                     </div>

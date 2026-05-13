@@ -1,0 +1,92 @@
+{
+  "app_name": "સ્માર્ટ ફરિયાદ વ્યવસ્થાપન સિસ્ટમ",
+
+  "welcome_back": "પાછા સ્વાગત છે",
+  "dashboard_welcome": "આજે તમારી ફરિયાદોમાં શું ચાલી રહ્યું છે તે અહીં છે.",
+
+  "try_ai_chatbot": "AI ચેટબોટ અજમાવો",
+  "submit_complaint": "ફરિયાદ નોંધાવો",
+  "submit_new_complaint": "નવી ફરિયાદ નોંધાવો",
+  "view_all_complaints": "બધી ફરિયાદો જુઓ",
+
+  "ai_chatbot_text": "AI સહાયકથી તરત મદદ મેળવો. પ્રશ્નો પૂછો અથવા સ્ટેટસ ટ્રેક કરો.",
+  "submit_desc": "અમારી સિસ્ટમનો ઉપયોગ કરીને ચિત્ર અથવા ઓડિયો પુરાવા સાથે નવી ફરિયાદ નોંધાવો.",
+  "view_desc": "તમારી સબમિટ કરેલી તમામ ફરિયાદો જુઓ અને તેમની લાઈવ પ્રગતિ ટ્રેક કરો.",
+
+  "total_complaints": "કુલ ફરિયાદો",
+  "pending": "બાકી",
+  "in_progress": "પ્રગતિમાં",
+  "resolved": "નિષ્કર્ષિત",
+
+  "quick_actions": "ઝડપી ક્રિયાઓ",
+  "recent_complaints": "તાજેતરની ફરિયાદો",
+  "no_complaints": "કોઈ ફરિયાદ મળી નથી",
+  "loading": "ફરિયાદો લોડ થઈ રહી છે...",
+  "loading_dashboard": "ડેશબોર્ડ લોડ થઈ રહ્યું છે...",
+
+  "complaint_details": "ફરિયાદ વિગતો",
+  "status": "સ્થિતિ",
+  "priority": "પ્રાથમિકતા",
+  "date": "તારીખ",
+  "action": "ક્રિયા",
+
+  "complaint_category": "ફરિયાદ શ્રેણી",
+  "description": "વર્ણન",
+  "optional_media": "મીડિયા અપલોડ (વૈકલ્પિક)",
+  "image_evidence": "ચિત્ર પુરાવા",
+  "audio_recording": "ઓડિયો રેકોર્ડિંગ",
+  "incident_address": "ઘટનાનું સરનામું",
+  "get_location": "મારી વર્તમાન લોકેશન મેળવો",
+  "submit_btn": "ફરિયાદ મોકલો",
+
+  "select_category": "શ્રેણી પસંદ કરો",
+
+  "modal_description": "વર્ણન",
+  "modal_address": "સરનામું",
+  "no_address": "સરનામું આપવામાં આવ્યું નથી",
+  "no_image": "ચિત્ર ઉપલબ્ધ નથી",
+  "progress": "ફરિયાદ પ્રગતિ",
+
+  "submitted": "સબમિટ કરેલ",
+  "in_progress_step": "પ્રગતિમાં",
+  "resolved_step": "નિષ્કર્ષિત",
+
+  "filter_search": "શીર્ષક દ્વારા શોધો...",
+  "all_status": "બધી સ્થિતિ",
+  "all_priority": "બધી પ્રાથમિકતા",
+
+  "view": "જુઓ",
+
+  "chat_user_example": "મારે રસ્તા તૂટી ગયા છે તેની ફરિયાદ કરવી છે",
+  "chat_bot_reply": "હું તેમાં તમારી મદદ કરી શકું છું! પહેલા, કૃપા કરીને સ્થાનની વિગત આપો.",
+  "chat_user_location": "મેઇન સ્ટ્રીટ, સિટી હોલ પાસે",
+
+  "hero_title_1": "સ્માર્ટ ફરિયાદ",
+  "hero_title_2": "વ્યવસ્થાપન સિસ્ટમ",
+  "hero_description": "AI-સંચાલિત સહાયતા સાથે તમારી ફરિયાદો વિના પ્રયાસે સબમિટ કરો અને ટ્રેક કરો. ત્વરિત પ્રતિસાદો, મલ્ટિમોડલ સબમિશન અને રીઅલ-ટાઇમ અપડેટ્સ મેળવો.",
+  "btn_ai_chatbot": "🤖 AI ચેટબોટ અજમાવો",
+  "btn_submit_complaint": "📝 ફરિયાદ નોંધાવો",
+  "smart_ai_assistant": "🤖 SmartGriev AI સહાયક",
+  "powered_by_ai": "એડવાન્સ્ડ AI દ્વારા સંચાલિત",
+  "chat_hello": "👋 હેલો! હું તમારો SmartGriev AI સહાયક છું. હું આજે તમને કેવી રીતે મદદ કરી શકું?",
+  "chat_user_report": "મારે રસ્તાના નુકસાનની ફરિયાદ નોંધાવવી છે",
+  "chat_bot_guidance": "હું તેમાં તમારી મદદ કરી શકું છું! ચાલો હું તમને ફરિયાદ સબમિટ કરવાની પ્રક્રિયામાં માર્ગદર્શન આપું. સૌ પ્રથમ, શું તમે નુકસાનનું સ્થાન જણાવી શકશો?",
+  "home": "હોમ",
+  "dashboard": "ડેશબોર્ડ",
+  "submit_complaints": "ફરિયાદ નોંધાવો",
+  "recent_my_complaints": "મારી ફરિયાદો",
+  "login": "લોગિન",
+  "sign_up": "સાઇન અપ",
+  "logout": "લોગ આઉટ",
+  "ai_chatbot_status": "AI ચેટબોટ",
+  "complaint_details_1": "ફરિયાદ વિગતો",
+
+  "my_complaints": "મારી ફરિયાદો",
+  "track_manage": "તમારી બધી નોંધાયેલ ફરિયાદોને સરળતાથી ટ્રેક અને મેનેજ કરો.",
+  "high": "ઉચ્ચ",
+  "medium": "મધ્યમ",
+  "low": "નીચું",
+  "loading_complaints": "ફરિયાદો લોડ થઈ રહી છે...",
+  "view_complaints": "જુઓ",
+  "evidence": "પુરાવા"
+}

@@ -9,33 +9,55 @@ const AIChatPage = () => {
     const [isLoading, setIsLoading] = useState(false);
     const messagesEndRef = useRef(null);
 
-    const scrollToBottom = () => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    };
+    //const scrollToBottom = () => {
+    //    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    //};
 
-    useEffect(scrollToBottom, [messages]);
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            messagesEndRef.current?.scrollIntoView({
+                behavior: "smooth",
+                block: "end"
+            });
+        }, 100);
+
+        return () => clearTimeout(timer);
+    }, [messages]);
 
     const handleSend = async () => {
         if (!input.trim() || isLoading) return;
 
-        const currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        const userMsg = { sender: 'user', text: input, time: currentTime };
+        const userMsg = {
+            sender: 'user',
+            text: input,
+            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        };
 
         setMessages(prev => [...prev, userMsg]);
+        const currentInput = input; // Store it before clearing
         setInput("");
         setIsLoading(true);
 
         try {
-            const res = await fetch("https://localhost:7224/api/chat", {
+            const res = await fetch("https://localhost:7224/api/AiChatBot", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ message: input })
+                body: JSON.stringify({ message: currentInput })
             });
             const data = await res.json();
-            setMessages(prev => [...prev, { sender: 'bot', text: data.reply, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }]);
+
+            // Artificial delay to make it feel "Professional/Thinking"
+            setTimeout(() => {
+                setMessages(prev => [...prev, {
+                    sender: 'bot',
+                    text: data.reply,
+                    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                }]);
+                setIsLoading(false);
+            }, 800);
+
         } catch (error) {
-            setMessages(prev => [...prev, { sender: 'bot', text: "I'm experiencing connectivity issues. Please try again later.", time: "System" }], error);
-        } finally {
+            setMessages(prev => [...prev, { sender: 'bot', text: "Service temporarily unavailable.", time: "System" }], error);
             setIsLoading(false);
         }
     };

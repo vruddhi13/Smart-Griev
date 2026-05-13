@@ -1,9 +1,11 @@
 ﻿import React from "react";
 import { theme } from "../../services/theme";
 import { useNavigate } from "react-router-dom";
+//import Translate from "../../Components/TranslateAllText";
+import { useTranslationContext } from "../../Context/TranslationContext";
 
 const CitizenDashboard = () => {
-
+    const { t } = useTranslationContext();
     const navigate = useNavigate();
 
     const pageStyle = {
@@ -119,23 +121,21 @@ const CitizenDashboard = () => {
                 <div style={leftSection}>
 
                     <h1 style={title}>
-                        Smart Grievance <br /> Management System
+                        {t("hero_title_1")} <br /> {t("hero_title_2")}
                     </h1>
 
                     <p style={description}>
-                        Submit and track your complaints effortlessly with AI-powered
-                        assistance. Get instant responses, multimodal submissions,
-                        and real-time updates.
+                        {t("hero_description")}
                     </p>
 
                     <div style={buttonContainer}>
 
                         <button style={primaryButton} onClick={() => navigate("/AIChatBotPage")}>
-                            🤖 Try AI Chatbot
+                            {t("btn_ai_chatbot")}
                         </button>
 
-                        <button style={outlineButton} onClick={() => navigate("/CitizenComplaint") }>
-                            📝 Submit Complaint
+                        <button style={outlineButton} onClick={() => navigate("/CitizenComplaint")}>
+                            {t("btn_submit_complaint")}
                         </button>
 
                     </div>
@@ -147,31 +147,28 @@ const CitizenDashboard = () => {
                 <div style={chatbotCard}>
 
                     <div style={chatHeader}>
-                        🤖 SmartGriev AI Assistant
+                        {t("smart_ai_assistant")}
                         <div style={{ fontSize: "0.8rem", opacity: 0.9 }}>
-                            Powered by Advanced AI
+                            {t("powered_by_ai")}
                         </div>
                     </div>
 
                     <div style={chatBody}>
 
                         <div style={botMessage}>
-                            👋 Hello! I'm your SmartGriev AI assistant.
-                            How can I help you today?
+                            {t("chat_hello")}
                         </div>
 
                         <div style={userMessage}>
-                            I need to report a road damage issue
+                            {t("chat_user_report")}
                         </div>
 
                         <div style={botMessage}>
-                            I can help you with that! Let me guide you through the
-                            complaint submission process. First, could you provide
-                            the location of the damage?
+                            {t("chat_bot_guidance")}
                         </div>
 
                         <div style={userMessage}>
-                            Main Street, near City Hall
+                            {t("chat_user_location")}
                         </div>
 
                     </div>
