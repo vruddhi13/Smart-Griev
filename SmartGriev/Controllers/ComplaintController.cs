@@ -157,31 +157,48 @@ namespace SmartGriev.Controllers
                 var complaints = await _context.Complaints
                     .Include(c => c.Department)
                     .Include(c => c.Category)
-                    .OrderByDescending(c => c.CreatedAt)
                     .ToListAsync();
 
+                var slas = await _context.SlaMasters
+                    .Where(s => s.IsActive)
+                    .ToListAsync();
+
+                var now = DateTime.Now;
                 var today = DateTime.Today;
+
+                // 🔹 Helper: Get SLA for a complaint
+                Func<Complaint, int> getSlaHours = (c) =>
+                {
+                    var sla = slas.FirstOrDefault(s =>
+                        s.CategoryId == c.CategoryId &&
+                        s.DepartmentId == c.DepartmentId &&
+                        s.PriorityLevel == c.PriorityLevel
+                    );
+
+                    return sla?.ResolutionHours ?? 72; // fallback = 72 hrs (3 days)
+                };
 
                 // 🔹 TOP STATS
                 var total = complaints.Count;
 
                 var slaBreached = complaints.Count(c =>
                     c.Status != "Resolved" &&
-                    c.CreatedAt < DateTime.Now.AddDays(-3) // example SLA: 3 days
+                    now > c.CreatedAt.AddHours(getSlaHours(c))
                 );
 
                 var nearDeadline = complaints.Count(c =>
                     c.Status != "Resolved" &&
-                    c.CreatedAt >= DateTime.Now.AddDays(-3) &&
-                    c.CreatedAt <= DateTime.Now.AddDays(-2)
+                    now <= c.CreatedAt.AddHours(getSlaHours(c)) &&
+                    now >= c.CreatedAt.AddHours(getSlaHours(c) - 2) // last 2 hours window
                 );
 
                 var resolvedToday = complaints.Count(c =>
                     c.Status == "Resolved" &&
-                    c.CreatedAt.Date == today
+                    c.UpdatedAt.HasValue &&
+                    c.UpdatedAt.Value.Date == today
                 );
 
-                // 🔹 STATUS DISTRIBUTION (for donut chart)
+                // 🔹 STATUS DISTRIBUTION
                 var statusData = complaints
                     .GroupBy(c => c.Status)
                     .Select(g => new
@@ -192,7 +209,7 @@ namespace SmartGriev.Controllers
 
                 // 🔹 TREND DATA (last 7 days)
                 var trendData = complaints
-                    .Where(c => c.CreatedAt >= DateTime.Now.AddDays(-7))
+                    .Where(c => c.CreatedAt >= now.AddDays(-7))
                     .GroupBy(c => c.CreatedAt.Date)
                     .Select(g => new
                     {
@@ -202,14 +219,17 @@ namespace SmartGriev.Controllers
                     .OrderBy(x => x.date);
 
                 // 🔹 RECENT COMPLAINTS
-                var recent = complaints.Take(5).Select(c => new
-                {
-                    title = c.Description,
-                    dept = c.Department.DepartmentName,
-                    status = c.Status,
-                    priority = c.PriorityLevel,
-                    time = c.CreatedAt
-                });
+                var recent = complaints
+                    .OrderByDescending(c => c.CreatedAt)
+                    .Take(5)
+                    .Select(c => new
+                    {
+                        title = c.Description,
+                        dept = c.Department.DepartmentName,
+                        status = c.Status,
+                        priority = c.PriorityLevel,
+                        time = c.CreatedAt
+                    });
 
                 // 🔹 DEPARTMENT PERFORMANCE
                 var departmentStats = complaints
@@ -220,7 +240,7 @@ namespace SmartGriev.Controllers
                         total = g.Count(),
                         breach = g.Count(c =>
                             c.Status != "Resolved" &&
-                            c.CreatedAt < DateTime.Now.AddDays(-3)
+                            now > c.CreatedAt.AddHours(getSlaHours(c))
                         )
                     });
 

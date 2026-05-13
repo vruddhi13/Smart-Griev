@@ -1,5 +1,6 @@
 ﻿import React, { useState, useEffect } from "react";
 //import { theme } from "../../services/theme";
+import { useTranslationContext } from "../../Context/TranslationContext";
 
 const CitizenComplaint = () => {
 
@@ -10,6 +11,7 @@ const CitizenComplaint = () => {
     const [image, setImage] = useState(null);
     const [categories, setCategories] = useState([]);
     const [categoryId, setCategoryId] = useState("");
+    const { t } = useTranslationContext();
 
     useEffect(() => {
         fetch("https://localhost:7224/api/Complaint/categories")
@@ -180,13 +182,13 @@ const CitizenComplaint = () => {
         <div style={styles.pageWrapper}>
             <div style={styles.formCard}>
                 <div style={styles.header}>
-                    🎥 Submit Multimodal Complaint
+                    🎥 {t("submit_new_complaint")}
                 </div>
                 <div style={styles.subHeader}>
-                    Submit your complaint using text, images, or audio. AI will process your submission automatically.
+                    {t("ai_chatbot_text")}
                 </div>
 
-                <label style={styles.label}>Complaint Category *</label>
+                <label style={styles.label}>{t("complaint_category")} *</label>
                 {/*<input*/}
                 {/*    style={styles.input}*/}
                 {/*    placeholder="Example: Garbage not collected for 3 days"*/}
@@ -194,7 +196,7 @@ const CitizenComplaint = () => {
                 {/*    onChange={(e) => setTitle(e.target.value)}*/}
                 {/*/>*/}
                 <select style={styles.input} value={categoryId} onChange={(e) => setCategoryId(e.target.value)}>
-                    <option value="">Select Category</option>
+                    <option value="">{t("select_category")}</option>
                     {categories.map(c => (
                         <option key={c.categoryId} value={c.categoryId}>
                             {c.categoryName}
@@ -202,21 +204,21 @@ const CitizenComplaint = () => {
                     ))}
                 </select>
 
-                <label style={styles.label}>Description (optional if uploading media)</label>
+                <label style={styles.label}>{t("description")}</label>
                 <textarea
                     style={{ ...styles.input, height: "120px" }}
-                    placeholder="Describe your complaint in detail..."
+                    placeholder={t("description")}
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                 />
 
                 <div style={styles.mediaSection}>
                     <div style={{ fontWeight: "700", marginBottom: "15px", display: "flex", alignItems: "center", gap: "8px" }}>
-                        📎 Upload Media (Optional)
+                        📎 {t("optional_media")}
                     </div>
 
                     <div style={{ marginBottom: "15px" }}>
-                        <div style={{ fontSize: "0.85rem", fontWeight: "600", marginBottom: "5px" }}>📷 Image Evidence</div>
+                        <div style={{ fontSize: "0.85rem", fontWeight: "600", marginBottom: "5px" }}>📷 {t("image_evidence")}</div>
                         <div style={styles.fileInputContainer}>
                             <input
                                 type="file"
@@ -235,7 +237,7 @@ const CitizenComplaint = () => {
 
                 <div style={styles.row}>
                     <div style={styles.col}>
-                        <label style={styles.label}>Priority</label>
+                        <label style={styles.label}>{t("priority")}</label>
                         <select
                             style={styles.input}
                             value={priority}
@@ -255,7 +257,7 @@ const CitizenComplaint = () => {
                     {/*</div>*/}
                 </div>
 
-                <label style={styles.label}>📍 Incident Address</label>
+                <label style={styles.label}>📍 {t("incident_address")}</label>
                 <input
                     style={styles.input}
                     placeholder="Enter incident address"
@@ -267,7 +269,7 @@ const CitizenComplaint = () => {
                 {/*</button>*/}
 
                 <button style={styles.submitBtn} onClick={handleSubmit}>
-                    📥 Submit Complaint
+                    📥 {t("submit_btn")}
                 </button>
 
                 {/*<div style={styles.noteBox}>*/}

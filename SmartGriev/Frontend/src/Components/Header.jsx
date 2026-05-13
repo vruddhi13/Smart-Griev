@@ -1,9 +1,10 @@
 ﻿import React from "react";
 import { theme } from "../services/theme";
 import { useNavigate } from "react-router-dom";
+import { useTranslationContext } from "../Context/TranslationContext";
 
 const Header = () => {
-
+    const { language, setLanguage, t } = useTranslationContext();
     const navigate = useNavigate();
     let user = null;
 
@@ -84,26 +85,46 @@ const Header = () => {
 
             <div style={{ display: "flex", alignItems: "center", gap: "28px" }}>
 
+                <select
+                    value={language}
+                    onChange={(e) => setLanguage(e.target.value)}
+                    style={{
+                        padding: "8px 12px",
+                        borderRadius: "8px",
+                        border: "none",
+                        outline: "none",
+                        cursor: "pointer",
+                        fontWeight: "600",
+                        background: "white",
+                        color: theme.colors.primary[600]
+                    }}
+                >
+                    <option value="en">English</option>
+                    <option value="hi">Hindi</option>
+                    <option value="gu">Gujarati</option>
+                    <option value="mr">Marathi</option>
+                </select>
+                
                 <button onClick={() => navigate("/")}
                     style={{ background: "none", border: "none", color: "white", cursor: "pointer", fontSize: "1.05rem" }}>
-                    Home
+                    {t("home")}
                 </button>
 
                 {user && (
                     <>
                         <button onClick={() => navigate("/CitizenComplaintStatus")}
                             style={{ background: "none", border: "none", color: "white", cursor: "pointer", fontSize: "1.05rem" }}>
-                            Dashboard
+                            {t("dashboard")}
                         </button>
 
                         <button onClick={() => navigate("/CitizenComplaint")}
                             style={{ background: "none", border: "none", color: "white", cursor: "pointer", fontSize: "1.05rem" }}>
-                            Submit Complaint
+                            {t("submit_complaints")}
                         </button>
 
                         <button onClick={() => navigate("/MyComplaints")}
                             style={{ background: "none", border: "none", color: "white", cursor: "pointer", fontSize: "1.05rem" }}>
-                            My Complaints
+                            {t("recent_my_complaints")}
                         </button>
                     </>
                 )}
@@ -112,7 +133,7 @@ const Header = () => {
                     <>
                         <button onClick={() => navigate("/login")}
                             style={{ background: "none", border: "none", color: "white", cursor: "pointer" }}>
-                            Login
+                            {t("login")}
                         </button>
 
                         <button onClick={() => navigate("/register")}
@@ -125,7 +146,7 @@ const Header = () => {
                                 cursor: "pointer",
                                 fontWeight: "600"
                             }}>
-                            Sign Up
+                            {t("sign_up")}
                         </button>
                     </>
                 ) : (
@@ -169,7 +190,7 @@ const Header = () => {
                                 cursor: "pointer",
                                 fontWeight: "600"
                             }}>
-                            Logout
+                                {t("logout")}
                         </button>
                     </div>
                 )}

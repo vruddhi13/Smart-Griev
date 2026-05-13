@@ -1,0 +1,93 @@
+{
+  "app_name": "Smart Grievance Management System",
+
+  "welcome_back": "Welcome back",
+  "dashboard_welcome": "Here's what's happening with your complaints today.",
+
+  "try_ai_chatbot": "Try AI Chatbot",
+  "submit_complaint": "Submit Complaint",
+  "submit_new_complaint": "Submit New Complaint",
+  "view_all_complaints": "View All Complaints",
+
+  "ai_chatbot_text": "Get instant help from our AI assistant. Ask questions or track status.",
+  "submit_desc": "Create a new complaint with image or audio evidence using our system.",
+  "view_desc": "See all your submitted complaints and track their live progress.",
+
+  "total_complaints": "Total Complaints",
+  "pending": "Pending",
+  "in_progress": "In Progress",
+  "resolved": "Resolved",
+
+  "quick_actions": "Quick Actions",
+  "recent_complaints": "Recent Complaints",
+  "no_complaints": "No complaints found",
+  "loading": "Loading complaints...",
+  "loading_dashboard": "Loading Dashboard...",
+
+  "complaint_details": "Complaint Details",
+  "status": "Status",
+  "priority": "Priority",
+  "date": "Date",
+  "action": "Action",
+
+  "complaint_category": "Complaint Category",
+  "description": "Description",
+  "optional_media": "Upload Media (Optional)",
+  "image_evidence": "Image Evidence",
+  "audio_recording": "Audio Recording",
+  "incident_address": "Incident Address",
+  "get_location": "Get My Current Location",
+  "submit_btn": "Submit Complaint",
+
+  "select_category": "Select Category",
+
+  "modal_description": "Description",
+  "modal_address": "Address",
+  "no_address": "No address provided",
+  "no_image": "No Image Available",
+  "progress": "Complaint Progress",
+
+  "submitted": "Submitted",
+  "in_progress_step": "In Progress",
+  "resolved_step": "Resolved",
+
+  "filter_search": "Search by title...",
+  "all_status": "All Status",
+  "all_priority": "All Priority",
+
+  "view": "View",
+  "chat_user_example": "I need to report a road damage issue",
+  "chat_bot_reply": "I can help you with that! First, provide the location.",
+  "hero_title_1": "Smart Grievance",
+  "hero_title_2": "Management System",
+  "hero_description": "Submit and track your complaints effortlessly with AI-powered assistance. Get instant responses, multimodal submissions, and real-time updates.",
+  "btn_ai_chatbot": "🤖 Try AI Chatbot",
+  "btn_submit_complaint": "📝 Submit Complaint",
+  "smart_ai_assistant": "🤖 SmartGriev AI Assistant",
+  "powered_by_ai": "Powered by Advanced AI",
+  "chat_hello": "👋 Hello! I'm your SmartGriev AI assistant. How can I help you today?",
+  "chat_user_report": "I need to report a road damage issue",
+  "chat_bot_guidance": "I can help you with that! Let me guide you through the complaint submission process. First, could you provide the location of the damage?",
+  "chat_user_location": "Main Street, near City Hall",
+  "home": "Home",
+  "dashboard": "Dashboard",
+  "submit_complaints": "Submit Complaint",
+  "recent_my_complaints": "My Complaints",
+  "login": "Login",
+  "sign_up": "Sign Up",
+  "logout": "Logout",
+  "ai_chatbot_status": "AI Chatbot",
+  "complaint_details_1": "Complaint Details",
+
+  "my_complaints": "My Complaints",
+  "track_manage": "Track and manage all your submitted complaints effortlessly.",
+  "high": "High",
+  "medium": "Medium",
+  "low": "Low",
+  "loading_complaints": "Loading Complaints...",
+  "view_complaints": "View",
+  "evidence": "Evidence",
+
+  "ai_chat_bot": "👋 Welcome to SmartGriev Support. I can help you file a complaint, check status, or answer city-service queries. How can I assist you today?"
+
+}

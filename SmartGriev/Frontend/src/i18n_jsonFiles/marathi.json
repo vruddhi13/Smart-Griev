@@ -1,0 +1,92 @@
+{
+  "app_name": "स्मार्ट तक्रार व्यवस्थापन प्रणाली",
+
+  "welcome_back": "पुन्हा स्वागत आहे",
+  "dashboard_welcome": "आज तुमच्या तक्रारींची स्थिती येथे पहा.",
+
+  "try_ai_chatbot": "AI चॅटबॉट वापरा",
+  "submit_complaint": "तक्रार नोंदवा",
+  "submit_new_complaint": "नवीन तक्रार नोंदवा",
+  "view_all_complaints": "सर्व तक्रारी पहा",
+
+  "ai_chatbot_text": "AI सहाय्यकाकडून त्वरित मदत मिळवा. प्रश्न विचारा किंवा स्थिती ट्रॅक करा.",
+  "submit_desc": "आमच्या प्रणालीचा वापर करून चित्र किंवा ऑडिओ पुराव्यासह नवीन तक्रार नोंदवा.",
+  "view_desc": "तुमच्या सर्व सादर केलेल्या तक्रारी पहा आणि त्यांची लाईव्ह प्रगती ट्रॅक करा.",
+
+  "total_complaints": "एकूण तक्रारी",
+  "pending": "प्रलंबित",
+  "in_progress": "प्रगतीत",
+  "resolved": "निकाली",
+
+  "quick_actions": "त्वरित क्रिया",
+  "recent_complaints": "अलीकडील तक्रारी",
+  "no_complaints": "कोणतीही तक्रार सापडली नाही",
+  "loading": "तक्रारी लोड होत आहेत...",
+  "loading_dashboard": "डॅशबोर्ड लोड होत आहे...",
+
+  "complaint_details": "तक्रार तपशील",
+  "status": "स्थिती",
+  "priority": "प्राधान्य",
+  "date": "तारीख",
+  "action": "कृती",
+
+  "complaint_category": "तक्रार श्रेणी",
+  "description": "वर्णन",
+  "optional_media": "मीडिया अपलोड (पर्यायी)",
+  "image_evidence": "छायाचित्र पुरावा",
+  "audio_recording": "ऑडिओ रेकॉर्डिंग",
+  "incident_address": "घटनेचा पत्ता",
+  "get_location": "माझे वर्तमान स्थान मिळवा",
+  "submit_btn": "तक्रार पाठवा",
+
+  "select_category": "श्रेणी निवडा",
+
+  "modal_description": "वर्णन",
+  "modal_address": "पत्ता",
+  "no_address": "पत्ता दिलेला नाही",
+  "no_image": "कोणतेही चित्र उपलब्ध नाही",
+  "progress": "तक्रार प्रगती",
+
+  "submitted": "सादर केले",
+  "in_progress_step": "प्रगतीत",
+  "resolved_step": "निकाली",
+
+  "filter_search": "शीर्षकानुसार शोधा...",
+  "all_status": "सर्व स्थिती",
+  "all_priority": "सर्व प्राधान्य",
+
+  "view": "पहा",
+
+  "chat_user_example": "मला रस्त्याच्या खराब स्थितीची तक्रार करायची आहे",
+  "chat_bot_reply": "मी यामध्ये तुमची मदत करू शकतो! सर्वात आधी, कृपया स्थानाचा तपशील द्या.",
+  "chat_user_location": "मेन स्ट्रीट, सिटी हॉल जवळ",
+
+  "hero_title_1": "स्मार्ट तक्रार",
+  "hero_title_2": "व्यवस्थापन प्रणाली",
+  "hero_description": "AI-आधारित सहाय्याने तुमची तक्रार सहजपणे नोंदवा आणि ट्रॅक करा. त्वरित प्रतिसाद, मल्टीमॉडल सबमिशन आणि रिअल-टाइम अपडेट्स मिळवा.",
+  "btn_ai_chatbot": "🤖 AI चॅटबॉट वापरा",
+  "btn_submit_complaint": "📝 तक्रार नोंदवा",
+  "smart_ai_assistant": "🤖 SmartGriev AI सहाय्यक",
+  "powered_by_ai": "प्रगत AI द्वारे संचालित",
+  "chat_hello": "👋 नमस्कार! मी तुमचा SmartGriev AI सहाय्यक आहे. मी आज तुम्हाला कशी मदत करू शकतो?",
+  "chat_user_report": "मला रस्त्याच्या नुकसानीची तक्रार नोंदवायची आहे",
+  "chat_bot_guidance": "मी यामध्ये तुमची मदत करू शकतो! मी तुम्हाला तक्रार नोंदवण्याच्या प्रक्रियेत मार्गदर्शन करेन. सर्वात आधी, तुम्ही नुकसानीचे स्थान सांगू शकाल का?",
+  "home": "होम",
+  "dashboard": "डॅशबोर्ड",
+  "submit_complaints": "तक्रार नोंदवा",
+  "recent_my_complaints": "माझ्या तक्रारी",
+  "login": "लॉगिन",
+  "sign_up": "साइन अप",
+  "logout": "लॉग आउट",
+  "ai_chatbot_status": "AI चॅटबॉट",
+  "complaint_details_1": "तक्रार तपशील",
+
+  "my_complaints": "माझ्या तक्रारी",
+  "track_manage": "तुमच्या सर्व नोंदवलेल्या तक्रारी सहजपणे ट्रॅक आणि व्यवस्थापित करा.",
+  "high": "उच्च",
+  "medium": "मध्यम",
+  "low": "कमी",
+  "loading_complaints": "तक्रारी लोड होत आहेत...",
+  "view_complaints": "पहा",
+  "evidence": "पुरावा"
+}

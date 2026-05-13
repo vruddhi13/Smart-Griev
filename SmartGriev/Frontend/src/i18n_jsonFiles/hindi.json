@@ -1,0 +1,93 @@
+{
+  "app_name": "स्मार्ट शिकायत प्रबंधन प्रणाली",
+
+  "welcome_back": "वापसी पर स्वागत है",
+  "dashboard_welcome": "आज आपकी शिकायतों की स्थिति यहाँ देखें।",
+
+  "try_ai_chatbot": "AI चैटबॉट आज़माएँ",
+  "submit_complaint": "शिकायत दर्ज करें",
+  "submit_new_complaint": "नई शिकायत दर्ज करें",
+  "view_all_complaints": "सभी शिकायतें देखें",
+
+  "ai_chatbot_text": "AI सहायक से तुरंत मदद पाएँ। सवाल पूछें या स्थिति ट्रैक करें।",
+  "submit_desc": "हमारी प्रणाली का उपयोग करके चित्र या ऑडियो साक्ष्य के साथ नई शिकायत दर्ज करें।",
+  "view_desc": "अपनी सभी सबमिट की गई शिकायतें देखें और उनकी लाइव प्रगति ट्रैक करें।",
+
+  "total_complaints": "कुल शिकायतें",
+  "pending": "लंबित",
+  "in_progress": "प्रगति में",
+  "resolved": "समाधान",
+
+  "quick_actions": "त्वरित कार्य",
+  "recent_complaints": "हाल की शिकायतें",
+  "no_complaints": "कोई शिकायत नहीं मिली",
+  "loading": "शिकायतें लोड हो रही हैं...",
+  "loading_dashboard": "डैशबोर्ड लोड हो रहा है...",
+
+  "complaint_details": "शिकायत विवरण",
+  "status": "स्थिति",
+  "priority": "प्राथमिकता",
+  "date": "तारीख",
+  "action": "कार्य",
+
+  "complaint_category": "शिकायत श्रेणी",
+  "description": "विवरण",
+  "optional_media": "मीडिया अपलोड (वैकल्पिक)",
+  "image_evidence": "छवि प्रमाण",
+  "audio_recording": "ऑडियो रिकॉर्डिंग",
+  "incident_address": "घटना का पता",
+  "get_location": "मेरा वर्तमान स्थान प्राप्त करें",
+  "submit_btn": "शिकायत भेजें",
+
+  "select_category": "श्रेणी चुनें",
+
+  "modal_description": "विवरण",
+  "modal_address": "पता",
+  "no_address": "कोई पता नहीं दिया गया",
+  "no_image": "कोई छवि उपलब्ध नहीं",
+  "progress": "शिकायत प्रगति",
+
+  "submitted": "सबमिट किया गया",
+  "in_progress_step": "प्रगति में",
+  "resolved_step": "समाधान",
+
+  "filter_search": "शीर्षक से खोजें...",
+  "all_status": "सभी स्थिति",
+  "all_priority": "सभी प्राथमिकता",
+
+  "view": "देखें",
+
+  "chat_user_example": "मुझे सड़क खराब होने की शिकायत दर्ज करनी है",
+  "chat_bot_reply": "मैं इसमें आपकी मदद कर सकता हूँ! सबसे पहले, कृपया स्थान का विवरण दें।",
+  "chat_user_location": "मेन स्ट्रीट, सिटी हॉल के पास",
+
+  "hero_title_1": "स्मार्ट शिकायत",
+  "hero_title_2": "प्रबंधन प्रणाली",
+  "hero_description": "AI-संचालित सहायता के साथ अपनी शिकायतें आसानी से दर्ज और ट्रैक करें। तत्काल प्रतिक्रिया, मल्टीमॉडल सबमिशन और रीयल-टाइम अपडेट प्राप्त करें।",
+  "btn_ai_chatbot": "🤖 AI चैटबॉट आज़माएँ",
+  "btn_submit_complaint": "📝 शिकायत दर्ज करें",
+  "smart_ai_assistant": "🤖 SmartGriev AI सहायक",
+  "powered_by_ai": "एडवांस्ड AI द्वारा संचालित",
+  "chat_hello": "👋 नमस्ते! मैं आपका SmartGriev AI सहायक हूँ। मैं आज आपकी क्या मदद कर सकता हूँ?",
+  "chat_user_report": "मुझे सड़क के नुकसान की रिपोर्ट करनी है",
+  "chat_bot_guidance": "मैं इसमें आपकी मदद कर सकता हूँ! मैं आपको शिकायत दर्ज करने की प्रक्रिया में मार्गदर्शन करूँगा। सबसे पहले, क्या आप नुकसान का स्थान बता सकते हैं?",
+  "home": "होम",
+  "dashboard": "डैशबोर्ड",
+  "submit_complaints": "शिकायत दर्ज करें",
+  "recent_my_complaints": "मेरी शिकायतें",
+  "login": "लॉगिन",
+  "sign_up": "साइन अप",
+  "logout": "लॉग आउट",
+  "ai_chatbot_status": "AI चैटबॉट",
+  "complaint_details_1": "शिकायत विवरण",
+
+  "my_complaints": "मेरी शिकायतें",
+  "track_manage": "अपनी सभी दर्ज की गई शिकायतों को आसानी से ट्रैक और प्रबंधित करें।",
+  "high": "उच्च",
+  "medium": "मध्यम",
+  "low": "कम",
+  "loading_complaints": "शिकायतें लोड हो रही हैं...",
+  "view_complaints": "देखें",
+  "evidence": "साक्ष्य"
+
+}

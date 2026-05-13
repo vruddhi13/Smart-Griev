@@ -1,11 +1,27 @@
 ﻿import React, { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
+import { useTranslationContext } from "../../Context/TranslationContext";
 
 const CitizenComplaintStatus = () => {
     const [dashboard, setDashboard] = useState(null);
     const [loading, setLoading] = useState(true);
+    const { t } = useTranslationContext();
 
     const navigate = useNavigate();
+
+    let user = null;
+
+    const storedUser = sessionStorage.getItem("user");
+
+    if (storedUser && storedUser !== "undefined") {
+        try {
+            user = JSON.parse(storedUser);
+        } catch (error) {
+            console.log(error);
+            user = null;
+        }
+    }
+
 
     useEffect(() => {
         const userId = 1;
@@ -21,7 +37,7 @@ const CitizenComplaintStatus = () => {
             });
     }, []);
 
-    if (loading) return <div style={{ textAlign: 'center', padding: '50px' }}>Loading Dashboard...</div>;
+    if (loading) return <div style={{ textAlign: 'center', padding: '50px' }}>{t("loading_dashboard")}</div>;
 
     const styles = {
         pageWrapper: {
@@ -198,8 +214,8 @@ const CitizenComplaintStatus = () => {
         <div style={styles.pageWrapper}>
             <div style={styles.blueBanner}>
                 <div style={styles.headerContent}>
-                    <h1 style={styles.welcomeText}>Welcome back, Shreya Vora! 👋</h1>
-                    <p style={styles.subWelcome}>Here's what's happening with your complaints today.</p>
+                    <h1 style={styles.welcomeText}>{t("welcome_back")}, {user?.name || "User"}! 👋</h1>
+                    <p style={styles.subWelcome}>{t("dashboard_welcome")}</p>
                 </div>
             </div>
 
@@ -209,52 +225,52 @@ const CitizenComplaintStatus = () => {
                     <div style={styles.statCard("#3b82f6")}>
                         <span style={{ fontSize: '1.5rem' }}>📊</span>
                         <div style={styles.statNumber}>{dashboard?.total || 0}</div>
-                        <div style={styles.statLabel}>Total Complaints</div>
+                        <div style={styles.statLabel}>{t("total_complaints")}</div>
                     </div>
                     <div style={styles.statCard("#f59e0b")}>
                         <span style={{ fontSize: '1.5rem' }}>⏳</span>
                         <div style={styles.statNumber}>{dashboard?.pending || 0}</div>
-                        <div style={styles.statLabel}>Pending</div>
+                        <div style={styles.statLabel}>{t("pending")}</div>
                     </div>
                     <div style={styles.statCard("#3b82f6")}>
                         <span style={{ fontSize: '1.5rem' }}>🔄</span>
                         <div style={styles.statNumber}>{dashboard?.inPending || 0}</div>
-                        <div style={styles.statLabel}>In Progress</div>
+                        <div style={styles.statLabel}>{t("in_progress")}</div>
                     </div>
                     <div style={styles.statCard("#10b981")}>
                         <span style={{ fontSize: '1.5rem' }}>✅</span>
                         <div style={styles.statNumber}>{dashboard?.resolved || 0}</div>
-                        <div style={styles.statLabel}>Resolved</div>
+                        <div style={styles.statLabel}>{t("resolved")}</div>
                     </div>
                 </div>
-                <h2 style={styles.sectionTitle}>Quick Actions</h2>
+                <h2 style={styles.sectionTitle}>{t("quick_actions")}</h2>
                 <div style={styles.actionGrid}>
                     <div style={styles.actionCard}>
                         <div style={styles.actionIcon}>🤖</div>
-                        <h3 style={{ margin: '0 0 10px 0' }}>AI Chatbot</h3>
-                        <p style={{ color: "#64748b", fontSize: "0.9rem", lineHeight: '1.5' }}> Get instant help from our AI assistant. Ask questions or track status. </p>
+                        <h3 style={{ margin: '0 0 10px 0' }}>{t("ai_chatbot_status")}</h3>
+                        <p style={{ color: "#64748b", fontSize: "0.9rem", lineHeight: '1.5' }}> {t("ai_chatbot_text")} </p>
                     </div>
                     <div style={styles.actionCard}>
                         <div style={styles.actionIcon} onClick={() => navigate("/CitizenComplaint")}>📝</div>
-                        <h3 style={{ margin: '0 0 10px 0' }}>Submit New Complaint</h3>
-                        <p style={{ color: "#64748b", fontSize: "0.9rem", lineHeight: '1.5' }}> Create a new complaint with image or audio evidence using our system. </p>
+                        <h3 style={{ margin: '0 0 10px 0' }}>{t("submit_new_complaint")}</h3>
+                        <p style={{ color: "#64748b", fontSize: "0.9rem", lineHeight: '1.5' }}>{t("submit_desc")}  </p>
                     </div>
                     <div style={styles.actionCard}>
                         <div style={styles.actionIcon} onClick={() => navigate("/MyComplaints")}>📋</div>
-                        <h3 style={{ margin: '0 0 10px 0' }}>View All Complaints</h3>
-                        <p style={{ color: "#64748b", fontSize: "0.9rem", lineHeight: '1.5' }}> See all your submitted complaints and track their live progress. </p>
+                        <h3 style={{ margin: '0 0 10px 0' }}>{t("view_all_complaints")}</h3>
+                        <p style={{ color: "#64748b", fontSize: "0.9rem", lineHeight: '1.5' }}> {t("view_desc")} </p>
                     </div>
                 </div>
 
-                <h2 style={styles.sectionTitle}>Recent Complaints</h2>
+                <h2 style={styles.sectionTitle}>{t("recent_complaints")}</h2>
                 <div style={styles.tableCard}>
                     <table style={styles.table}>
                         <thead>
                             <tr>
-                                <th style={styles.th}>Complaint Details</th>
-                                <th style={styles.th}>Status</th>
-                                <th style={styles.th}>Priority</th>
-                                <th style={styles.th}>Date</th>
+                                <th style={styles.th}>{t("complaint_details_1")}</th>
+                                <th style={styles.th}>{t("status")}</th>
+                                <th style={styles.th}>{t("priority")}</th>
+                                <th style={styles.th}>{t("date")}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -282,7 +298,7 @@ const CitizenComplaintStatus = () => {
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan="4" style={{ textAlign: 'center', padding: '40px', color: '#94a3b8' }}>No complaints yet.</td>
+                                        <td colSpan="4" style={{ textAlign: 'center', padding: '40px', color: '#94a3b8' }}>{t("no_complaints")}</td>
                                 </tr>
                             )}
                         </tbody>
