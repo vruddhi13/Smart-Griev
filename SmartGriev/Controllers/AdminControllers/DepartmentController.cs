@@ -92,5 +92,18 @@ namespace SmartGriev.Controllers.AdminControllers
                 isActive = updatedDept.IsActive
             });
         }
+        [HttpGet("dropdown")]
+        public async Task<IActionResult> GetDepartmentDropdown()
+        {
+            var departments = await _repo.GetAllDepartments();
+
+            var result = departments.Select(d => new
+            {
+                departmentId = d.DepartmentId,
+                departmentName = d.DepartmentName
+            });
+
+            return Ok(result);
+        }
     }
 }

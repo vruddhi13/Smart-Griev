@@ -17,13 +17,17 @@ namespace SmartGriev.Controllers.DepartmentHeadController
         {
             _context = context;
         }
-        [HttpPost("depthead-assign")]
-        public async Task<IActionResult> DeptHeadAssign([FromBody] AssignComplaintDTO model)
+
+        [HttpPost("assign")]
+        public async Task<IActionResult> AssignComplaint(
+           [FromBody] AssignComplaintDTO model)
         {
             var complaint = await _context.Complaints
-                .FirstOrDefaultAsync(c => c.ComplaintId == model.ComplaintId);
+                .FirstOrDefaultAsync(c =>
+                    c.ComplaintId == model.ComplaintId);
 
-            if (complaint == null) return NotFound("Complaint not found");
+            if (complaint == null)
+                return NotFound("Complaint not found");
 
             var oldStatus = complaint.Status;
 
@@ -31,18 +35,71 @@ namespace SmartGriev.Controllers.DepartmentHeadController
             complaint.Status = "Assigned";
             complaint.UpdatedAt = DateTime.Now;
 
-            _context.ComplaintAssignments.Add(new ComplaintAssignment
-            {
-                ComplaintId = model.ComplaintId,
-                AssignedTo = model.OfficerId,
-                AssignedBy = model.AdminId,
-                AssignmentStatus = model.ForceReassign ? "Reassigned" : "Assigned",
-                Remarks = "Assigned by Department Head: " + model.Remarks,
-                AssignedAt = DateTime.Now
-            });
+            // Assignment Log
+            _context.ComplaintAssignments.Add(
+                new ComplaintAssignment
+                {
+                    ComplaintId = model.ComplaintId,
+                    AssignedTo = model.OfficerId,
+                    AssignedBy = model.AdminId,
+                    AssignmentStatus = model.ForceReassign
+                        ? "Reassigned"
+                        : "Assigned",
+
+                    Remarks = model.Remarks,
+                    AssignedAt = DateTime.Now
+                });
+
+            // Status Log
+            _context.ComplaintStatusLogs.Add(
+                new ComplaintStatusLog
+                {
+                    ComplaintId = model.ComplaintId,
+                    OldStatus = oldStatus,
+                    NewStatus = "Assigned",
+                    ChangedBy = model.AdminId,
+                    Remarks = model.Remarks,
+                    ChangedAt = DateTime.Now
+                });
 
             await _context.SaveChangesAsync();
-            return Ok(new { message = "Complaint assigned by Dept Head successfully" });
+
+            return Ok(new
+            {
+                success = true,
+                message = model.ForceReassign
+                    ? "Complaint reassigned successfully"
+                    : "Complaint assigned successfully"
+            });
+        }
+
+        // ==============================
+        // GET DEPARTMENT COMPLAINTS
+        // ==============================
+        [HttpGet("department-complaints/{departmentId}")]
+        public async Task<IActionResult> GetDepartmentComplaints(int departmentId)
+        {
+            var complaints = await _context.Complaints
+                .Where(c => c.DepartmentId == departmentId)
+                .Select(c => new
+                {
+                    complaintId = c.ComplaintId,
+                    complaintNumber = c.ComplaintNumber,
+                    userName = c.User.FullName,
+                    departmentName = c.Department.DepartmentName,
+                    categoryName = c.Category.CategoryName,
+                    location = c.ComplaintLocations,
+                    priorityLevel = c.PriorityLevel,
+                    status = c.Status,
+                    createdAt = c.CreatedAt,
+                    assignedTo = c.AssignedTo,
+                    assignedToName = c.AssignedToNavigation != null
+    ? c.AssignedToNavigation.FullName
+    : null
+                })
+                .ToListAsync();
+
+            return Ok(complaints);
         }
     }
 }

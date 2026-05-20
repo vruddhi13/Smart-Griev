@@ -1,7 +1,8 @@
 ﻿const API = "https://localhost:7224/api/DeptHead";
 
 export const deptHeadAssignComplaint = async (data) => {
-    const res = await fetch(`${API}/depthead-assign`, {
+
+    const res = await fetch(`${API}/assign`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -10,8 +11,21 @@ export const deptHeadAssignComplaint = async (data) => {
     });
 
     if (!res.ok) {
-        const errorText = await res.text();
-        throw new Error(errorText || "DeptHead Assignment failed");
+        const error = await res.text();
+        throw new Error(error);
+    }
+
+    return await res.json();
+};
+
+export const getDepartmentComplaints = async (departmentId) => {
+
+    const res = await fetch(
+        `${API}/department-complaints/${departmentId}`
+    );
+
+    if (!res.ok) {
+        throw new Error("Failed to fetch complaints");
     }
 
     return await res.json();

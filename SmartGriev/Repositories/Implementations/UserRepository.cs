@@ -46,15 +46,24 @@ namespace SmartGriev.Repositories.Implementations
         {
             return await _context.Users
                 .Include(u => u.Role)
+                .Include(u => u.Department)
                 .Where(u => !u.IsDeleted)
                 .Select(u => new
                 {
-                    userId = u.UserId,      
-                    name = u.FullName,     
-                    email = u.Email,        
-                    phone = u.MobileNo,     
+                    userId = u.UserId,
+                    name = u.FullName,
+                    email = u.Email,
+                    phone = u.MobileNo,
+
                     roleName = u.Role.RoleName,
-                    roleId = u.RoleId,      
+                    roleId = u.RoleId,
+
+                    departmentId = u.DepartmentId,
+
+                    departmentName = u.Department != null
+                        ? u.Department.DepartmentName
+                        : null,
+
                     isActive = u.IsActive
                 })
                 .ToListAsync<object>();

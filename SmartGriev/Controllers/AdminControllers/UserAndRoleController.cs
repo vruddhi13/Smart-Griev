@@ -53,7 +53,14 @@ namespace SmartGriev.Controllers.AdminControllers
 
             // ✅ ROLE FIX (MAIN PART)
             user.RoleId = dto.RoleId;
-
+            if (dto.RoleId == 2 || dto.RoleId == 3)
+            {
+                user.DepartmentId = dto.DepartmentId;
+            }
+            else
+            {
+                user.DepartmentId = null;
+            }
             // ✅ OPTIONAL: auto-role from email (if needed)
             if (!string.IsNullOrEmpty(dto.Email))
             {
@@ -90,6 +97,7 @@ namespace SmartGriev.Controllers.AdminControllers
                 Email = dto.Email,
                 MobileNo = dto.Phone,
                 RoleId = dto.RoleId,
+                DepartmentId = dto.DepartmentId,
                 IsActive = true,
                 CreatedAt = DateTime.Now
             };

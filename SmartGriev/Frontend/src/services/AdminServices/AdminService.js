@@ -283,25 +283,6 @@ export const getComplaints = async () => {
     return await res.json();
 };
 
-export const assignComplaint = async (data) => {
-    const res = await fetch("https://localhost:7224/api/Complaint/assign-complaint", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(data)
-    });
-
-    const text = await res.text();
-
-    if (!res.ok) {
-        console.error("API ERROR:", text);
-        throw new Error(text || "Assignment failed");
-    }
-
-    return text ? JSON.parse(text) : {};
-};
-
 export const updateStatus = async (complaintId, status) => {
     const res = await fetch("https://localhost:7224/api/officer/update-status", {
         method: "POST",
@@ -333,4 +314,39 @@ export const getOfficers = async () => {
         console.error("API ERROR:", error);
         throw error;
     }
+};
+
+export const getEscalations = async () => {
+
+    const res = await fetch("https://localhost:7224/api/escalation");
+
+    if (!res.ok) {
+        throw new Error("Failed to fetch escalations");
+    }
+
+    return await res.json();
+};
+
+export const runAutoEscalation = async () => {
+
+    const res = await fetch(
+        "https://localhost:7224/api/escalation/auto",
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }
+    );
+
+    if (!res.ok) {
+
+        const errorText = await res.text();
+
+        console.log(errorText);
+
+        throw new Error("Auto escalation failed");
+    }
+
+    return await res.json();
 };

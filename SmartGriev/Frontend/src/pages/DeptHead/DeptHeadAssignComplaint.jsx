@@ -2,10 +2,10 @@
 import AdminLayout from '../../layout/DeptHeadLayout';
 import { deptHeadTheme as theme } from '../../services/DeptHeadServices/DeptHeadTheme';
 import { Eye, MapPin, AlertCircle, X, RefreshCcw } from 'lucide-react';
-import { getComplaints, getOfficers } from '../../services/AdminServices/AdminService';
+import { getOfficers } from '../../services/AdminServices/AdminService';
 
 // Logic Fix: Matching lowercase export and aliasing to avoid component name conflict
-import { deptHeadAssignComplaint as assignComplaintService } from '../../services/DeptHeadServices/DeptHeadService';
+import { deptHeadAssignComplaint as assignComplaintService, getDepartmentComplaints } from '../../services/DeptHeadServices/DeptHeadService';
 
 import usePagination from '../../services/usePagination';
 import Pagination from '../../Components/AdminComponents/Pagination';
@@ -31,15 +31,29 @@ const DeptHeadAssignComplaint = () => {
 
     const fetchComplaints = async () => {
         try {
+
             setLoading(true);
-            const response = await getComplaints();
-            // Data Fix: Ensuring we handle cases where API returns { data: [] }
-            const data = response?.data || response || [];
+
+            const deptId = sessionStorage.getItem("deptId");
+
+            const response =
+                await getDepartmentComplaints(deptId);
+
+            const data = response || [];
+
             setComplaints(data);
+
         } catch (err) {
-            console.error("Error fetching complaints:", err);
+
+            console.error(
+                "Error fetching complaints:",
+                err
+            );
+
         } finally {
+
             setLoading(false);
+
         }
     };
 
@@ -171,7 +185,14 @@ const DeptHeadAssignComplaint = () => {
                                         <td style={{ ...tdStyle, maxWidth: '250px' }}>
                                             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                                                 <MapPin size={14} />
-                                                <span style={ellipsisText}>{c.location || "N/A"}</span>
+
+                                                <span style={ellipsisText}>
+                                                    {
+                                                        c.location?.length > 0
+                                                            ? c.location[0].address
+                                                            : "N/A"
+                                                    }
+                                                </span>
                                             </div>
                                         </td>
                                         <td style={tdStyle}>{c.assignedToName || "Not Assigned"}</td>

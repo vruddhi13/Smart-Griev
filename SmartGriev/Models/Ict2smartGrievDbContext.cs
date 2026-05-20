@@ -688,7 +688,7 @@ public partial class Ict2smartGrievDbContext : DbContext
                 .HasConstraintName("FK_sla_tracking_complaint");
 
             entity.HasOne(d => d.Sla)
-                .WithMany()
+                .WithMany(p => p.SlaTrackings)
                 .HasForeignKey(d => d.SlaId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_sla_tracking_sla");

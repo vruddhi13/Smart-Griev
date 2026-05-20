@@ -189,7 +189,8 @@ namespace SmartGriev.Controllers.Identity
                         userId = user.UserId,
                         roleId = user.RoleId,
                         type = "login" ,  // 👈 IMPORTANT
-                        name = user.FullName
+                        name = user.FullName,
+                        departmentId = user.DepartmentId
                     }
                 });
             }
