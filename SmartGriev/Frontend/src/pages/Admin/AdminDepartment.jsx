@@ -71,15 +71,11 @@ const AdminDepartments = () => {
             setIsFormOpen(false);
 
             fetchDepartments();
-
-        } catch (error) {
-            
-            console.log(error);
-            showError("Something went wrong");
         } catch {
             showError("Something went wrong.");
         }
     };
+
 
     const handleDelete = async (id) => {
         const confirmed = await confirmDelete();
@@ -88,11 +84,6 @@ const AdminDepartments = () => {
 
         try {
             await deleteDepartment(id);
-            showSuccessToast("Department deleted successfully");
-            fetchDepartments();
-        } catch (error) {
-            console.error(error);
-            showError("Delete failed");
 
             setDepartments(prev =>
                 prev.filter(dept => dept.departmentId !== id)
