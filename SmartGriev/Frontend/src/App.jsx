@@ -25,7 +25,7 @@ import OfficerAccount from './pages/Officer/OfficerAccount';
 import StatusPieReport from './pages/Officer/StatusPieReport';
 import DeptHeadDashboard from './pages/DeptHead/DeptHeadDashboard';
 import DeptHeadAssignComplaint from './pages/DeptHead/DeptHeadAssignComplaint';
-
+import AdminAuditLog from './pages/Admin/AdminAuditLog';
 
 
 function App() {
@@ -54,6 +54,7 @@ function App() {
                 <Route path="/admin/users" element={<ProtectedRoute allowedRole="1"><AdminUserRolePanel /></ProtectedRoute>} />
                 <Route path="/admin/sla" element={<ProtectedRoute allowedRole="1"><AdminSLAMaster /></ProtectedRoute>} />
                 <Route path="/admin/complaintdetails" element={<ProtectedRoute allowedRole="1"><AdminComplaints /></ProtectedRoute>} />
+                <Route path="/admin/audit" element={<ProtectedRoute allowedRole="1"><AdminAuditLog /></ProtectedRoute>} />
 
                 {/*Officer*/}
                 <Route path="/officer" element={<ProtectedRoute allowedRole="3"><OfficerDashboard /></ProtectedRoute>} />

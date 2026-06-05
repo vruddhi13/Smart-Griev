@@ -122,17 +122,17 @@ const AdminComplaints = () => {
                 margin: '0 auto',
             }}>
 
-                {/* HEADER */}
+                
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div>
-                        <h2 style={{
-                            color: theme.colors.text.main,
-                            margin: 0,
-                            fontSize: '26px',
-                            fontWeight: '700',
-                        }}>
-                            Complaint Management
-                        </h2>
+                        {/*<h2 style={{*/}
+                        {/*    color: theme.colors.text.main,*/}
+                        {/*    margin: 0,*/}
+                        {/*    fontSize: '26px',*/}
+                        {/*    fontWeight: '700',*/}
+                        {/*}}>*/}
+                        {/*    Complaint Management*/}
+                        {/*</h2>*/}
                         <p style={{ color: theme.colors.text.gray, fontSize: '15px' }}>
                             Monitor and manage city grievances
                         </p>

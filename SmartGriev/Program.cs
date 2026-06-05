@@ -46,6 +46,7 @@ namespace SmartGriev
             builder.Services.AddHttpClient<HuggingFaceAIService>();
             builder.Services.AddScoped<IComplaintRepository, ComplaintRepository>();
             builder.Services.AddScoped<ISlaRepository, SlaRepository>();
+            builder.Services.AddScoped<IAuditRepository, AuditRepository>();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -114,7 +115,6 @@ namespace SmartGriev
 
             builder.Services.AddAuthentication();
             builder.Services.AddAuthorization();
-
 
             var app = builder.Build();
 

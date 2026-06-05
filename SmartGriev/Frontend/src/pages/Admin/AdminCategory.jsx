@@ -2,6 +2,7 @@
 import AdminLayout from '../../layout/AdminLayout';
 import { adminTheme as theme } from '../../services/AdminServices/AdminTheme';
 import { ListTree, Plus, Trash2, Edit, X, Clock, Info } from 'lucide-react';
+import { showError, showSuccessToast } from "../../services/alertservice";
 import {
     getCategories,
     addCategory,
@@ -52,16 +53,16 @@ const AdminCategories = () => {
         try {
             if (editId) {
                 await updateCategory(editId, formData);
-                alert("Category updated successfully");
+                showSuccessToast("Category updated successfully");
             } else {
                 await addCategory(formData);
-                alert("Category added successfully");
+                showSuccessToast("Category added successfully");
             }
             resetForm();
             fetchData();
         } catch (error) {
             console.error("API Error:", error);
-            alert("Operation failed");
+            showError("Operation failed");
         }
     };
 
@@ -69,9 +70,11 @@ const AdminCategories = () => {
         if (!window.confirm("Soft delete this category?")) return;
         try {
             await deleteCategory(id);
+            showSuccessToast("Category deleted successfully");
             fetchData();
         } catch (error) {
             console.error(error);
+            showError("Delete failed");
         }
     };
 
@@ -107,7 +110,7 @@ const AdminCategories = () => {
                 {/* HEADER SECTION */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div>
-                        <h2 style={{ color: theme.colors.text.main, margin: 0 }}>Complaint Categories</h2>
+                        {/*<h2 style={{ color: theme.colors.text.main, margin: 0 }}>Complaint Categories</h2>*/}
                         <p style={{ color: theme.colors.text.gray, fontSize: '14px' }}>Map complaint types to specific departments</p>
                     </div>
                     <button

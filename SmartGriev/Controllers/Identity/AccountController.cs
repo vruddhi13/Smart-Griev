@@ -1,12 +1,16 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using SmartGriev.DTOs;
+using SmartGriev.DTOs.OfficerDTOs;
 using SmartGriev.Models;
 using SmartGriev.Repositories.Interfaces;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using Microsoft.AspNetCore.Identity;
+
 
 namespace SmartGriev.Controllers.Identity
 {
@@ -359,5 +363,60 @@ namespace SmartGriev.Controllers.Identity
                 Data = null
             });
         }
+
+        [HttpPost("citizen/change-password")]
+        public async Task<ActionResult<ApiResponse<object>>> ChangePassword(CitizenPasswordChangeDTO model)
+        {
+            if (string.IsNullOrEmpty(model.Email) ||
+                string.IsNullOrEmpty(model.CurrentPassword) ||
+                string.IsNullOrEmpty(model.NewPassword))
+            {
+                return BadRequest(new ApiResponse<object>
+                {
+                    Status = false,
+                    StatusCode = 400,
+                    Message = "All fields are required",
+                    Data = null
+                });
+            }
+
+            var user = await _userRepository
+                .GetUserByEmailOrMobile(model.Email);
+
+            if (user == null)
+            {
+                return NotFound(new ApiResponse<object>
+                {
+                    Status = false,
+                    StatusCode = 404,
+                    Message = "User not found",
+                    Data = null
+                });
+            }
+
+            if (user.PasswordHash != model.CurrentPassword)
+            {
+                return BadRequest(new ApiResponse<object>
+                {
+                    Status = false,
+                    StatusCode = 400,
+                    Message = "Current password is incorrect",
+                    Data = null
+                });
+            }
+
+            user.PasswordHash = model.NewPassword;
+
+            await _userRepository.UpdateUser(user);
+
+            return Ok(new ApiResponse<object>
+            {
+                Status = true,
+                StatusCode = 200,
+                Message = "Password changed successfully",
+                Data = null
+            });
+        }
+
     }
 }

@@ -59,5 +59,11 @@ namespace SmartGriev.Repositories.Implementations
             sla.IsActive = false;
             await _context.SaveChangesAsync();
         }
+
+        public async Task<SlaMaster?> GetSlaById(int id)
+        {
+            return await _context.SlaMasters
+                .FirstOrDefaultAsync(s => s.SlaId == id);
+        }
     }
 }
