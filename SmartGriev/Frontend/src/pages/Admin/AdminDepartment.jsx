@@ -5,6 +5,7 @@ import { Building2, Plus, Trash2, Edit, X, UserX, UserCheck } from 'lucide-react
 import { getDepartments, addDepartment, updateDepartment, deleteDepartment, toggleDepartmentStatus } from "../../services/AdminServices/AdminService"; 
 import usePagination from '../../services/usePagination';
 import Pagination from '../../Components/AdminComponents/Pagination';
+import { showError, showSuccessToast } from "../../services/alertservice";
 import {
     confirmDelete,
     showSuccessToast,
@@ -38,10 +39,11 @@ const AdminDepartments = () => {
     const handleToggleStatus = async (deptId) => {
         try {
             await toggleDepartmentStatus(deptId);
+            showSuccessToast("Department status updated");
             fetchDepartments(); // Refresh the table
         } catch (error) {
             console.error("Failed to toggle department status:", error);
-            alert("Failed to update status");
+            showError("Failed to update status");
         }
     };
 
@@ -70,6 +72,10 @@ const AdminDepartments = () => {
 
             fetchDepartments();
 
+        } catch (error) {
+            
+            console.log(error);
+            showError("Something went wrong");
         } catch {
             showError("Something went wrong.");
         }
@@ -82,6 +88,11 @@ const AdminDepartments = () => {
 
         try {
             await deleteDepartment(id);
+            showSuccessToast("Department deleted successfully");
+            fetchDepartments();
+        } catch (error) {
+            console.error(error);
+            showError("Delete failed");
 
             setDepartments(prev =>
                 prev.filter(dept => dept.departmentId !== id)
@@ -110,7 +121,7 @@ const AdminDepartments = () => {
                 {/* HEADER SECTION */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div>
-                        <h2 style={{ color: theme.colors.text.main, margin: 0 }}>City Departments</h2>
+                        {/*<h2 style={{ color: theme.colors.text.main, margin: 0 }}>City Departments</h2>*/}
                         <p style={{ color: theme.colors.text.gray, fontSize: '14px' }}>Manage and monitor municipal sectors</p>
                     </div>
                     <button

@@ -1,31 +1,75 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SmartGriev.DTOs;
-using SmartGriev.Models;
-using SmartGriev.Repositories.Interfaces;
 using SmartGriev.DTOs.AdminDTOs;
+using SmartGriev.Models;
 using SmartGriev.Repositories.Implementations;
+using SmartGriev.Repositories.Interfaces;
+using System.Text.Json;
 
 namespace SmartGriev.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ComplaintController : ControllerBase
     {
         private readonly Ict2smartGrievDbContext _context;
         private readonly IComplaintRepository _repo;
+        private readonly IAuditRepository _auditRepo;
 
-        public ComplaintController(IComplaintRepository repo, Ict2smartGrievDbContext context)
+        public ComplaintController(IComplaintRepository repo, Ict2smartGrievDbContext context, IAuditRepository auditRepo)
         {
             _context = context;
             _repo = repo;
+            _auditRepo = auditRepo;
+        }
+
+        private int? GetUserId()
+        {
+            var claim = User.FindFirst("UserId");
+
+            if (claim == null)
+                return null;
+
+            return int.Parse(claim.Value);
         }
 
         [HttpPost]
         public async Task<IActionResult> SubmitComplaint([FromForm] ComplaintDTO dto)
         {
+            var userId = GetUserId();
+            if (userId == null)
+            {
+                return Unauthorized("User not authenticated");
+            }
             var result = await _repo.SubmitComplaint(dto);
+
+            //audit log
+            var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
+            string newDataJson = JsonSerializer.Serialize(new
+            {
+                // Serializing critical fields safely
+                dto.CategoryId,
+                dto.Description,
+                dto.PriorityLevel
+            });
+
+            // 3. Save CREATE Audit Log
+            await _auditRepo.AddLog(new AuditLog
+            {
+                UserId = userId.Value,
+                ActionType = "CREATE",
+                EntityName = "Complaint",
+                EntityId = null, // Set to result identifier if your SubmitComplaint repo contract exposes it
+                OldData = null,
+                NewData = newDataJson,
+                Description = $"Created a new complaint mapping to Category {dto.CategoryId}",
+                IpAddress = ipAddress,
+                UserAgent = Request.Headers["User-Agent"].ToString()
+            });
 
             return Ok(result);
         }
@@ -75,8 +119,8 @@ namespace SmartGriev.Controllers
                 {
                     total = complaints.Count,
                     // Adjust these strings ("Pending", "Resolved") to match exactly what's in your Database
-                    pending = complaints.Count(c => c.Status == "Submitted" || c.Status == "Pending"),
-                    inProgress = complaints.Count(c => c.Status == "In Progress"),
+                    pending = complaints.Count(c => c.Status == "Submitted" ),
+                    inProgress = complaints.Count(c => c.Status == "Assigned" || c.Status == "In Progress"),
                     resolved = complaints.Count(c => c.Status == "Resolved"),
 
                     // 3. Get only the top 5 for the "Recent" table
@@ -118,7 +162,22 @@ namespace SmartGriev.Controllers
                                 .Select(l => l.Address)
                                 .FirstOrDefault(),
                     imageUrl = c.ComplaintImages
-                                .Select(i => i.FilePath != null? $"{Request.Scheme}://{Request.Host}/{i.FilePath}": null).FirstOrDefault()
+                                .Select(i => i.FilePath != null? $"{Request.Scheme}://{Request.Host}/{i.FilePath}": null).FirstOrDefault(),
+
+                    hasFeedback = _context.CitizenFeedbacks.Any(f => f.ComplaintId == c.ComplaintId),
+
+                     assignedOfficerName = _context.ComplaintAssignments
+                    .Where(a => a.ComplaintId == c.ComplaintId)
+                    .OrderByDescending(a => a.AssignedAt)
+                    .Select(a => a.AssignedToNavigation.FullName)
+                    .FirstOrDefault(),
+
+                    // ✅ ADD THIS
+                    assignedAt = _context.ComplaintAssignments
+                    .Where(a => a.ComplaintId == c.ComplaintId)
+                    .OrderByDescending(a => a.AssignedAt)
+                    .Select(a => a.AssignedAt)
+                    .FirstOrDefault()
                 })
                 .ToListAsync();
 
@@ -264,6 +323,93 @@ namespace SmartGriev.Controllers
             }
         }
 
+        [HttpPost("assign-complaint")]
+        public async Task<IActionResult> AssignComplaint([FromBody] AssignComplaintDTO model)
+        {
+            var userId = GetUserId();
+            if (userId == null)
+            {
+                return Unauthorized("User not authenticated");
+            }
+            var complaint = await _context.Complaints
+                .FirstOrDefaultAsync(c => c.ComplaintId == model.ComplaintId);
+
+            if (complaint == null)
+                return NotFound("Complaint not found");
+            if (complaint.AssignedTo != null && !model.ForceReassign)
+            {
+                return BadRequest("Complaint already assigned");
+            }
+
+            var oldStatus = complaint.Status;
+
+            string oldDataJson = JsonSerializer.Serialize(new
+            {
+                complaint.ComplaintId,
+                complaint.ComplaintNumber,
+                complaint.AssignedTo,
+                complaint.Status,
+                complaint.UpdatedAt
+            });
+            // ✅ UPDATE
+            complaint.AssignedTo = model.OfficerId;
+            complaint.Status = "Assigned";
+            complaint.UpdatedAt = DateTime.Now;
+
+            // ✅ ASSIGNMENT LOG
+            _context.ComplaintAssignments.Add(new ComplaintAssignment
+            {
+                ComplaintId = model.ComplaintId,
+                AssignedTo = model.OfficerId,
+                AssignedBy = model.AdminId,
+                AssignmentStatus = model.ForceReassign ? "Reassigned" : "Assigned",
+                Remarks = model.Remarks,
+                AssignedAt = DateTime.Now
+            });
+
+            // ✅ STATUS LOG
+            _context.ComplaintStatusLogs.Add(new ComplaintStatusLog
+            {
+                ComplaintId = model.ComplaintId,
+                OldStatus = oldStatus,
+                NewStatus = "Assigned",
+                ChangedBy = model.AdminId,
+                Remarks = model.ForceReassign ? "Reassigned by admin" : "Assigned by admin",
+                ChangedAt = DateTime.Now
+            });
+
+            await _context.SaveChangesAsync();
+            string newDataJson = JsonSerializer.Serialize(new
+            {
+                complaint.ComplaintId,
+                complaint.ComplaintNumber,
+                complaint.AssignedTo,
+                complaint.Status,
+                complaint.UpdatedAt
+            });
+
+            var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
+
+            // 3. Save UPDATE Audit Log
+            await _auditRepo.AddLog(new AuditLog
+            {
+                UserId = userId.Value,
+                ActionType = "UPDATE",
+                EntityName = "Complaint",
+                EntityId = complaint.ComplaintId,
+                OldData = oldDataJson,
+                NewData = newDataJson,
+                Description = model.ForceReassign
+                    ? $"Reassigned complaint {complaint.ComplaintNumber} to officer ID {model.OfficerId}"
+                    : $"Assigned complaint {complaint.ComplaintNumber} to officer ID {model.OfficerId}",
+                IpAddress = ipAddress,
+                UserAgent = Request.Headers["User-Agent"].ToString()
+            });
+
+            await CreateNotification(model.OfficerId,complaint.ComplaintId,"Complaint Assigned",$"New complaint assigned: {complaint.ComplaintNumber}","Complaint");
+            return Ok(new { message = "Complaint assigned successfully" });
+        }
+
         [HttpGet("get-officers")]
         public async Task<IActionResult> GetOfficers()
         {
@@ -281,6 +427,24 @@ namespace SmartGriev.Controllers
                 .ToListAsync();
 
             return Ok(officers);
+        }
+
+        private async Task CreateNotification(int userId, int? complaintId, string title, string message, string type)
+        {
+            var notification = new Notification
+            {
+                UserId = userId,
+                ComplaintId = complaintId,
+                Title = title,
+                Message = message,
+                NotificationType = type,
+                IsRead = false,
+                SentAt = DateTime.Now
+            };
+
+            _context.Notifications.Add(notification);
+
+            await _context.SaveChangesAsync();
         }
     }
 }

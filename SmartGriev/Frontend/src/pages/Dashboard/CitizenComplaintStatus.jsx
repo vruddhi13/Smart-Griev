@@ -24,9 +24,23 @@ const CitizenComplaintStatus = () => {
 
 
     useEffect(() => {
-        const userId = 1;
-        fetch(`https://localhost:7224/api/Complaint/dashboard/${userId}`)
-            .then(res => res.json())
+        const token = sessionStorage.getItem("token");
+
+        fetch(
+            `https://localhost:7224/api/Complaint/dashboard/1`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }
+        )
+            .then(async (res) => {
+                if (!res.ok) {
+                    throw new Error(`HTTP ${res.status}`);
+                }
+
+                return res.json();
+            })
             .then(data => {
                 setDashboard(data);
                 setLoading(false);
@@ -234,7 +248,7 @@ const CitizenComplaintStatus = () => {
                     </div>
                     <div style={styles.statCard("#3b82f6")}>
                         <span style={{ fontSize: '1.5rem' }}>🔄</span>
-                        <div style={styles.statNumber}>{dashboard?.inPending || 0}</div>
+                        <div style={styles.statNumber}>{dashboard?.inProgress || 0}</div>
                         <div style={styles.statLabel}>{t("in_progress")}</div>
                     </div>
                     <div style={styles.statCard("#10b981")}>
@@ -246,7 +260,7 @@ const CitizenComplaintStatus = () => {
                 <h2 style={styles.sectionTitle}>{t("quick_actions")}</h2>
                 <div style={styles.actionGrid}>
                     <div style={styles.actionCard}>
-                        <div style={styles.actionIcon}>🤖</div>
+                        <div style={styles.actionIcon} onClick={() => navigate("/AIChatBotPage")}>🤖</div>
                         <h3 style={{ margin: '0 0 10px 0' }}>{t("ai_chatbot_status")}</h3>
                         <p style={{ color: "#64748b", fontSize: "0.9rem", lineHeight: '1.5' }}> {t("ai_chatbot_text")} </p>
                     </div>

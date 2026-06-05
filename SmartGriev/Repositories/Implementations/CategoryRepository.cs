@@ -80,5 +80,10 @@ namespace SmartGriev.Repositories.Implementations
                 );
             }
         }
+        public async Task<ComplaintCategory?> GetCategoryById(int id)
+        {
+            return await _context.ComplaintCategories
+                .FirstOrDefaultAsync(c => c.CategoryId == id);
+        }
     }
 }

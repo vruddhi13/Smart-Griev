@@ -1,8 +1,19 @@
 ﻿const API = "https://localhost:7224/api/admin";
 
+const getAuthHeaders = () => {
+    const token = sessionStorage.getItem("token");
+
+    return {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+    };
+};
+
 export const getDepartments = async () => {
 
-    const response = await fetch(`${API}/department`);
+    const response = await fetch(`${API}/department`, {
+        headers: getAuthHeaders()
+    });
 
     if (!response.ok) {
         throw new Error("Failed to fetch departments");
@@ -15,9 +26,7 @@ export const addDepartment = async (data) => {
 
     const response = await fetch(`${API}/department`, {
         method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
+        headers: getAuthHeaders(),
         body: JSON.stringify(data)
     });
 
@@ -31,9 +40,7 @@ export const addDepartment = async (data) => {
 export const updateDepartment = async (id, data) => {
     const response = await fetch(`${API}/department/${id}`, {
         method: "PUT",
-        headers: {
-            "Content-Type": "application/json"
-        },
+        headers: getAuthHeaders(),
         body: JSON.stringify(data)
     });
 
@@ -46,7 +53,10 @@ export const updateDepartment = async (id, data) => {
 
 export const deleteDepartment = async (id) => {
     const response = await fetch(`${API}/department/${id}`, {
-        method: "DELETE"
+        method: "DELETE",
+        headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("token")}`
+        }
     });
 
     const data = await response.json();
@@ -61,7 +71,9 @@ export const deleteDepartment = async (id) => {
 //Category Services 
 
 export const getCategories = async () => {
-    const response = await fetch(`${API}/category`);
+    const response = await fetch(`${API}/category`, {
+        headers: getAuthHeaders()
+    });
 
     if (!response.ok) {
         throw new Error("Failed to fetch categories");
@@ -73,9 +85,7 @@ export const getCategories = async () => {
 export const addCategory = async (data) => {
     const response = await fetch(`${API}/category`, {
         method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
+        headers: getAuthHeaders(),
         body: JSON.stringify(data)
     });
 
@@ -89,9 +99,7 @@ export const addCategory = async (data) => {
 export const updateCategory = async (id, data) => {
     const response = await fetch(`${API}/category/${id}`, {
         method: "PUT",
-        headers: {
-            "Content-Type": "application/json"
-        },
+        headers: getAuthHeaders(),
         body: JSON.stringify(data)
     });
 
@@ -104,7 +112,10 @@ export const updateCategory = async (id, data) => {
 
 export const deleteCategory = async (id) => {
     const response = await fetch(`${API}/category/${id}`, {
-        method: "DELETE"
+        method: "DELETE",
+        headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("token")}`
+        }
     });
 
     if (!response.ok) {
@@ -116,7 +127,9 @@ export const deleteCategory = async (id) => {
 
 export const getUsers = async () => {
 
-    const response = await fetch(`${API}/users`);
+    const response = await fetch(`${API}/users`, {
+        headers: getAuthHeaders()
+    });
 
     if (!response.ok) {
         throw new Error("Failed to fetch users");
@@ -127,7 +140,10 @@ export const getUsers = async () => {
 
 export const toggleUserStatus = async (userId) => {
     const response = await fetch(`${API}/users/${userId}/toggle-status`, {
-        method: "PUT"
+        method: "PUT",
+        headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("token")}`
+        }
     });
 
     if (!response.ok) {
@@ -160,6 +176,8 @@ export const addUser = async (formData) => {
 
     const response = await fetch(`${API}/users`, {
         method: "POST",
+        headers: getAuthHeaders(),
+        body: JSON.stringify(data)
         headers: {
             "Content-Type": "application/json"
         },
@@ -185,6 +203,8 @@ export const updateUser = async (id, formData) => {
 
     const response = await fetch(`${API}/users/${id}`, {
         method: "PUT",
+        headers: getAuthHeaders(),
+        body: JSON.stringify(data)
         headers: {
             "Content-Type": "application/json"
         },
@@ -201,7 +221,10 @@ export const updateUser = async (id, formData) => {
 // ❌ Delete User
 export const deleteUser = async (id) => {
     const response = await fetch(`${API}/users/${id}`, {
-        method: "DELETE"
+        method: "DELETE",
+        headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("token")}`
+        }
     });
 
     if (!response.ok) {
@@ -214,7 +237,9 @@ export const deleteUser = async (id) => {
 // SLA Services
 
 export const getSlas = async () => {
-    const response = await fetch(`${API}/sla`);
+    const response = await fetch(`${API}/sla`, {
+        headers: getAuthHeaders()
+    });
 
     if (!response.ok) {
         throw new Error("Failed to fetch SLA policies");
@@ -226,9 +251,7 @@ export const getSlas = async () => {
 export const addSla = async (data) => {
     const response = await fetch(`${API}/sla`, {
         method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
+        headers: getAuthHeaders(),
         body: JSON.stringify(data)
     });
 
@@ -242,9 +265,7 @@ export const addSla = async (data) => {
 export const updateSla = async (id, data) => {
     const response = await fetch(`${API}/sla/${id}`, {
         method: "PUT",
-        headers: {
-            "Content-Type": "application/json"
-        },
+        headers: getAuthHeaders(),
         body: JSON.stringify(data)
     });
 
@@ -257,7 +278,10 @@ export const updateSla = async (id, data) => {
 
 export const deleteSla = async (id) => {
     const response = await fetch(`${API}/sla/${id}`, {
-        method: "DELETE"
+        method: "DELETE",
+        headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("token")}`
+        }
     });
 
     if (!response.ok) {
@@ -271,7 +295,9 @@ export const deleteSla = async (id) => {
 
 export const getDashboardStats = async () => {
 
-    const response = await fetch(`${API}/dashboard`);
+    const response = await fetch(`${API}/dashboard`, {
+        headers: getAuthHeaders()
+    });
 
     if (!response.ok) {
         throw new Error("Failed to fetch dashboard stats");
@@ -282,7 +308,10 @@ export const getDashboardStats = async () => {
 
 export const toggleDepartmentStatus = async (departmentId) => {
     const response = await fetch(`${API}/department/${departmentId}/toggle-status`, {
-        method: "PUT"
+        method: "PUT",
+        headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("token")}`
+        }
     });
 
     if (!response.ok) {
@@ -293,7 +322,11 @@ export const toggleDepartmentStatus = async (departmentId) => {
 };
 
 export const getComplaints = async () => {
-    const res = await fetch("https://localhost:7224/api/complaint/all");
+    const res = await fetch("https://localhost:7224/api/complaint/all",
+        {
+            headers: getAuthHeaders()
+        }
+    );
 
     if (!res.ok) {
         throw new Error("Failed to fetch complaints");
@@ -302,12 +335,27 @@ export const getComplaints = async () => {
     return await res.json();
 };
 
+export const assignComplaint = async (data) => {
+    const res = await fetch("https://localhost:7224/api/Complaint/assign-complaint", {
+        method: "POST",
+        headers: getAuthHeaders(),
+        body: JSON.stringify(data)
+    });
+
+    const text = await res.text();
+
+    if (!res.ok) {
+        console.error("API ERROR:", text);
+        throw new Error(text || "Assignment failed");
+    }
+
+    return text ? JSON.parse(text) : {};
+};
+
 export const updateStatus = async (complaintId, status) => {
     const res = await fetch("https://localhost:7224/api/officer/update-status", {
         method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
+        headers: getAuthHeaders(),
         body: JSON.stringify({
             complaintId,
             status,
@@ -320,7 +368,11 @@ export const updateStatus = async (complaintId, status) => {
 
 export const getOfficers = async () => {
     try {
-        const res = await fetch("https://localhost:7224/api/Complaint/get-officers");
+        const res = await fetch("https://localhost:7224/api/Complaint/get-officers",
+            {
+                headers: getAuthHeaders()
+            }
+        );
 
         if (!res.ok) {
             throw new Error("Failed to fetch officers");
@@ -335,6 +387,17 @@ export const getOfficers = async () => {
     }
 };
 
+export const getAuditLogs = async () => {
+    const response = await fetch(`${API}/audit`, {
+        headers: getAuthHeaders()
+    });
+
+    if (!response.ok) {
+        throw new Error("Failed to fetch audit logs");
+    }
+
+    return await response.json();
+};
 const handleResponse = async (response) => {
     const data = await response.json().catch(() => null);
 

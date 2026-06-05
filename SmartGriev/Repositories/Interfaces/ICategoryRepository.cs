@@ -9,5 +9,7 @@ namespace SmartGriev.Repositories.Interfaces
         Task<ComplaintCategory> AddCategory(CategoryCreateDTO dto);
         Task UpdateCategory(int id, CategoryUpdateDTO dto);
         Task DeleteCategory(int id);
+
+        Task<ComplaintCategory?> GetCategoryById(int id);
     }
 }

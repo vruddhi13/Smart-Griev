@@ -73,5 +73,11 @@ namespace SmartGriev.Repositories.Implementations
                 throw new Exception("SLA cannot be deleted because it is used in other records.");
             }
         }
+
+        public async Task<SlaMaster?> GetSlaById(int id)
+        {
+            return await _context.SlaMasters
+                .FirstOrDefaultAsync(s => s.SlaId == id);
+        }
     }
 }

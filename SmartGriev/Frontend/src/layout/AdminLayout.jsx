@@ -1,10 +1,17 @@
-﻿import React from 'react';
+﻿import React, { useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import AdminSidebar from '../Components/AdminComponents/AdminSidebar';
 import AdminHeader from '../Components/AdminComponents/AdminHeader';
 import { adminTheme as theme } from '../services/AdminServices/AdminTheme';
 
 const AdminLayout = ({ children, pageTitle }) => {
+
+    useEffect(() => {
+        document.title = pageTitle
+            ? `${pageTitle} - SmartGriev`
+            : "SmartGriev";
+    }, [pageTitle]);
+
     const roleId = sessionStorage.getItem("roleId");
     if (roleId !== "1") {
         return <Navigate to="/" replace />;
