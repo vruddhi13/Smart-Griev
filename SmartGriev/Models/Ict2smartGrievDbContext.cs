@@ -162,6 +162,7 @@ public partial class Ict2smartGrievDbContext : DbContext
 
             entity.Property(e => e.ComplaintId).HasColumnName("complaint_id");
             entity.Property(e => e.AssignedTo).HasColumnName("assigned_to");
+            entity.Property(e => e.EscalatedTo).HasColumnName("escalated_to");
             entity.Property(e => e.CategoryId).HasColumnName("category_id");
             entity.Property(e => e.ClosedAt).HasColumnName("closed_at");
             entity.Property(e => e.ComplaintNumber)
@@ -198,6 +199,10 @@ public partial class Ict2smartGrievDbContext : DbContext
             entity.HasOne(d => d.AssignedToNavigation).WithMany(p => p.ComplaintAssignedToNavigations)
                 .HasForeignKey(d => d.AssignedTo)
                 .HasConstraintName("FK_complaint_assigned_to");
+
+            entity.HasOne(d => d.EscalatedToNavigation).WithMany()
+                .HasForeignKey(d => d.EscalatedTo)
+                .HasConstraintName("FK_complaint_escalated_to");
 
             entity.HasOne(d => d.Category).WithMany(p => p.Complaints)
                 .HasForeignKey(d => d.CategoryId)
@@ -688,7 +693,7 @@ public partial class Ict2smartGrievDbContext : DbContext
                 .HasConstraintName("FK_sla_tracking_complaint");
 
             entity.HasOne(d => d.Sla)
-                .WithMany()
+                .WithMany(p => p.SlaTrackings)
                 .HasForeignKey(d => d.SlaId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_sla_tracking_sla");

@@ -10,7 +10,6 @@ import ForgotPassword from './pages/identity/ForgotPassword';
 import CitizenComplaint from './pages/Dashboard/CitizenComplaint';
 import CitizenComplaintStatus from './pages/Dashboard/CitizenComplaintStatus';
 import AdminDashboard from './pages/Admin/AdminDashboard';
-import AdminLayout from './layout/AdminLayout';
 import ProtectedRoute from './Components/ProtectedRoute';
 import AdminDepartments from './pages/Admin/AdminDepartment';
 import AdminCategories from './pages/Admin/AdminCategory';
@@ -28,6 +27,10 @@ import DeptHeadAssignComplaint from './pages/DeptHead/DeptHeadAssignComplaint';
 import AdminAuditLog from './pages/Admin/AdminAuditLog';
 
 
+import AdminEscalation from './pages/Admin/AdminEscalation';
+import AdminEscalationComplaints from './pages/Admin/AdminEscalationComplaints';
+import OfficerEscalation from './pages/Officer/OfficerEscalation';
+import DeptHeadEscalation from './pages/DeptHead/DeptHeadEscalation';
 function App() {
     return (
         <BrowserRouter>
@@ -55,22 +58,27 @@ function App() {
                 <Route path="/admin/sla" element={<ProtectedRoute allowedRole="1"><AdminSLAMaster /></ProtectedRoute>} />
                 <Route path="/admin/complaintdetails" element={<ProtectedRoute allowedRole="1"><AdminComplaints /></ProtectedRoute>} />
                 <Route path="/admin/audit" element={<ProtectedRoute allowedRole="1"><AdminAuditLog /></ProtectedRoute>} />
+                <Route path="/admin/escalations" element={<ProtectedRoute allowedRole="1"><AdminEscalation /></ProtectedRoute>} />
+                <Route path="/admin/escalation-complaints" element={<ProtectedRoute allowedRole="1"><AdminEscalationComplaints/></ProtectedRoute>}/>
 
                 {/*Officer*/}
                 <Route path="/officer" element={<ProtectedRoute allowedRole="3"><OfficerDashboard /></ProtectedRoute>} />
                 <Route path="/officer/complaints" element={<OfficerComplaints />} />
                 <Route path="/officer/account" element={<OfficerAccount />} />
                 <Route path="/officer/report" element={<StatusPieReport />} />
+                <Route path="/officer/escalations" element={<OfficerEscalation />} />
+
 
                 {/*Department Head*/}
                 <Route path="/depthead" element={<ProtectedRoute allowedRole="2"><DeptHeadDashboard /></ProtectedRoute>} />
-                <Route path="/depthead/dept-assign" element={<DeptHeadAssignComplaint/>} />
+                <Route path="/depthead/dept-assign" element={<DeptHeadAssignComplaint />} />
+                <Route path="/depthead/escalations" element={<DeptHeadEscalation/>} />
+
                 {/*<Route path="/officer/complaints" element={<OfficerComplaints />} />*/}
                 {/*<Route path="/officer/account" element={<OfficerAccount />} />*/}
                 {/*<Route path="/officer/report" element={<StatusPieReport />} />*/}
 
                 {/*<Route path="/officer/sla" element={<OfficerSLA />} />*/}
-                {/*<Route path="/officer/escalations" element={<OfficerEscalations />} />*/}
                 {/*<Route path="*" element={<Navigate to="/"/> }/>*/}
             </Routes>
         </BrowserRouter>

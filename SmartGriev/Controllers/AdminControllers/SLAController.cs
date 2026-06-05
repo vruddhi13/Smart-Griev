@@ -181,6 +181,22 @@ namespace SmartGriev.Controllers.AdminControllers
                 UserAgent = Request.Headers["User-Agent"].ToString()
             });
             return Ok("SLA Deleted");
+            try
+            {
+                await _slaRepository.DeleteSla(id);
+
+                return Ok(new
+                {
+                    message = "SLA deleted successfully"
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    message = ex.Message
+                });
+            }
         }
     }
 }

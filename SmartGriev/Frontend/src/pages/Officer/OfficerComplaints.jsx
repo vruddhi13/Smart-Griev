@@ -17,7 +17,6 @@ const OfficerComplaints = () => {
         try {
             setLoading(true);
             const data = await getMyComplaints();
-            console.log("API Data:", data); // Check your console to see the exact field name for the user
             setComplaints(data);
         } catch (error) {
             showError(error.message || "Failed to load complaints.");

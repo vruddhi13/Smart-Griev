@@ -88,3 +88,35 @@ export const updateStatus = async (complaintId, status) => {
 export const getNotifications = async () => {
     return [];
 };
+
+export const getEscalatedComplaints = async () => {
+    const res = await axios.get(
+        `${BASE_URL}/Officer/escalated-complaints`,
+        getAuthConfig()
+    );
+
+    return res.data;
+};
+
+export const getComplaintHistory = async (complaintId) => {
+    try {
+        const res = await axios.get(
+            `${BASE_URL}/Officer/complaint-history/${complaintId}`,
+            getAuthConfig()
+        );
+
+        return res.data;
+    } catch (error) {
+        console.error("Error fetching complaint history:", error);
+        throw error;
+    }
+};
+
+export const getComplaintDetails = async (complaintId) => {
+    const res = await axios.get(
+        `${BASE_URL}/Officer/complaint-details/${complaintId}`,
+        getAuthConfig()
+    );
+
+    return res.data;
+};

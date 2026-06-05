@@ -47,6 +47,8 @@ namespace SmartGriev
             builder.Services.AddScoped<IComplaintRepository, ComplaintRepository>();
             builder.Services.AddScoped<ISlaRepository, SlaRepository>();
             builder.Services.AddScoped<IAuditRepository, AuditRepository>();
+            builder.Services.AddScoped<IEscalationRepository, EscalationRepository>();
+            builder.Services.AddScoped<IDepartmentHeadEscalationRepository, DepartmentHeadEscalationRepository>();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -116,6 +118,11 @@ namespace SmartGriev
             builder.Services.AddAuthentication();
             builder.Services.AddAuthorization();
 
+            builder.WebHost.UseUrls(
+    "https://localhost:7224",
+    "http://localhost:5224",
+    "http://0.0.0.0:5224"
+);
             var app = builder.Build();
 
             var uploadsPath = Path.Combine(Directory.GetCurrentDirectory(), "uploads");
@@ -156,7 +163,7 @@ namespace SmartGriev
                 app.UseSwaggerUI();
             }
 
-            app.UseHttpsRedirection();
+          // app.UseHttpsRedirection();
 
             app.UseCors("AllowAll");
 

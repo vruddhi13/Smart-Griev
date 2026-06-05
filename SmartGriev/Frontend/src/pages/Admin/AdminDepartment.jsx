@@ -6,6 +6,11 @@ import { getDepartments, addDepartment, updateDepartment, deleteDepartment, togg
 import usePagination from '../../services/usePagination';
 import Pagination from '../../Components/AdminComponents/Pagination';
 import { showError, showSuccessToast } from "../../services/alertservice";
+import {
+    confirmDelete,
+    showSuccessToast,
+    showError
+} from "../../services/AlertService"; // adjust path if needed
 
 const AdminDepartments = () => {
     const [departments, setDepartments] = useState([]);
@@ -47,18 +52,18 @@ const AdminDepartments = () => {
         e.preventDefault();
         try {
             if (editId) {
-                // UPDATE
                 await updateDepartment(editId, {
                     departmentName: deptName,
                     isActive: true
                 });
+
                 showSuccessToast("Department updated successfully");
             } else {
-                // CREATE
                 await addDepartment({
                     departmentName: deptName,
                     isActive: true
                 });
+
                 showSuccessToast("Department added successfully");
             }
             setDeptName('');
@@ -71,12 +76,16 @@ const AdminDepartments = () => {
             
             console.log(error);
             showError("Something went wrong");
+        } catch {
+            showError("Something went wrong.");
         }
     };
 
     const handleDelete = async (id) => {
-        if (!window.confirm("Are you sure you want to delete this department?"))
-            return;
+        const confirmed = await confirmDelete();
+
+        if (!confirmed) return;
+
         try {
             await deleteDepartment(id);
             showSuccessToast("Department deleted successfully");
@@ -85,6 +94,14 @@ const AdminDepartments = () => {
             console.error(error);
             showError("Delete failed");
 
+            setDepartments(prev =>
+                prev.filter(dept => dept.departmentId !== id)
+            );
+
+            showSuccessToast("Department deleted successfully");
+
+        } catch (error) {
+            showError(error.message);
         }
     };
 

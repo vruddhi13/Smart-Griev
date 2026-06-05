@@ -10,6 +10,11 @@ import {
     deleteCategory,
     getDepartments // Needed for the dropdown
 } from "../../services/AdminServices/AdminService";
+import {
+    confirmDelete,
+    showSuccessToast,
+    showError
+} from "../../services/AlertService";
 import usePagination from '../../services/usePagination';
 import Pagination from '../../Components/AdminComponents/Pagination';
 
@@ -63,11 +68,15 @@ const AdminCategories = () => {
         } catch (error) {
             console.error("API Error:", error);
             showError("Operation failed");
+            showError(error.message);
         }
     };
 
     const handleDelete = async (id) => {
-        if (!window.confirm("Soft delete this category?")) return;
+        const confirmed = await confirmDelete();
+
+        if (!confirmed) return;
+
         try {
             await deleteCategory(id);
             showSuccessToast("Category deleted successfully");
@@ -75,6 +84,15 @@ const AdminCategories = () => {
         } catch (error) {
             console.error(error);
             showError("Delete failed");
+
+            setCategories(prev =>
+                prev.filter(cat => cat.categoryId !== id)
+            );
+
+            showSuccessToast("Category deleted successfully");
+
+        } catch (error) {
+            showError(error.message);
         }
     };
 
@@ -84,12 +102,14 @@ const AdminCategories = () => {
         setIsFormOpen(false);
     };
 
+
     const handleEdit = (cat) => {
         setFormData({
             categoryName: cat.categoryName,
-            departmentId: cat.departmentId,
-            description: cat.description
+            departmentId: Number(cat.departmentId),
+            description: cat.description || ""
         });
+
         setEditId(cat.categoryId);
         setIsFormOpen(true);
     };
@@ -148,9 +168,13 @@ const AdminCategories = () => {
                                 <label style={labelStyle}>Assign Department</label>
                                 <select
                                     required
-                                    value={formData.departmentId}
-                                    disabled={editId !== null}
-                                    onChange={(e) => setFormData({ ...formData, departmentId: parseInt(e.target.value) })}
+                                    value={formData.departmentId ? String(formData.departmentId) : ""}
+                                    onChange={(e) =>
+                                        setFormData({
+                                            ...formData,
+                                            departmentId: Number(e.target.value)
+                                        })
+                                    }
                                     style={inputStyle}
                                 >
                                     <option value="">Select Department</option>

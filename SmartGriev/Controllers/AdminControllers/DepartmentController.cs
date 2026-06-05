@@ -182,9 +182,30 @@ namespace SmartGriev.Controllers.AdminControllers
             });
 
             return Ok(new
+            try
             {
-                message = "Department deleted successfully"
-            });
+                var result = await _repo.DeleteDepartment(id);
+
+                if (!result)
+                {
+                    return NotFound(new
+                    {
+                        message = "Department not found"
+                    });
+                }
+
+                return Ok(new
+                {
+                    message = "Department deleted successfully"
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    message = ex.Message
+                });
+            }
         }
 
         [HttpPut("{id}/toggle-status")]
@@ -237,6 +258,19 @@ namespace SmartGriev.Controllers.AdminControllers
                 message = "Status updated successfully",
                 isActive = updatedDept.IsActive
             });
+        }
+        [HttpGet("dropdown")]
+        public async Task<IActionResult> GetDepartmentDropdown()
+        {
+            var departments = await _repo.GetAllDepartments();
+
+            var result = departments.Select(d => new
+            {
+                departmentId = d.DepartmentId,
+                departmentName = d.DepartmentName
+            });
+
+            return Ok(result);
         }
     }
 }

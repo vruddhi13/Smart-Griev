@@ -62,4 +62,8 @@ public partial class Complaint
     public virtual User User { get; set; } = null!;
 
     public virtual ICollection<SLA_Tracking> SlaTrackings { get; set; } = new List<SLA_Tracking>();
+
+    public int? EscalatedTo { get; set; }
+
+    public virtual User? EscalatedToNavigation { get; set; }
 }

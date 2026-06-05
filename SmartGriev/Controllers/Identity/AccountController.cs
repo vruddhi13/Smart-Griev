@@ -73,6 +73,7 @@ namespace SmartGriev.Controllers.Identity
             string otp = new Random().Next(100000, 999999).ToString();
 
             Console.WriteLine("=================================");
+            Console.WriteLine("LOGIN OTP");
             Console.WriteLine($"OTP Generated: {otp}");
             Console.WriteLine($"Mobile: {user.MobileNo}");
             Console.WriteLine("=================================");
@@ -193,7 +194,8 @@ namespace SmartGriev.Controllers.Identity
                         userId = user.UserId,
                         roleId = user.RoleId,
                         type = "login" ,  // 👈 IMPORTANT
-                        name = user.FullName
+                        name = user.FullName,
+                        departmentId = user.DepartmentId
                     }
                 });
             }
@@ -304,6 +306,12 @@ namespace SmartGriev.Controllers.Identity
             }
 
             string otp = new Random().Next(100000, 999999).ToString();
+
+            Console.WriteLine("=================================");
+            Console.WriteLine("FORGOT PASSWORD OTP");
+            Console.WriteLine($"OTP Generated: {otp}");
+            Console.WriteLine($"Mobile: {user.MobileNo}");
+            Console.WriteLine("=================================");
 
             await _otpRepository.SaveOtpAsync(user.MobileNo, otp);
 

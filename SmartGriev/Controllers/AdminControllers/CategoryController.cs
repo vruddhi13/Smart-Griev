@@ -172,6 +172,22 @@ namespace SmartGriev.Controllers.AdminControllers
             return Ok("Category Deleted");
         }
 
+            try
+            {
+                await _categoryRepository.DeleteCategory(id);
 
+                return Ok(new
+                {
+                    message = "Category deleted successfully"
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    message = ex.Message
+                });
+            }
+        }
     }
 }
