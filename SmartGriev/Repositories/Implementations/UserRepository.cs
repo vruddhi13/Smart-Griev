@@ -81,7 +81,9 @@ namespace SmartGriev.Repositories.Implementations
 
         public async Task DeleteUser(User user)
         {
-            _context.Users.Remove(user);
+            user.IsDeleted = true;
+            user.IsActive = false;
+
             await _context.SaveChangesAsync();
         }
 

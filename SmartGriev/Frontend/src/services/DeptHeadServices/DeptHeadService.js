@@ -1,4 +1,6 @@
-﻿const API = "https://localhost:7224/api/DeptHead";
+﻿import axios from "axios";
+
+const API = "https://localhost:7224/api/DeptHead";
 
 export const deptHeadAssignComplaint = async (data) => {
 
@@ -20,8 +22,15 @@ export const deptHeadAssignComplaint = async (data) => {
 
 export const getDepartmentComplaints = async (departmentId) => {
 
+    const token = localStorage.getItem("token");
+
     const res = await fetch(
-        `${API}/department-complaints/${departmentId}`
+        `${API}/department-complaints/${departmentId}`,
+        {
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        }
     );
 
     if (!res.ok) {
@@ -29,4 +38,36 @@ export const getDepartmentComplaints = async (departmentId) => {
     }
 
     return await res.json();
+};
+
+const getToken = () => sessionStorage.getItem("token");
+
+const auth = () => ({
+    headers: {
+        Authorization: `Bearer ${getToken()}`
+    }
+});
+
+/* ================= ESCALATED ================= */
+export const getEscalatedComplaints = async () => {
+    const res = await axios.get(
+        `${API}/escalated-complaints`,auth()
+    );
+    return res.data;
+};
+
+/* ================= DETAILS ================= */
+export const getDeptHeadComplaintDetails = async (id) => {
+    const res = await axios.get(
+        `${API}/complaint-details/${id}`,auth()
+    );
+    return res.data;
+};
+
+/* ================= HISTORY ================= */
+export const getComplaintHistory = async (id) => {
+    const res = await axios.get(
+        `${API}/complaint-history/${id}`,auth()
+    );
+    return res.data;
 };

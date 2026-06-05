@@ -15,6 +15,54 @@ const Register = () => {
         password: ""
     });
 
+    const validateForm = () => {
+
+        // Full Name
+        if (!formData.fullName.trim()) {
+            showError("Full Name is required");
+            return false;
+        }
+
+        // Email
+        if (!formData.email.trim()) {
+            showError("Email is required");
+            return false;
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!emailRegex.test(formData.email)) {
+            showError("Enter a valid Email Address");
+            return false;
+        }
+
+        // Mobile Number
+        if (!formData.mobileNo.trim()) {
+            showError("Mobile Number is required");
+            return false;
+        }
+
+        const mobileRegex = /^[0-9]{10}$/;
+
+        if (!mobileRegex.test(formData.mobileNo)) {
+            showError("Mobile Number must be 10 digits");
+            return false;
+        }
+
+        // Password
+        if (!formData.password.trim()) {
+            showError("Password is required");
+            return false;
+        }
+
+        if (formData.password.length < 6) {
+            showError("Password must be at least 6 characters");
+            return false;
+        }
+
+        return true;
+    };
+
     const container = {
         minHeight: "100vh",
         background: theme.colors.background.primary,
@@ -62,7 +110,9 @@ const Register = () => {
     const handleSubmit = async (e) => {
 
         e.preventDefault();
-
+        if (!validateForm()) {
+            return;
+        }
         try {
 
             await registerUser(formData);

@@ -53,6 +53,7 @@ namespace SmartGriev.Repositories.Implementations
             if (category == null) return;
 
             category.CategoryName = dto.CategoryName ?? category.CategoryName;
+            category.DepartmentId = dto.DepartmentId;
             category.Description = dto.Description ?? category.Description ?? "";
             category.UpdatedAt = DateTime.Now;
 
@@ -61,13 +62,23 @@ namespace SmartGriev.Repositories.Implementations
 
         public async Task DeleteCategory(int id)
         {
-            var category = await _context.ComplaintCategories.FindAsync(id);
+            try
+            {
+                var category = await _context.ComplaintCategories.FindAsync(id);
 
-            if (category == null) return;
+                if (category == null)
+                    throw new Exception("Category not found");
 
-            category.IsActive = false;
+                category.IsActive = false;
 
-            await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException)
+            {
+                throw new Exception(
+                    "Category is used in other records and cannot be deleted."
+                );
+            }
         }
     }
 }

@@ -5,6 +5,11 @@ import { Building2, Plus, Trash2, Edit, X, UserX, UserCheck } from 'lucide-react
 import { getDepartments, addDepartment, updateDepartment, deleteDepartment, toggleDepartmentStatus } from "../../services/AdminServices/AdminService"; 
 import usePagination from '../../services/usePagination';
 import Pagination from '../../Components/AdminComponents/Pagination';
+import {
+    confirmDelete,
+    showSuccessToast,
+    showError
+} from "../../services/AlertService"; // adjust path if needed
 
 const AdminDepartments = () => {
     const [departments, setDepartments] = useState([]);
@@ -45,17 +50,19 @@ const AdminDepartments = () => {
         e.preventDefault();
         try {
             if (editId) {
-                // UPDATE
                 await updateDepartment(editId, {
                     departmentName: deptName,
                     isActive: true
                 });
+
+                showSuccessToast("Department updated successfully");
             } else {
-                // CREATE
                 await addDepartment({
                     departmentName: deptName,
                     isActive: true
                 });
+
+                showSuccessToast("Department added successfully");
             }
             setDeptName('');
             setEditId(null);
@@ -63,22 +70,27 @@ const AdminDepartments = () => {
 
             fetchDepartments();
 
-        } catch (error) {
-            alert("Something went wrong.");
-            console.log(error);
+        } catch {
+            showError("Something went wrong.");
         }
     };
 
     const handleDelete = async (id) => {
-        if (!window.confirm("Are you sure you want to delete this department?"))
-            return;
+        const confirmed = await confirmDelete();
+
+        if (!confirmed) return;
+
         try {
             await deleteDepartment(id);
-            fetchDepartments();
-        } catch (error) {
-            console.error(error);
-            alert("Delete failed");
 
+            setDepartments(prev =>
+                prev.filter(dept => dept.departmentId !== id)
+            );
+
+            showSuccessToast("Department deleted successfully");
+
+        } catch (error) {
+            showError(error.message);
         }
     };
 

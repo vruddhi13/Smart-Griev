@@ -46,10 +46,18 @@ namespace SmartGriev.Repositories.Implementations
             if (dept == null)
                 return false;
 
-            _context.Departments.Remove(dept);
-            await _context.SaveChangesAsync();
-
-            return true;
+            try
+            {
+                _context.Departments.Remove(dept);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (DbUpdateException)
+            {
+                throw new Exception(
+                    "This department cannot be deleted because it is assigned to other records."
+                );
+            }
         }
 
         public async Task<Department> ToggleDepartmentStatus(int id)

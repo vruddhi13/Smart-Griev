@@ -1,6 +1,6 @@
 ﻿import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { LayoutDashboard, ClipboardCheck, Users, BarChart3, Settings } from 'lucide-react';
+import { LayoutDashboard, ClipboardCheck, Users, BarChart3, Settings, AlertTriangle } from 'lucide-react';
 import { deptHeadTheme as theme } from '../../services/DeptHeadServices/DeptHeadTheme';
 const DeptHeadSidebar = () => {
     const navigate = useNavigate();
@@ -9,8 +9,7 @@ const DeptHeadSidebar = () => {
     const menuItems = [
         { id: 'dashboard', label: 'Dept Dashboard', icon: LayoutDashboard, path: '/depthead' },
         { id: 'complaints', label: 'Assigned Complaints', icon: ClipboardCheck, path: '/depthead/dept-assign' },
-        { id: 'staff', label: 'My Staff', icon: Users, path: '/dept/staff' },
-        { id: 'analytics', label: 'Dept Analytics', icon: BarChart3, path: '/dept/analytics' },
+        { id: 'escalation', label: 'Escalation Inbox', icon: AlertTriangle, path: '/depthead/escalations' },
     ];
 
     return (

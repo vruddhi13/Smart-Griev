@@ -79,6 +79,15 @@ const ForgotPassword = () => {
     const handleVerifyOtp = async (e) => {
         e.preventDefault();
 
+        if (!otp.trim()) {
+            showError("OTP is required");
+            return;
+        }
+
+        if (otp.length !== 6) {
+            showError("OTP must be 6 digits");
+            return;
+        }
         try {
             await verifyOtp({
                 mobileNo,
@@ -97,7 +106,20 @@ const ForgotPassword = () => {
     // 🔥 Step 3: Reset Password
     const handleResetPassword = async (e) => {
         e.preventDefault();
+        if (!passwords.newPassword.trim()) {
+            showError("New Password is required");
+            return;
+        }
 
+        if (passwords.newPassword.length < 6) {
+            showError("Password must be at least 6 characters");
+            return;
+        }
+
+        if (!passwords.confirmPassword.trim()) {
+            showError("Confirm Password is required");
+            return;
+        }
         if (passwords.newPassword !== passwords.confirmPassword) {
             showError("Passwords do not match");
             return;
@@ -133,7 +155,7 @@ const ForgotPassword = () => {
                             <input
                                 style={input}
                                 value={mobileNo}
-                                onChange={(e) => setMobileNo(e.target.value)}
+                                onChange={(e) => setMobileNo(e.target.value.replace(/\D/g, ""))}
                             />
 
                             <button style={button}>Send OTP</button>
@@ -153,7 +175,7 @@ const ForgotPassword = () => {
                             <input
                                 style={input}
                                 value={otp}
-                                onChange={(e) => setOtp(e.target.value)}
+                                onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
                             />
 
                             <button style={button}>Verify OTP</button>

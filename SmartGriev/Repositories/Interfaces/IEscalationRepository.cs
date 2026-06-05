@@ -12,5 +12,7 @@ namespace SmartGriev.Repositories.Interfaces
 
         Task<string> AutoEscalateComplaints();
 
+        Task<object> GetEscalationComplaints();
+
     }
 }

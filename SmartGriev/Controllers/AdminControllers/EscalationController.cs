@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SmartGriev.DTOs.AdminDTOs;
+using SmartGriev.Models;
 using SmartGriev.Repositories.Interfaces;
 
 namespace SmartGriev.Controllers.AdminControllers
@@ -11,9 +13,12 @@ namespace SmartGriev.Controllers.AdminControllers
     {
         private readonly IEscalationRepository _repository;
 
-        public EscalationController(IEscalationRepository repository)
+        private readonly Ict2smartGrievDbContext _context;
+
+        public EscalationController(IEscalationRepository repository, Ict2smartGrievDbContext context)
         {
             _repository = repository;
+            _context = context;
         }
 
         [HttpGet]
@@ -119,5 +124,54 @@ namespace SmartGriev.Controllers.AdminControllers
                 });
             }
         }
+
+        [HttpGet("complaints")]
+        public async Task<IActionResult> GetEscalationComplaints()
+        {
+            var data =
+                await _repository
+                    .GetEscalationComplaints();
+
+            return Ok(data);
+        }
+
+        [HttpGet("officers/{departmentId}")]
+        public async Task<IActionResult> GetOfficersByDepartment(int departmentId)
+        {
+            try
+            {
+                var officers = await _context.Users
+                    .Include(x => x.Role)
+                    .Where(x =>
+                        x.DepartmentId == departmentId &&
+                        x.IsActive == true &&
+                        x.Role != null &&
+x.Role.RoleName.ToLower() == "officer")
+                 .Select(x => new {
+                     userId = x.UserId,
+                     userName = x.FullName,
+                     email = x.Email,
+                     mobileNo = x.MobileNo,
+                     departmentName = x.Department.DepartmentName,
+                     role = x.Role.RoleName
+                 })
+                    .ToListAsync();
+
+                return Ok(new
+                {
+                    success = true,
+                    data = officers
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = ex.Message
+                });
+            }
+        }
     }
+
 }

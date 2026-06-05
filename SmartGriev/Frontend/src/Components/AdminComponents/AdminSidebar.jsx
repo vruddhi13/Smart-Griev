@@ -15,6 +15,7 @@ const AdminSidebar = () => {
         { id: 'sla', label: 'SLA Config', icon: Clock, path: '/admin/sla' },
         { id: 'complaints', label: 'Complaints', icon: FileWarning, path: '/admin/complaintdetails' },
         { id: 'escalations',label: 'Escalations',icon: AlertTriangle,path: '/admin/escalations'},
+        { id: 'escalationComplaints', label: 'Escalation Complaints', icon: TimerReset, path: '/admin/escalation-complaints'},
 
 
     //    { id: 'analytics', label: 'Analytics', icon: BarChart3, path: '/admin/analytics' },

@@ -10,6 +10,11 @@ import {
     getDepartments,
     getCategories
 } from "../../services/AdminServices/AdminService";
+import {
+    confirmDelete,
+    showSuccessToast,
+    showError
+} from "../../services/AlertService";
 import usePagination from '../../services/usePagination';
 import Pagination from '../../Components/AdminComponents/Pagination';
 
@@ -57,26 +62,33 @@ const AdminSLAMaster = () => {
         try {
             if (editId) {
                 await updateSla(editId, formData);
-                alert("SLA updated successfully");
+                showSuccessToast("SLA updated successfully");
             } else {
                 await addSla(formData);
-                alert("SLA added successfully");
+                showSuccessToast("SLA added successfully");
             }
+
             resetForm();
             fetchData();
+
         } catch (error) {
-            console.error("API Error:", error);
-            alert("Operation failed");
+            showError(error?.message || "Operation failed");
         }
     };
 
     const handleDelete = async (id) => {
-        if (!window.confirm("Are you sure you want to delete this SLA policy?")) return;
+        const confirmed = await confirmDelete();
+        if (!confirmed) return;
+
         try {
             await deleteSla(id);
-            fetchData();
+
+            setSlas(prev => prev.filter(sla => sla.slaId !== id));
+
+            showSuccessToast("SLA deleted successfully");
+
         } catch (error) {
-            console.error(error);
+            showError(error?.message || "Cannot delete SLA (linked data exists)");
         }
     };
 
@@ -94,15 +106,16 @@ const AdminSLAMaster = () => {
 
     const handleEdit = (sla) => {
         setFormData({
-            departmentId: sla.departmentId,
-            categoryId: sla.categoryId,
-            priorityLevel: sla.priorityLevel,
-            resolutionHours: sla.resolutionHours,
-            escalationHours: sla.escalationHours
+            departmentId: Number(sla.departmentId),
+            categoryId: Number(sla.categoryId),
+            priorityLevel: sla.priorityLevel || "",
+            resolutionHours: sla.resolutionHours || "",
+            escalationHours: sla.escalationHours || ""
         });
+
         setEditId(sla.slaId);
         setIsFormOpen(true);
-    };
+    };  
 
     const {
         currentPage,
@@ -147,15 +160,21 @@ const AdminSLAMaster = () => {
                             <div>
                                 <label style={labelStyle}>Department</label>
                                 <select
-                                    required
                                     value={formData.departmentId}
-                                    disabled={editId !== null}
-                                    onChange={(e) => setFormData({ ...formData, departmentId: parseInt(e.target.value) })}
+                                    onChange={(e) =>
+                                        setFormData({
+                                            ...formData,
+                                            departmentId: Number(e.target.value),
+                                            categoryId: ""
+                                        })
+                                    }
                                     style={inputStyle}
                                 >
                                     <option value="">Select Department</option>
                                     {departments.map((d) => (
-                                        <option key={d.departmentId} value={d.departmentId}>{d.departmentName}</option>
+                                        <option key={d.departmentId} value={d.departmentId}>
+                                            {d.departmentName}
+                                        </option>
                                     ))}
                                 </select>
                             </div>
@@ -164,17 +183,26 @@ const AdminSLAMaster = () => {
                             <div>
                                 <label style={labelStyle}>Category</label>
                                 <select
-                                    required
                                     value={formData.categoryId}
-                                    disabled={editId !== null}
-                                    onChange={(e) => setFormData({ ...formData, categoryId: parseInt(e.target.value) })}
+                                    onChange={(e) =>
+                                        setFormData({
+                                            ...formData,
+                                            categoryId: Number(e.target.value)
+                                        })
+                                    }
                                     style={inputStyle}
                                 >
                                     <option value="">Select Category</option>
+
                                     {categories
-                                        .filter(c => !formData.departmentId || c.departmentId === formData.departmentId)
+                                        .filter(c =>
+                                            !formData.departmentId ||
+                                            c.departmentId === Number(formData.departmentId)
+                                        )
                                         .map((c) => (
-                                            <option key={c.categoryId} value={c.categoryId}>{c.categoryName}</option>
+                                            <option key={c.categoryId} value={c.categoryId}>
+                                                {c.categoryName}
+                                            </option>
                                         ))}
                                 </select>
                             </div>

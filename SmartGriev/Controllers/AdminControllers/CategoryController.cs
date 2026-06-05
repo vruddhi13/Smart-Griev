@@ -54,10 +54,22 @@ namespace SmartGriev.Controllers.AdminControllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCategory(int id)
         {
-            await _categoryRepository.DeleteCategory(id);
-            return Ok("Category Deleted");
+            try
+            {
+                await _categoryRepository.DeleteCategory(id);
+
+                return Ok(new
+                {
+                    message = "Category deleted successfully"
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    message = ex.Message
+                });
+            }
         }
-
-
     }
 }

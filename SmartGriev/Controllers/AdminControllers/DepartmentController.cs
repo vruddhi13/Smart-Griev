@@ -67,15 +67,30 @@ namespace SmartGriev.Controllers.AdminControllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteDepartment(int id)
         {
-            var result = await _repo.DeleteDepartment(id);
-
-            if (!result)
-                return NotFound("Department not found");
-
-            return Ok(new
+            try
             {
-                message = "Department deleted successfully"
-            });
+                var result = await _repo.DeleteDepartment(id);
+
+                if (!result)
+                {
+                    return NotFound(new
+                    {
+                        message = "Department not found"
+                    });
+                }
+
+                return Ok(new
+                {
+                    message = "Department deleted successfully"
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    message = ex.Message
+                });
+            }
         }
 
         [HttpPut("{id}/toggle-status")]

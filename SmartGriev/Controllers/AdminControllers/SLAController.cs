@@ -45,8 +45,22 @@ namespace SmartGriev.Controllers.AdminControllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteSla(int id)
         {
-            await _slaRepository.DeleteSla(id);
-            return Ok("SLA Deleted");
+            try
+            {
+                await _slaRepository.DeleteSla(id);
+
+                return Ok(new
+                {
+                    message = "SLA deleted successfully"
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    message = ex.Message
+                });
+            }
         }
     }
 }

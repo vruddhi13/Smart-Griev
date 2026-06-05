@@ -1,6 +1,11 @@
 ﻿import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { LayoutDashboard, ClipboardList, UserCircle,FileText } from "lucide-react";
+import {
+    LayoutDashboard,
+    ClipboardList,
+    UserCircle,
+    FileText,
+    ShieldAlert } from "lucide-react";
 import { officerTheme as theme } from "../../services/OfficerServices/OfficerTheme";
 
 const OfficerSidebar = () => {
@@ -10,6 +15,7 @@ const OfficerSidebar = () => {
     const menu = [
         { name: "Dashboard", icon: LayoutDashboard, path: "/officer" },
         { name: "Complaints", icon: ClipboardList, path: "/officer/complaints" },
+        { name: "Escalations", icon: ShieldAlert, path: "/officer/escalations" },
         { name: "Report", icon: FileText, path: "/officer/report" },
         { name: "Account", icon: UserCircle, path: "/officer/account" },
     ];
