@@ -9,5 +9,6 @@ namespace SmartGriev.Repositories.Interfaces
         Task<SlaMaster> AddSla(SlaCreateDTO dto);
         Task UpdateSla(int id, SlaUpdateDTO dto);
         Task DeleteSla(int id);
+        Task<SlaMaster?> GetSlaById(int id);
     }
 }

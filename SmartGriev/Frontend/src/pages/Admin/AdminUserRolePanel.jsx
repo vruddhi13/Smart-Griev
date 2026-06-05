@@ -157,6 +157,57 @@
 
         const handleDelete = async (id) => {
 
+    const {
+        currentPage,
+        totalPages,
+        currentData,
+        nextPage,
+        prevPage,
+        setCurrentPage
+    } = usePagination(users, 4);
+
+    return (
+        <AdminLayout pageTitle="Users">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '25px' }}>
+
+                {/* HEADER SECTION */}
+                <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    width: '100%',
+                    marginBottom: '5px' // Gives a little breathing room above the table/form
+                }}>
+                    {/* Left Column: Title and Subtitle with perfect left-alignment */}
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                        {/*<h2 style={{*/}
+                        {/*    color: theme.colors.text.main,*/}
+                        {/*    margin: 0,*/}
+                        {/*    fontSize: '24px',*/}
+                        {/*    fontWeight: '700',*/}
+                        {/*    textAlign: 'left' // Explicitly align text to the left*/}
+                        {/*}}>*/}
+                        {/*    System Users*/}
+                        {/*</h2>*/}
+                        <p style={{
+                            color: theme.colors.text.gray,
+                            fontSize: '14px',
+                            margin: '4px 0 0 0',
+                            textAlign: 'left' // Explicitly align subtitle text to the left
+                        }}>
+                            Manage user permissions and account status
+                        </p>
+                    </div>
+
+                    {/* Right Column: Actions Grouped Nicely Together */}
+                    <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '12px' // Keeps a clean, uniform gap between the Add button and Total count
+                    }}>
+                        <button
+                            onClick={() => {
+                                if (isFormOpen) {
             try {
                 const confirmed = await confirmDelete();
                 if (!confirmed) return;
@@ -237,18 +288,35 @@
                                 display: 'flex',
                                 alignItems: 'center',
                                 gap: '8px',
+                                padding: '12px 20px',
                                 padding: '12px 24px',
                                 background: isFormOpen ? '#FF5B5B' : theme.colors.brand.primary,
                                 color: 'white',
                                 border: 'none',
                                 borderRadius: '14px',
                                 cursor: 'pointer',
+                                fontWeight: 'bold',
+                                boxShadow: '0 4px 12px rgba(108, 99, 255, 0.15)', // Subtle shadow matches your layout style
+                                transition: 'all 0.2s ease'
                                 fontWeight: 'bold'
                             }}
                         >
                             {isFormOpen ? <X size={18} /> : <Plus size={18} />}
                             {isFormOpen ? "Cancel" : "Add User"}
                         </button>
+
+                        <div style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                            padding: '12px 20px',
+                            background: 'white',
+                            borderRadius: '14px',
+                            boxShadow: theme.shadows.card,
+                            color: theme.colors.brand.primary,
+                            fontWeight: 'bold',
+                            height: '42px', // Matches vertical height profile with the Add button
+                            boxSizing: 'border-box'
                         <div style={{
                             display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 20px',
                             background: 'white', borderRadius: '14px', boxShadow: theme.shadows.card,
@@ -259,6 +327,8 @@
                         </div>
                     </div>
 
+                {/* EDIT FORM */}
+                {isFormOpen && (
 
                     {/* EDIT FORM */}
                     {isFormOpen && (

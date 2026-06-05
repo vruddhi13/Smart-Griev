@@ -46,6 +46,7 @@ namespace SmartGriev
             builder.Services.AddHttpClient<HuggingFaceAIService>();
             builder.Services.AddScoped<IComplaintRepository, ComplaintRepository>();
             builder.Services.AddScoped<ISlaRepository, SlaRepository>();
+            builder.Services.AddScoped<IAuditRepository, AuditRepository>();
             builder.Services.AddScoped<IEscalationRepository, EscalationRepository>();
             builder.Services.AddScoped<IDepartmentHeadEscalationRepository, DepartmentHeadEscalationRepository>();
 

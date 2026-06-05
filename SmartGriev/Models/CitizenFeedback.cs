@@ -19,7 +19,7 @@ public partial class CitizenFeedback
 
     public DateTime CreatedAt { get; set; }
 
-    public virtual User Citizen { get; set; } = null!;
+    public virtual User? Citizen { get; set; } = null!;
 
-    public virtual Complaint Complaint { get; set; } = null!;
+    public virtual Complaint? Complaint { get; set; } = null!;
 }

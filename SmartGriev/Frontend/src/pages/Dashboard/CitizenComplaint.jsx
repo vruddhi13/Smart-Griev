@@ -1,6 +1,7 @@
 ﻿import React, { useState, useEffect } from "react";
 //import { theme } from "../../services/theme";
 import { useTranslationContext } from "../../Context/TranslationContext";
+import { showError, showSuccessToast } from "../../services/alertService";
 
 const CitizenComplaint = () => {
 
@@ -14,13 +15,19 @@ const CitizenComplaint = () => {
     const { t } = useTranslationContext();
 
     useEffect(() => {
-        fetch("https://localhost:7224/api/Complaint/categories")
+        const token = sessionStorage.getItem("token");
+        fetch("https://localhost:7224/api/Complaint/categories", {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
             .then(res => res.json())
             .then(data => setCategories(data));
     }, []);
 
 
     const handleSubmit = async () => {
+        const token = sessionStorage.getItem("token");
 
         const formData = new FormData();
         const userId = sessionStorage.getItem("userId");
@@ -39,11 +46,14 @@ const CitizenComplaint = () => {
 
             const response = await fetch("https://localhost:7224/api/Complaint", {
                 method: "POST",
+                headers: {
+                    Authorization: `Bearer ${token}`
+                },
                 body: formData
             });
 
             if (response.ok) {
-                alert("Complaint submitted successfully!");
+                showSuccessToast("Complaint Submitted Successfully!");
 
                 // reset form
                 setTitle("");
@@ -55,12 +65,12 @@ const CitizenComplaint = () => {
             else {
                 const errorText = await response.text();
                 console.error(errorText);
-                alert("Error submitting complaint");
+                showError(errorText || "Error submitting complaint")
             }
 
         } catch (error) {
             console.error(error);
-            alert("Server error");
+            showError("Server Error");
         }
     };
 

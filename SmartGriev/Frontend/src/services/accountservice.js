@@ -129,3 +129,92 @@ export const resetPassword = async (data) => {
 
     return result.data;
 };
+
+export const getUserById = async (id) => {
+
+    const token = sessionStorage.getItem("token");
+
+    const response = await fetch(
+        `https://localhost:7224/api/admin/users/${id}`,
+        {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`
+            }
+        }
+    );
+
+    let result;
+
+    try {
+        result = await response.json();
+    } catch {
+        throw new Error("Failed to fetch user");
+    }
+
+    if (!response.ok) {
+        throw new Error(result.message || "Failed to fetch user");
+    }
+
+    return result;
+};
+
+export const updateAccount = async (data) => {
+
+    const token = sessionStorage.getItem("token");
+
+    const response = await fetch(
+        `https://localhost:7224/api/admin/users/update-account`,
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify(data)
+        }
+    );
+
+    let result;
+
+    try {
+        result = await response.json();
+    } catch {
+        throw new Error("Update failed");
+    }
+
+    if (!response.ok) {
+        throw new Error(result.message || "Update failed");
+    }
+
+    return result;
+};
+
+export const CitizenPasswordChange = async (data) => {
+
+    const token = sessionStorage.getItem("token");
+
+    const response = await fetch(`${API}/citizen/change-password`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(data)
+    });
+
+    let result;
+
+    try {
+        result = await response.json();
+    } catch {
+        throw new Error("Update failed");
+    }
+
+    if (!response.ok) {
+        throw new Error(result.message || "Update failed");
+    }
+
+    return result;
+};

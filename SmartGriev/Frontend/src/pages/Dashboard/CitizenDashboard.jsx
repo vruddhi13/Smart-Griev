@@ -1,10 +1,11 @@
-﻿import React from "react";
+﻿import React from 'react';
 import { theme } from "../../services/theme";
 import { useNavigate } from "react-router-dom";
 //import Translate from "../../Components/TranslateAllText";
 import { useTranslationContext } from "../../Context/TranslationContext";
 
 const CitizenDashboard = () => {
+
     const { t } = useTranslationContext();
     const navigate = useNavigate();
 
@@ -25,26 +26,35 @@ const CitizenDashboard = () => {
     };
 
     const leftSection = {
-        flex: 1
+        flex: 1,
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "flex-start"
     };
 
     const title = {
         fontSize: "3.5rem",
         fontWeight: "700",
         marginBottom: "20px",
-        color: "#111827"
+        color: "#111827",
+        textAlign: "left",       // Forces absolute left-alignment
+        width: "100%"
     };
 
     const description = {
         fontSize: "1.15rem",
         lineHeight: "1.7",
         color: "#4b5563",
-        marginBottom: "35px"
+        marginBottom: "35px",
+        textAlign: "left",       // Forces absolute left-alignment
+        width: "100%"
     };
 
     const buttonContainer = {
         display: "flex",
-        gap: "18px"
+        gap: "18px",
+        justifyContent: "flex-start",
+        width: "100%"
     };
 
     const primaryButton = {

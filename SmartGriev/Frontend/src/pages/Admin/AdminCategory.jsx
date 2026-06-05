@@ -2,6 +2,7 @@
 import AdminLayout from '../../layout/AdminLayout';
 import { adminTheme as theme } from '../../services/AdminServices/AdminTheme';
 import { ListTree, Plus, Trash2, Edit, X, Clock, Info } from 'lucide-react';
+import { showError, showSuccessToast } from "../../services/alertservice";
 import {
     getCategories,
     addCategory,
@@ -65,6 +66,8 @@ const AdminCategories = () => {
             resetForm();
             fetchData();
         } catch (error) {
+            console.error("API Error:", error);
+            showError("Operation failed");
             showError(error.message);
         }
     };
@@ -76,6 +79,11 @@ const AdminCategories = () => {
 
         try {
             await deleteCategory(id);
+            showSuccessToast("Category deleted successfully");
+            fetchData();
+        } catch (error) {
+            console.error(error);
+            showError("Delete failed");
 
             setCategories(prev =>
                 prev.filter(cat => cat.categoryId !== id)
@@ -122,7 +130,7 @@ const AdminCategories = () => {
                 {/* HEADER SECTION */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div>
-                        <h2 style={{ color: theme.colors.text.main, margin: 0 }}>Complaint Categories</h2>
+                        {/*<h2 style={{ color: theme.colors.text.main, margin: 0 }}>Complaint Categories</h2>*/}
                         <p style={{ color: theme.colors.text.gray, fontSize: '14px' }}>Map complaint types to specific departments</p>
                     </div>
                     <button

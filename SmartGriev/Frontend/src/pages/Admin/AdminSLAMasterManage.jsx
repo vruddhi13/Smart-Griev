@@ -17,6 +17,7 @@ import {
 } from "../../services/AlertService";
 import usePagination from '../../services/usePagination';
 import Pagination from '../../Components/AdminComponents/Pagination';
+import { showError, showSuccessToast } from "../../services/alertservice";
 
 const AdminSLAMaster = () => {
     const [slas, setSlas] = useState([]);
@@ -65,6 +66,7 @@ const AdminSLAMaster = () => {
                 showSuccessToast("SLA updated successfully");
             } else {
                 await addSla(formData);
+                showError("SLA added successfully");
                 showSuccessToast("SLA added successfully");
             }
 
@@ -72,11 +74,14 @@ const AdminSLAMaster = () => {
             fetchData();
 
         } catch (error) {
+            console.error("API Error:", error);
+            showError("Operation failed");
             showError(error?.message || "Operation failed");
         }
     };
 
     const handleDelete = async (id) => {
+        if (!window.showError("Are you sure you want to delete this SLA policy?")) return;
         const confirmed = await confirmDelete();
         if (!confirmed) return;
 
@@ -133,7 +138,7 @@ const AdminSLAMaster = () => {
                 {/* HEADER SECTION */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div>
-                        <h2 style={{ color: theme.colors.text.main, margin: 0 }}>SLA Master</h2>
+                        {/*<h2 style={{ color: theme.colors.text.main, margin: 0 }}>SLA Master</h2>*/}
                         <p style={{ color: theme.colors.text.gray, fontSize: '14px' }}>Define resolution and escalation timelines by priority</p>
                     </div>
                     <button

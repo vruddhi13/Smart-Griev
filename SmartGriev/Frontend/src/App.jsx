@@ -24,6 +24,9 @@ import OfficerAccount from './pages/Officer/OfficerAccount';
 import StatusPieReport from './pages/Officer/StatusPieReport';
 import DeptHeadDashboard from './pages/DeptHead/DeptHeadDashboard';
 import DeptHeadAssignComplaint from './pages/DeptHead/DeptHeadAssignComplaint';
+import AdminAuditLog from './pages/Admin/AdminAuditLog';
+
+
 import AdminEscalation from './pages/Admin/AdminEscalation';
 import AdminEscalationComplaints from './pages/Admin/AdminEscalationComplaints';
 import OfficerEscalation from './pages/Officer/OfficerEscalation';
@@ -57,6 +60,7 @@ function App() {
                 <Route path="/admin/users" element={<ProtectedRoute allowedRole="1"><AdminUserRolePanel /></ProtectedRoute>} />
                 <Route path="/admin/sla" element={<ProtectedRoute allowedRole="1"><AdminSLAMaster /></ProtectedRoute>} />
                 <Route path="/admin/complaintdetails" element={<ProtectedRoute allowedRole="1"><AdminComplaints /></ProtectedRoute>} />
+                <Route path="/admin/audit" element={<ProtectedRoute allowedRole="1"><AdminAuditLog /></ProtectedRoute>} />
                 <Route path="/admin/escalations" element={<ProtectedRoute allowedRole="1"><AdminEscalation /></ProtectedRoute>} />
                 <Route path="/admin/escalation-complaints" element={<ProtectedRoute allowedRole="1"><AdminEscalationComplaints /></ProtectedRoute>} />
                 <Route path="/admin/complaint-assignments" element={<ProtectedRoute allowedRole="1"><AdminComplaintAssignmentList /></ProtectedRoute>} />

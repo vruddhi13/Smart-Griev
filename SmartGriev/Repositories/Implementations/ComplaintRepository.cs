@@ -69,6 +69,7 @@ namespace SmartGriev.Repositories.Implementations
             _context.Complaints.Add(complaint);
             await _context.SaveChangesAsync();
 
+
             decimal lat = 0;
             decimal lng = 0;
 
@@ -185,27 +186,35 @@ namespace SmartGriev.Repositories.Implementations
                    departmentName = c.Department.DepartmentName,
                    categoryName = c.Category.CategoryName,
 
-                   // ✅ FIX 1: SEND ID (IMPORTANT)
+                  
                    assignedTo = c.AssignedTo,
 
-                   // ✅ FIX 2: SEND NAME SEPARATELY
-                   assignedToName = c.AssignedToNavigation != null
-        ? c.AssignedToNavigation.FullName
-        : null,
 
-                   // ✅ FIX 3: SEND HISTORY (MOST IMPORTANT)
+                   assignedToName = _context.ComplaintAssignments
+                   .Where(a => a.ComplaintId == c.ComplaintId)
+                    .OrderByDescending(a => a.AssignedAt)
+                    .Select(a => a.AssignedToNavigation.FullName)
+                    .FirstOrDefault(),
+
+                   // ✅ ADD THIS
+                   assignedAt = _context.ComplaintAssignments
+                    .Where(a => a.ComplaintId == c.ComplaintId)
+                    .OrderByDescending(a => a.AssignedAt)
+                    .Select(a => a.AssignedAt)
+                    .FirstOrDefault(),
+
                    assignedOfficerIds = _context.ComplaintAssignments
-        .Where(a => a.ComplaintId == c.ComplaintId)
-        .Select(a => a.AssignedTo)
-        .ToList(),
+                    .Where(a => a.ComplaintId == c.ComplaintId)
+                    .Select(a => a.AssignedTo)
+                    .ToList(),
 
                    status = c.Status,
                    priorityLevel = c.PriorityLevel,
                    createdAt = c.CreatedAt,
 
                    location = c.ComplaintLocations
-        .Select(l => l.Address)
-        .FirstOrDefault() ?? "No Location"
+                    .Select(l => l.Address)
+                    .FirstOrDefault() ?? "No Location"
                })
                 .ToListAsync();
 
