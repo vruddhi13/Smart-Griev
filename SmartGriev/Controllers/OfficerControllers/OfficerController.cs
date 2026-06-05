@@ -122,10 +122,47 @@ namespace SmartGriev.Controllers.OfficerControllers
             complaint.UpdatedAt = DateTime.Now;
 
             if (model.Status == "Resolved")
+            {
                 complaint.ResolvedAt = DateTime.Now;
+                complaint.ClosedAt = DateTime.Now;
+
+                var tracking = await _context.SLA_Trackings
+                    .Where(x =>
+                        x.ComplaintId == complaint.ComplaintId &&
+                        x.CompletedAt == null)
+                    .OrderByDescending(x => x.TrackingId)
+                    .FirstOrDefaultAsync();
+
+                if (tracking != null)
+                {
+                    tracking.CompletedAt = DateTime.Now;
+
+                    tracking.IsEscalated = await _context.EscalationLogs
+                        .AnyAsync(x =>
+                            x.ComplaintId == complaint.ComplaintId);
+                }
+            }
 
             if (model.Status == "Closed")
+            {
                 complaint.ClosedAt = DateTime.Now;
+
+                var tracking = await _context.SLA_Trackings
+                    .Where(x =>
+                        x.ComplaintId == complaint.ComplaintId &&
+                        x.CompletedAt == null)
+                    .OrderByDescending(x => x.TrackingId)
+                    .FirstOrDefaultAsync();
+
+                if (tracking != null)
+                {
+                    tracking.CompletedAt = DateTime.Now;
+
+                    tracking.IsEscalated = await _context.EscalationLogs
+                        .AnyAsync(x =>
+                            x.ComplaintId == complaint.ComplaintId);
+                }
+            }
 
             // ✅ Insert into status log
             _context.ComplaintStatusLogs.Add(new ComplaintStatusLog
@@ -225,34 +262,107 @@ namespace SmartGriev.Controllers.OfficerControllers
         [HttpGet("complaints")]
         public IActionResult GetComplaints()
         {
-            var officerId = GetUserId(); // Get ID of the logged-in officer
+            var officerId = GetUserId();
+
+            if (officerId == null)
+                return Unauthorized();
 
             var complaints = _context.Complaints
-                .Where(c => c.AssignedTo == officerId && c.IsActive == true)
+
+                .Include(c => c.Category)
+                .Include(c => c.User)
+                .Include(c => c.AssignedToNavigation)
+                    .ThenInclude(x => x.Role)
+
+                .Where(c =>
+
+                    c.IsActive == true &&
+
+                    (
+                        c.AssignedTo == officerId ||
+
+                        c.EscalatedTo == officerId
+                    )
+                )
+
                 .Select(c => new
                 {
                     complaint_id = c.ComplaintId,
+
                     complaint_number = c.ComplaintNumber,
+
                     description = c.Description,
+
                     status = c.Status,
+
                     priority_level = c.PriorityLevel,
+
                     created_at = c.CreatedAt,
+
                     category_name = c.Category.CategoryName,
-                    // 🛑 IMPORTANT: This joins the Users table to get the Citizen Name
+
                     citizen_name = c.User.FullName,
-                    // 🛑 IMPORTANT: This joins the Location table for the Map
+
+                    assigned_to =
+                        c.AssignedToNavigation != null
+                            ? c.AssignedToNavigation.FullName
+                            : "Not Assigned",
+
+                    assigned_role =
+                        c.AssignedToNavigation != null &&
+                        c.AssignedToNavigation.Role != null
+
+                            ? c.AssignedToNavigation
+                                .Role
+                                .RoleName
+
+                            : "-",
+
+                    escalated_to = c.EscalatedTo,
+
+                    is_escalated =
+                        c.EscalatedTo != null,
+
                     location_data = _context.ComplaintLocations
-                        .Where(l => l.ComplaintId == c.ComplaintId)
-                        .Select(l => new {
-                            l.Latitude,
-                            l.Longitude,
-                            l.Address
-                        }).FirstOrDefault(),
+
+                        .Where(l =>
+                            l.ComplaintId == c.ComplaintId)
+
+                        .Select(l => new
+                        {
+                            latitude = l.Latitude,
+                            longitude = l.Longitude,
+                            address = l.Address
+                        })
+
+                        .FirstOrDefault(),
+
                     image = _context.ComplaintImages
-                        .Where(i => i.ComplaintId == c.ComplaintId)
+
+                        .Where(i =>
+                            i.ComplaintId == c.ComplaintId)
+
                         .Select(i => i.FilePath)
-                        .FirstOrDefault()
+
+                        .FirstOrDefault(),
+
+                    escalation_level =
+                        _context.EscalationLogs
+
+                            .Where(e =>
+                                e.ComplaintId == c.ComplaintId)
+
+                            .OrderByDescending(e =>
+                                e.EscalationLevel)
+
+                            .Select(e =>
+                                e.EscalationLevel)
+
+                            .FirstOrDefault()
                 })
+
+                .OrderByDescending(c => c.created_at)
+
                 .ToList();
 
             return Ok(complaints);
@@ -282,6 +392,210 @@ namespace SmartGriev.Controllers.OfficerControllers
                 .FirstOrDefault();
 
             return Ok(user);
+        }
+
+        [HttpGet("escalated-complaints")]
+        public IActionResult GetEscalatedComplaints()
+        {
+            var officerId = GetUserId();
+
+            if (officerId == null)
+                return Unauthorized();
+
+            var complaints = _context.Complaints
+
+                .Include(c => c.User)
+                .Include(c => c.Category)
+                .Include(c => c.Department)
+                .Include(c => c.AssignedToNavigation)
+
+                .Where(c =>
+                    c.IsActive == true &&
+                    c.EscalatedTo == officerId
+                )
+
+                .Select(c => new
+                {
+                    complaintId = c.ComplaintId,
+                    complaintNumber = c.ComplaintNumber,
+
+                    citizenName = c.User.FullName,
+
+                    categoryName = c.Category.CategoryName,
+
+                    departmentName = c.Department.DepartmentName,
+
+                    description = c.Description,
+
+                    status = c.Status,
+
+                    priorityLevel = c.PriorityLevel,
+
+                    createdAt = c.CreatedAt,
+
+                    assignedOfficer =
+                        c.AssignedToNavigation != null
+                            ? c.AssignedToNavigation.FullName
+                            : "-",
+
+                    escalationLevel =
+                        _context.EscalationLogs
+                            .Where(e => e.ComplaintId == c.ComplaintId)
+                            .OrderByDescending(e => e.EscalationLevel)
+                            .Select(e => e.EscalationLevel)
+                            .FirstOrDefault(),
+
+                    image =
+                        _context.ComplaintImages
+                            .Where(i => i.ComplaintId == c.ComplaintId)
+                            .Select(i => i.FilePath)
+                            .FirstOrDefault(),
+
+                    location = _context.ComplaintLocations
+    .Where(x => x.ComplaintId == c.ComplaintId)
+    .Select(x => new
+    {
+        x.Latitude,
+        x.Longitude,
+        x.Address
+    })
+    .FirstOrDefault(),
+                })
+
+                .OrderByDescending(x => x.createdAt)
+
+                .ToList();
+
+            return Ok(complaints);
+        }
+
+        [HttpGet("complaint-details/{complaintId}")]
+        public IActionResult ComplaintDetails(int complaintId)
+        {
+            var data = _context.Complaints
+                .Where(c => c.ComplaintId == complaintId)
+                .Select(c => new
+                {
+                    c.ComplaintId,
+                    c.ComplaintNumber,
+
+                    c.UserId,
+                    c.DepartmentId,
+                    c.CategoryId,
+
+                    c.PriorityLevel,
+                    c.Description,
+                    c.Status,
+
+                    c.AssignedTo,
+                    c.EscalatedTo,
+
+                    c.SlaDueTime,
+                    c.ResolvedAt,
+                    c.ClosedAt,
+
+                    c.IsActive,
+
+                    c.CreatedAt,
+                    c.UpdatedAt,
+
+                    CitizenName = c.User.FullName,
+
+                    DepartmentName = c.Department.DepartmentName,
+
+                    CategoryName = c.Category.CategoryName,
+
+                    AssignedOfficer =
+                        c.AssignedToNavigation != null
+                            ? c.AssignedToNavigation.FullName
+                            : "-",
+
+                    EscalatedOfficer =
+                        c.EscalatedToNavigation != null
+                            ? c.EscalatedToNavigation.FullName
+                            : "-",
+
+                    Location = _context.ComplaintLocations
+                        .FirstOrDefault(x => x.ComplaintId == c.ComplaintId),
+
+                    Images = _context.ComplaintImages
+                        .Where(x => x.ComplaintId == c.ComplaintId)
+                        .Select(x => x.FilePath)
+                        .ToList()
+                })
+                .FirstOrDefault();
+
+            if (data == null)
+                return NotFound();
+
+            return Ok(data);
+        }
+
+        [HttpGet("complaint-history/{complaintId}")]
+        public IActionResult ComplaintHistory(int complaintId)
+        {
+            var history = _context.ComplaintStatusLogs
+                .Include(x => x.ChangedByNavigation)
+                    .ThenInclude(u => u.Role)
+
+                .Where(x => x.ComplaintId == complaintId)
+                .OrderByDescending(x => x.ChangedAt)
+                .ToList()
+                .Select(x =>
+                {
+                    // GET assignment at time of change (OLD STATE approx)
+                    var oldAssignment = _context.ComplaintAssignments
+                        .Where(a => a.ComplaintId == complaintId
+                                    && a.AssignedAt <= x.ChangedAt)
+                        .OrderByDescending(a => a.AssignedAt)
+                        .Include(a => a.AssignedToNavigation)
+                            .ThenInclude(u => u.Role)
+                        .FirstOrDefault();
+
+                    // GET latest assignment after change (NEW STATE approx)
+                    var newAssignment = _context.ComplaintAssignments
+                        .Where(a => a.ComplaintId == complaintId
+                                    && a.AssignedAt >= x.ChangedAt)
+                        .OrderBy(a => a.AssignedAt)
+                        .Include(a => a.AssignedToNavigation)
+                            .ThenInclude(u => u.Role)
+                        .FirstOrDefault();
+
+                    return new
+                    {
+                        oldStatus = new
+                        {
+                            status = x.OldStatus,
+
+                            user = oldAssignment?.AssignedToNavigation?.FullName,
+                            role = oldAssignment?.AssignedToNavigation?.Role?.RoleName,
+                            email = oldAssignment?.AssignedToNavigation?.Email,
+                            mobile = oldAssignment?.AssignedToNavigation?.MobileNo
+                        },
+
+                        newStatus = new
+                        {
+                            status = x.NewStatus,
+
+                            user = newAssignment?.AssignedToNavigation?.FullName,
+                            role = newAssignment?.AssignedToNavigation?.Role?.RoleName,
+                            email = newAssignment?.AssignedToNavigation?.Email,
+                            mobile = newAssignment?.AssignedToNavigation?.MobileNo
+                        },
+
+                        changedBy = new
+                        {
+                            user = x.ChangedByNavigation?.FullName,
+                            role = x.ChangedByNavigation?.Role?.RoleName
+                        },
+
+                        changedAt = x.ChangedAt,
+                        remarks = x.Remarks
+                    };
+                })
+                .ToList();
+
+            return Ok(history);
         }
 
     }

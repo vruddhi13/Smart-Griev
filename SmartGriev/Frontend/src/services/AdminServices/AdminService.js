@@ -49,11 +49,13 @@ export const deleteDepartment = async (id) => {
         method: "DELETE"
     });
 
+    const data = await response.json();
+
     if (!response.ok) {
-        throw new Error("Failed to delete department");
+        throw new Error(data.message);
     }
 
-    return await response.json();
+    return data;
 };
 
 //Category Services 
@@ -146,13 +148,22 @@ export const submitComplaint = async (data) => {
 }
 
 // ➕ Add User
-export const addUser = async (data) => {
+export const addUser = async (formData) => {
+    // Map properties explicitly so .NET accepts them seamlessly
+    const payload = {
+        Name: formData.name,
+        Email: formData.email,
+        Phone: formData.phone,
+        RoleId: Number(formData.roleId),
+        DepartmentId: formData.departmentId ? Number(formData.departmentId) : null
+    };
+
     const response = await fetch(`${API}/users`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify(payload)
     });
 
     if (!response.ok) {
@@ -163,13 +174,21 @@ export const addUser = async (data) => {
 };
 
 // ✏️ Update User
-export const updateUser = async (id, data) => {
+export const updateUser = async (id, formData) => {
+    const payload = {
+        Name: formData.name,
+        Email: formData.email,
+        Phone: formData.phone,
+        RoleId: Number(formData.roleId),
+        DepartmentId: formData.departmentId ? Number(formData.departmentId) : null
+    };
+
     const response = await fetch(`${API}/users/${id}`, {
         method: "PUT",
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify(payload)
     });
 
     if (!response.ok) {
@@ -283,25 +302,6 @@ export const getComplaints = async () => {
     return await res.json();
 };
 
-export const assignComplaint = async (data) => {
-    const res = await fetch("https://localhost:7224/api/Complaint/assign-complaint", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(data)
-    });
-
-    const text = await res.text();
-
-    if (!res.ok) {
-        console.error("API ERROR:", text);
-        throw new Error(text || "Assignment failed");
-    }
-
-    return text ? JSON.parse(text) : {};
-};
-
 export const updateStatus = async (complaintId, status) => {
     const res = await fetch("https://localhost:7224/api/officer/update-status", {
         method: "POST",
@@ -333,4 +333,64 @@ export const getOfficers = async () => {
         console.error("API ERROR:", error);
         throw error;
     }
+};
+
+const handleResponse = async (response) => {
+    const data = await response.json().catch(() => null);
+
+    if (!response.ok) {
+        throw new Error(data?.message || "API request failed");
+    }
+
+    return data;
+};
+
+// GET ALL ESCALATIONS
+export const getEscalations = async () => {
+    const response = await fetch(`${API}/escalation`);
+    return await handleResponse(response);
+};
+
+// GET ESCALATION COMPLAINTS
+export const getEscalationComplaints = async () => {
+    const response = await fetch(`${API}/escalation/complaints`);
+    return await handleResponse(response);
+};
+
+// GET ESCALATION HISTORY BY COMPLAINT ID
+export const getEscalationHistory = async (complaintId) => {
+    const response = await fetch(
+        `${API}/escalation/complaint/${complaintId}`
+    );
+    return await handleResponse(response);
+};
+
+// MANUAL ESCALATION
+export const manualEscalation = async (data, token) => {
+    const response = await fetch(`${API}/escalation/manual`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(data)
+    });
+
+    return await handleResponse(response);
+};
+
+// AUTO ESCALATION TRIGGER
+export const runAutoEscalation = async (token) => {
+    const response = await fetch(
+        `${API}/escalation/run-auto-escalation`,
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`
+            }
+        }
+    );
+
+    return await handleResponse(response);
 };

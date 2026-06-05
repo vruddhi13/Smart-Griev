@@ -1,6 +1,6 @@
 ﻿import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Users, Building2, Clock, BarChart3 } from 'lucide-react';
+import { LayoutDashboard, Users, Building2, Clock, BarChart3, AlertTriangle,Tags,TimerReset,FileWarning } from 'lucide-react';
 import { adminTheme as theme } from '../../services/AdminServices/AdminTheme';
 
 const AdminSidebar = () => {
@@ -11,9 +11,12 @@ const AdminSidebar = () => {
         { id: 'dashboard', label: 'Main Dashboard', icon: LayoutDashboard, path: '/admin' },
         { id: 'users', label: 'User & Roles', icon: Users, path: '/admin/users' },
         { id: 'depts', label: 'Departments', icon: Building2, path: '/admin/departments' },
-        { id: 'category', label: 'Category', icon: Building2, path: '/admin/category' },
+        { id: 'category', label: 'Category', icon: Tags, path: '/admin/category' },
         { id: 'sla', label: 'SLA Config', icon: Clock, path: '/admin/sla' },
-        { id: 'complaints', label: 'Complaints', icon: Clock, path: '/admin/complaintdetails' },
+        { id: 'complaints', label: 'Complaints', icon: FileWarning, path: '/admin/complaintdetails' },
+        { id: 'escalations',label: 'Escalations',icon: AlertTriangle,path: '/admin/escalations'},
+        { id: 'escalationComplaints', label: 'Escalation Complaints', icon: TimerReset, path: '/admin/escalation-complaints'},
+
 
     //    { id: 'analytics', label: 'Analytics', icon: BarChart3, path: '/admin/analytics' },
     ];

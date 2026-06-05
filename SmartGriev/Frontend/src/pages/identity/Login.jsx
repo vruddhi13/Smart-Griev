@@ -7,7 +7,6 @@ import { showError, showSuccessToast } from "../../services/alertService";
 const Login = () => {
 
     const navigate = useNavigate();
-
     const [formData, setFormData] = useState({
         emailOrMobile: "",
         password: ""
@@ -60,6 +59,10 @@ const Login = () => {
 
         e.preventDefault();
 
+        if (!validateForm()) {
+            return;
+        }
+
         try {
 
             const result = await loginUser(formData);
@@ -77,6 +80,36 @@ const Login = () => {
         }
     };
 
+    const validateForm = () => {
+
+        if (!formData.emailOrMobile.trim()) {
+            showError("Email or Mobile is required");
+            return false;
+        }
+
+        const value = formData.emailOrMobile.trim();
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const mobileRegex = /^[0-9]{10}$/;
+
+        if (!emailRegex.test(value) && !mobileRegex.test(value)) {
+            showError("Enter valid Email or 10 digit Mobile Number");
+            return false;
+        }
+
+        if (!formData.password.trim()) {
+            showError("Password is required");
+            return false;
+        }
+
+        if (formData.password.length < 6) {
+            showError("Password must be at least 6 characters");
+            return false;
+        }
+
+        return true;
+    };
+
     return (
         <div style={container}>
 
@@ -89,6 +122,7 @@ const Login = () => {
                 <form onSubmit={handleSubmit}>
 
                     <label>Email or Mobile</label>
+
                     <input
                         type="text"
                         name="emailOrMobile"
@@ -98,6 +132,7 @@ const Login = () => {
                     />
 
                     <label>Password</label>
+
                     <input
                         type="password"
                         name="password"

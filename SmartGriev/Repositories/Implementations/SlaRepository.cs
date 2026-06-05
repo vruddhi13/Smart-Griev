@@ -44,9 +44,13 @@ namespace SmartGriev.Repositories.Implementations
 
             if (sla == null) return;
 
+            sla.DepartmentId = dto.DepartmentId;
+            sla.CategoryId = dto.CategoryId;
+
             sla.PriorityLevel = dto.PriorityLevel;
             sla.ResolutionHours = dto.ResolutionHours;
             sla.EscalationHours = dto.EscalationHours;
+
             sla.UpdatedAt = DateTime.Now;
 
             await _context.SaveChangesAsync();
@@ -55,9 +59,19 @@ namespace SmartGriev.Repositories.Implementations
         public async Task DeleteSla(int id)
         {
             var sla = await _context.SlaMasters.FindAsync(id);
-            if (sla == null) return;
-            sla.IsActive = false;
-            await _context.SaveChangesAsync();
+
+            if (sla == null)
+                throw new Exception("SLA not found");
+
+            try
+            {
+                sla.IsActive = false;
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException)
+            {
+                throw new Exception("SLA cannot be deleted because it is used in other records.");
+            }
         }
     }
 }

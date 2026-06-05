@@ -264,53 +264,6 @@ namespace SmartGriev.Controllers
             }
         }
 
-        [HttpPost("assign-complaint")]
-        public async Task<IActionResult> AssignComplaint([FromBody] AssignComplaintDTO model)
-        {
-            var complaint = await _context.Complaints
-                .FirstOrDefaultAsync(c => c.ComplaintId == model.ComplaintId);
-
-            if (complaint == null)
-                return NotFound("Complaint not found");
-            if (complaint.AssignedTo != null && !model.ForceReassign)
-            {
-                return BadRequest("Complaint already assigned");
-            }
-
-            var oldStatus = complaint.Status;
-
-            // ✅ UPDATE
-            complaint.AssignedTo = model.OfficerId;
-            complaint.Status = "Assigned";
-            complaint.UpdatedAt = DateTime.Now;
-
-            // ✅ ASSIGNMENT LOG
-            _context.ComplaintAssignments.Add(new ComplaintAssignment
-            {
-                ComplaintId = model.ComplaintId,
-                AssignedTo = model.OfficerId,
-                AssignedBy = model.AdminId,
-                AssignmentStatus = model.ForceReassign ? "Reassigned" : "Assigned",
-                Remarks = model.Remarks,
-                AssignedAt = DateTime.Now
-            });
-
-            // ✅ STATUS LOG
-            _context.ComplaintStatusLogs.Add(new ComplaintStatusLog
-            {
-                ComplaintId = model.ComplaintId,
-                OldStatus = oldStatus,
-                NewStatus = "Assigned",
-                ChangedBy = model.AdminId,
-                Remarks = model.ForceReassign ? "Reassigned by admin" : "Assigned by admin",
-                ChangedAt = DateTime.Now
-            });
-
-            await _context.SaveChangesAsync();
-
-            return Ok(new { message = "Complaint assigned successfully" });
-        }
-
         [HttpGet("get-officers")]
         public async Task<IActionResult> GetOfficers()
         {
