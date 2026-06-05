@@ -311,5 +311,63 @@ namespace SmartGriev.Controllers.DepartmentHeadController
 
             return Ok(history);
         }
+
+        [HttpGet("department-officers/{departmentId}")]
+        public IActionResult GetDepartmentOfficers(int departmentId)
+        {
+            var officers = _context.Users
+                .Include(u => u.Role)
+                .Include(u => u.Department)
+                .Where(u =>
+                    u.DepartmentId == departmentId &&
+                    u.Role.RoleName == "Officer" &&
+                    u.IsActive == true)
+                .Select(u => new
+                {
+                    userId = u.UserId,
+                    fullName = u.FullName,
+                    email = u.Email,
+                    mobileNo = u.MobileNo,
+                    departmentId = u.DepartmentId,
+                    departmentName = u.Department.DepartmentName,
+                    roleName = u.Role.RoleName
+                })
+                .ToList();
+
+            return Ok(officers);
+        }
+
+        [HttpGet("my-department-officers")]
+        public IActionResult GetMyDepartmentOfficers()
+        {
+            var userId = GetUserId();
+
+            if (userId == null)
+                return Unauthorized();
+
+            var departmentId = _context.Users
+                .Where(u => u.UserId == userId)
+                .Select(u => u.DepartmentId)
+                .FirstOrDefault();
+
+            var officers = _context.Users
+                .Include(u => u.Department)
+                .Include(u => u.Role)
+                .Where(u =>
+                    u.DepartmentId == departmentId &&
+                    u.Role.RoleName == "Officer")
+                .Select(u => new
+                {
+                    userId = u.UserId,
+                    name = u.FullName,
+                    email = u.Email,
+                    phone = u.MobileNo,
+                    departmentName = u.Department.DepartmentName,
+                    isActive = u.IsActive
+                })
+                .ToList();
+
+            return Ok(officers);
+        }
     }
 }

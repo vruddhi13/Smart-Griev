@@ -429,6 +429,52 @@ namespace SmartGriev.Controllers
             return Ok(officers);
         }
 
+        [HttpGet("complaint-assignments")]
+        public IActionResult GetComplaintAssignments()
+        {
+            var assignments = _context.ComplaintAssignments
+
+                .Include(a => a.Complaint)
+                .Include(a => a.AssignedByNavigation)
+                    .ThenInclude(u => u.Role)
+
+                .Include(a => a.AssignedToNavigation)
+                    .ThenInclude(u => u.Role)
+
+                .OrderByDescending(a => a.AssignedAt)
+
+                .Select(a => new
+                {
+                    assignmentId = a.AssignmentId,
+
+                    complaintId = a.ComplaintId,
+
+                    complaintNumber = a.Complaint.ComplaintNumber,
+
+                    assignedBy = new
+                    {
+                        userId = a.AssignedBy,
+                        name = a.AssignedByNavigation.FullName,
+                        role = a.AssignedByNavigation.Role.RoleName
+                    },
+
+                    assignedTo = new
+                    {
+                        userId = a.AssignedTo,
+                        name = a.AssignedToNavigation.FullName,
+                        role = a.AssignedToNavigation.Role.RoleName
+                    },
+
+                    assignmentStatus = a.AssignmentStatus,
+
+                    remarks = a.Remarks,
+
+                    assignedAt = a.AssignedAt
+                })
+
+                .ToList();
+
+            return Ok(assignments);
         private async Task CreateNotification(int userId, int? complaintId, string title, string message, string type)
         {
             var notification = new Notification

@@ -31,6 +31,9 @@ import AdminEscalation from './pages/Admin/AdminEscalation';
 import AdminEscalationComplaints from './pages/Admin/AdminEscalationComplaints';
 import OfficerEscalation from './pages/Officer/OfficerEscalation';
 import DeptHeadEscalation from './pages/DeptHead/DeptHeadEscalation';
+import DeptHeadOfficerList from './pages/DeptHead/DeptHeadOfficerList';
+import AdminComplaintAssignmentList from './pages/Admin/AdminComplaintAssignmentList';
+
 function App() {
     return (
         <BrowserRouter>
@@ -59,7 +62,9 @@ function App() {
                 <Route path="/admin/complaintdetails" element={<ProtectedRoute allowedRole="1"><AdminComplaints /></ProtectedRoute>} />
                 <Route path="/admin/audit" element={<ProtectedRoute allowedRole="1"><AdminAuditLog /></ProtectedRoute>} />
                 <Route path="/admin/escalations" element={<ProtectedRoute allowedRole="1"><AdminEscalation /></ProtectedRoute>} />
-                <Route path="/admin/escalation-complaints" element={<ProtectedRoute allowedRole="1"><AdminEscalationComplaints/></ProtectedRoute>}/>
+                <Route path="/admin/escalation-complaints" element={<ProtectedRoute allowedRole="1"><AdminEscalationComplaints /></ProtectedRoute>} />
+                <Route path="/admin/complaint-assignments" element={<ProtectedRoute allowedRole="1"><AdminComplaintAssignmentList /></ProtectedRoute>} />
+
 
                 {/*Officer*/}
                 <Route path="/officer" element={<ProtectedRoute allowedRole="3"><OfficerDashboard /></ProtectedRoute>} />
@@ -72,7 +77,8 @@ function App() {
                 {/*Department Head*/}
                 <Route path="/depthead" element={<ProtectedRoute allowedRole="2"><DeptHeadDashboard /></ProtectedRoute>} />
                 <Route path="/depthead/dept-assign" element={<DeptHeadAssignComplaint />} />
-                <Route path="/depthead/escalations" element={<DeptHeadEscalation/>} />
+                <Route path="/depthead/escalations" element={<DeptHeadEscalation />} />
+                <Route path="/depthead/officers" element={<DeptHeadOfficerList/>} />
 
                 {/*<Route path="/officer/complaints" element={<OfficerComplaints />} />*/}
                 {/*<Route path="/officer/account" element={<OfficerAccount />} />*/}

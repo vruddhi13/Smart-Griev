@@ -71,3 +71,16 @@ export const getComplaintHistory = async (id) => {
     );
     return res.data;
 };
+
+export const getDepartmentOfficers = async () => {
+    const token = sessionStorage.getItem("token");
+
+    return axios.get(
+        `${API}/my-department-officers`,
+        {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+    );
+};

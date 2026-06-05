@@ -1,4 +1,6 @@
-﻿const API = "https://localhost:7224/api/admin";
+﻿import axios from "axios";
+
+const API = "https://localhost:7224/api/admin";
 
 const getAuthHeaders = () => {
     const token = sessionStorage.getItem("token");
@@ -456,4 +458,17 @@ export const runAutoEscalation = async (token) => {
     );
 
     return await handleResponse(response);
+};
+
+export const getComplaintAssignments = async () => {
+    const token = sessionStorage.getItem("token");
+
+    return await axios.get(
+        `https://localhost:7224/api/Complaint/complaint-assignments`,
+        {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+    );
 };
