@@ -153,46 +153,36 @@ namespace SmartGriev.Controllers.AdminControllers
                 return Unauthorized("User not authenticated");
             }
 
-            var dept = await _repo.GetDepartmentById(id);
-
-            if (dept == null)
-                return NotFound("Department not found");
-
-            // Capture the state before it disappears completely
-            string oldDataJson = JsonSerializer.Serialize(new
-            {
-                dept.DepartmentId,
-                dept.DepartmentName,
-                dept.IsActive
-            });
-
-            await _repo.DeleteDepartment(id);
-            var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
-            await _auditRepo.AddLog(new AuditLog
-            {
-                UserId = userId.Value,
-                ActionType = "DELETE",
-                EntityName = "Department",
-                EntityId = dept.DepartmentId,
-                OldData = oldDataJson, // Retain what we deleted
-                NewData = null,
-                Description = $"Deleted department {dept.DepartmentName}",
-                IpAddress = ipAddress,
-                UserAgent = Request.Headers["User-Agent"].ToString()
-            });
-
-            return Ok(new
             try
             {
-                var result = await _repo.DeleteDepartment(id);
+                var dept = await _repo.GetDepartmentById(id);
 
-                if (!result)
+                if (dept == null)
+                    return NotFound(new { message = "Department not found" });
+
+                string oldDataJson = JsonSerializer.Serialize(new
                 {
-                    return NotFound(new
-                    {
-                        message = "Department not found"
-                    });
-                }
+                    dept.DepartmentId,
+                    dept.DepartmentName,
+                    dept.IsActive
+                });
+
+                await _repo.DeleteDepartment(id);
+
+                var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
+
+                await _auditRepo.AddLog(new AuditLog
+                {
+                    UserId = userId.Value,
+                    ActionType = "DELETE",
+                    EntityName = "Department",
+                    EntityId = dept.DepartmentId,
+                    OldData = oldDataJson, 
+                    NewData = null,
+                    Description = $"Deleted department {dept.DepartmentName}",
+                    IpAddress = ipAddress,
+                    UserAgent = Request.Headers["User-Agent"].ToString()
+                });
 
                 return Ok(new
                 {

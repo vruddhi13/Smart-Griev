@@ -137,44 +137,43 @@ namespace SmartGriev.Controllers.AdminControllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCategory(int id)
         {
-            var userId = GetUserId();
-            if (userId == null)
-            {
-                return Unauthorized("User not authenticated");
-            }
-            var existingCategory = await _categoryRepository.GetCategoryById(id);
-            if (existingCategory == null)
-            {
-                return NotFound("Category not found");
-            }
-
-            string oldDataJson = JsonSerializer.Serialize(new
-            {
-                existingCategory.CategoryId,
-                existingCategory.CategoryName,
-                existingCategory.Description,
-                existingCategory.DepartmentId
-            });
-            await _categoryRepository.DeleteCategory(id);
-            var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
-            await _auditRepo.AddLog(new AuditLog
-            {
-                UserId = userId.Value,
-                ActionType = "DELETE",
-                EntityName = "Category",
-                EntityId = id,
-                OldData = oldDataJson, // Record what used to exist here
-                NewData = null,
-                Description = $"Deleted category with ID {id}",
-                IpAddress = ipAddress,
-                UserAgent = Request.Headers["User-Agent"].ToString()
-            });
-            return Ok("Category Deleted");
-        }
-
             try
             {
+                var userId = GetUserId();
+                if (userId == null)
+                {
+                    return Unauthorized("User not authenticated");
+                }
+
+                var existingCategory = await _categoryRepository.GetCategoryById(id);
+                if (existingCategory == null)
+                {
+                    return NotFound("Category not found");
+                }
+
+                string oldDataJson = JsonSerializer.Serialize(new
+                {
+                    existingCategory.CategoryId,
+                    existingCategory.CategoryName,
+                    existingCategory.Description,
+                    existingCategory.DepartmentId
+                });
+
                 await _categoryRepository.DeleteCategory(id);
+
+                var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
+                await _auditRepo.AddLog(new AuditLog
+                {
+                    UserId = userId.Value,
+                    ActionType = "DELETE",
+                    EntityName = "Category",
+                    EntityId = id,
+                    OldData = oldDataJson,
+                    NewData = null,
+                    Description = $"Deleted category with ID {id}",
+                    IpAddress = ipAddress,
+                    UserAgent = Request.Headers["User-Agent"].ToString()
+                });
 
                 return Ok(new
                 {

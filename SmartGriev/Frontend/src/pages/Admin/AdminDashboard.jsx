@@ -7,6 +7,14 @@ import {
     AreaChart, Area, CartesianGrid, XAxis, YAxis, Legend
 } from 'recharts';
 
+const STATUS_ORDER = ['Assigned', 'Resolved', 'Submitted'];
+const COLOR_MAP = {
+    'Assigned': theme.colors.brand.primary,
+    'Resolved': '#10B981',
+    'Submitted': '#F59E0B'
+};
+const FALLBACK_COLORS = [theme.colors.brand.primary, '#10B981', '#F59E0B', '#EF4444', '#8B5CF6'];
+
 const AdminDashboard = () => {
     const [dashboard, setDashboard] = useState(null);
     const [filter, setFilter] = useState('year'); // Default to Year to capture wider range distributions
@@ -14,13 +22,6 @@ const AdminDashboard = () => {
     const [loading, setLoading] = useState(true);
 
     
-    const STATUS_ORDER = ['Assigned', 'Resolved', 'Submitted'];
-    const COLOR_MAP = {
-        'Assigned': theme.colors.brand.primary, 
-        'Resolved': '#10B981',                
-        'Submitted': '#F59E0B'                
-    };
-    const FALLBACK_COLORS = [theme.colors.brand.primary, '#10B981', '#F59E0B', '#EF4444', '#8B5CF6'];
 
     const generateFallbackTrend = (rangeMode) => {
         const today = new Date();

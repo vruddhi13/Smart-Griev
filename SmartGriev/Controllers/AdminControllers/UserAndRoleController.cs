@@ -7,23 +7,30 @@ using SmartGriev.DTOs.AdminDTOs;
 using SmartGriev.DTOs.OfficerDTOs;
 using SmartGriev.Models;
 using SmartGriev.Repositories.Interfaces;
+using System;
+using System.Linq;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace SmartGriev.Controllers.AdminControllers
 {
     [Authorize]
     [Route("api/admin/users")]
-    [Route("api/admin")] 
     [ApiController]
     public class UserAndRoleController : ControllerBase
     {
         private readonly IUserRepository _userRepository;
         private readonly IAuditRepository _auditRepo;
-        public UserAndRoleController(IUserRepository userRepository, IAuditRepository auditRepo)
+        private readonly Ict2smartGrievDbContext _context;
+
+        // Unified constructor combining all injected dependencies
+        public UserAndRoleController(IUserRepository userRepository, IAuditRepository auditRepo, Ict2smartGrievDbContext context)
         {
             _userRepository = userRepository;
             _auditRepo = auditRepo;
+            _context = context;
         }
+
         private int? GetUserId()
         {
             var claim = User.FindFirst("UserId");
@@ -32,13 +39,7 @@ namespace SmartGriev.Controllers.AdminControllers
                 return null;
 
             return int.Parse(claim.Value);
-        private readonly Ict2smartGrievDbContext _context;
-
-        public UserAndRoleController(IUserRepository userRepository, Ict2smartGrievDbContext context)
-        {
-            _userRepository = userRepository;
-            _context = context;
-        }
+        } // <-- Fixed: Added missing closing brace here
 
         [HttpGet("users")]
         public async Task<IActionResult> GetAllUsers()
@@ -85,7 +86,7 @@ namespace SmartGriev.Controllers.AdminControllers
                 user.IsActive
             });
 
-            //audit log
+            // audit log
             var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
             await _auditRepo.AddLog(new AuditLog
             {
@@ -103,7 +104,7 @@ namespace SmartGriev.Controllers.AdminControllers
             return Ok(user);
         }
 
-        [HttpPut("{id}")]
+        
         [HttpPut("users/{id}")]
         public async Task<IActionResult> UpdateUser(int id, [FromBody] UserRoleListDTO dto)
         {
@@ -127,15 +128,12 @@ namespace SmartGriev.Controllers.AdminControllers
                 user.IsActive
             });
 
-            // ✅ Basic fields
+           
+
+            // ROLE FIX
             user.FullName = dto.Name ?? "";
             user.Email = dto.Email;
             user.MobileNo = dto.Phone ?? "";
-
-            // ✅ ROLE FIX (MAIN PART)
-            user.FullName = dto.Name;
-            user.Email = dto.Email;
-            user.MobileNo = dto.Phone;
             user.RoleId = dto.RoleId;
 
             if (dto.RoleId == 2 || dto.RoleId == 3)
@@ -155,7 +153,7 @@ namespace SmartGriev.Controllers.AdminControllers
                 user.IsActive
             });
 
-            //Audit log 
+            // Audit log 
             var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
             await _auditRepo.AddLog(new AuditLog
             {
@@ -202,27 +200,25 @@ namespace SmartGriev.Controllers.AdminControllers
                 user.RoleId,
                 user.IsActive
             });
-            await _userRepository.DeleteUser(user);
 
-            //audit log
-            var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
-            await _auditRepo.AddLog(new AuditLog
-            {
-                UserId = userId.Value,
-                ActionType = "DELETE",
-                EntityName = "User",
-                EntityId = user.UserId,
-                OldData = oldDataJson,
-                NewData = null, 
-                Description = $"Deleted user {user.FullName}",
-                IpAddress = ipAddress,
-                UserAgent = Request.Headers["User-Agent"].ToString()
-            });
-
-            return Ok(new { message = "User deleted successfully" });
             try
             {
                 await _userRepository.DeleteUser(user);
+
+                // audit log
+                var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
+                await _auditRepo.AddLog(new AuditLog
+                {
+                    UserId = userId.Value,
+                    ActionType = "DELETE",
+                    EntityName = "User",
+                    EntityId = user.UserId,
+                    OldData = oldDataJson,
+                    NewData = null,
+                    Description = $"Deleted user {user.FullName}",
+                    IpAddress = ipAddress,
+                    UserAgent = Request.Headers["User-Agent"].ToString()
+                });
 
                 return Ok(new
                 {
@@ -248,6 +244,7 @@ namespace SmartGriev.Controllers.AdminControllers
             {
                 return Unauthorized("User not authenticated");
             }
+
             var user = new User
             {
                 FullName = dto.Name ?? "",
@@ -269,7 +266,8 @@ namespace SmartGriev.Controllers.AdminControllers
                 user.RoleId,
                 user.IsActive
             });
-            //audit log
+
+            // audit log
             var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
             await _auditRepo.AddLog(new AuditLog
             {
@@ -277,7 +275,7 @@ namespace SmartGriev.Controllers.AdminControllers
                 ActionType = "CREATE",
                 EntityName = "User",
                 EntityId = user.UserId,
-                OldData = null, // None since record did not exist
+                OldData = null,
                 NewData = newDataJson,
                 Description = $"Created user {user.FullName}",
                 IpAddress = ipAddress,
@@ -311,7 +309,6 @@ namespace SmartGriev.Controllers.AdminControllers
         {
             try
             {
-                // Get logged-in user id from token
                 var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "user_id");
 
                 if (userIdClaim == null)
@@ -321,7 +318,6 @@ namespace SmartGriev.Controllers.AdminControllers
 
                 int userId = int.Parse(userIdClaim.Value);
 
-                // Find user
                 var user = await _userRepository.GetUserById(userId);
 
                 if (user == null)
@@ -329,23 +325,22 @@ namespace SmartGriev.Controllers.AdminControllers
                     return NotFound(new { message = "User not found" });
                 }
 
-                // Password validation
                 if (string.IsNullOrWhiteSpace(dto.Password))
                 {
                     return BadRequest(new { message = "Password is required" });
                 }
+
                 string oldDataJson = JsonSerializer.Serialize(new { Id = user.UserId, Note = "Password Modification Event Initiated." });
-                // Hash password
+
                 var passwordHasher = new PasswordHasher<User>();
-
                 user.PasswordHash = passwordHasher.HashPassword(user, dto.Password);
-
                 user.UpdatedAt = DateTime.Now;
 
-                // Save changes
                 await _userRepository.UpdateUser(user);
+
                 string newDataJson = JsonSerializer.Serialize(new { Id = user.UserId, Note = "Password successfully hashed and saved." });
                 var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
+
                 await _auditRepo.AddLog(new AuditLog
                 {
                     UserId = userId,
@@ -358,6 +353,7 @@ namespace SmartGriev.Controllers.AdminControllers
                     IpAddress = ipAddress,
                     UserAgent = Request.Headers["User-Agent"].ToString()
                 });
+
                 return Ok(new
                 {
                     message = "Password updated successfully"
@@ -370,24 +366,6 @@ namespace SmartGriev.Controllers.AdminControllers
                     message = ex.Message
                 });
             }
-        }
-
-       
-        
-            return Ok(new { message = "User added successfully" });
-        }
-
-        [HttpPut("users/{id}/toggle-status")]
-        public async Task<IActionResult> ToggleUserStatus(int id)
-        {
-            var user = await _userRepository.GetUserById(id);
-            if (user == null)
-                return NotFound(new { message = "User not found" });
-
-            user.IsActive = !user.IsActive;
-            await _userRepository.UpdateUser(user);
-
-            return Ok(user);
         }
     }
 }
