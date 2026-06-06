@@ -2,7 +2,7 @@
 import AdminLayout from '../../layout/AdminLayout';
 import { adminTheme as theme } from '../../services/AdminServices/AdminTheme';
 import { ListTree, Plus, Trash2, Edit, X, Clock, Info } from 'lucide-react';
-import { showError, showSuccessToast } from "../../services/alertservice";
+import { showError, showSuccessToast, confirmDelete } from "../../services/alertservice";
 import {
     getCategories,
     addCategory,
@@ -10,11 +10,6 @@ import {
     deleteCategory,
     getDepartments // Needed for the dropdown
 } from "../../services/AdminServices/AdminService";
-import {
-    confirmDelete,
-    showSuccessToast,
-    showError
-} from "../../services/AlertService";
 import usePagination from '../../services/usePagination';
 import Pagination from '../../Components/AdminComponents/Pagination';
 
@@ -81,7 +76,8 @@ const AdminCategories = () => {
             await deleteCategory(id);
             showSuccessToast("Category deleted successfully");
             fetchData();
-        } catch (error) {
+        } catch (error)
+        {
             console.error(error);
             showError("Delete failed");
 
@@ -91,8 +87,6 @@ const AdminCategories = () => {
 
             showSuccessToast("Category deleted successfully");
 
-        } catch (error) {
-            showError(error.message);
         }
     };
 

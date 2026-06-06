@@ -10,14 +10,10 @@ import {
     getDepartments,
     getCategories
 } from "../../services/AdminServices/AdminService";
-import {
-    confirmDelete,
-    showSuccessToast,
-    showError
-} from "../../services/AlertService";
+
 import usePagination from '../../services/usePagination';
 import Pagination from '../../Components/AdminComponents/Pagination';
-import { showError, showSuccessToast } from "../../services/alertservice";
+import { showError, showSuccessToast, confirmDelete } from "../../services/alertservice";
 
 const AdminSLAMaster = () => {
     const [slas, setSlas] = useState([]);

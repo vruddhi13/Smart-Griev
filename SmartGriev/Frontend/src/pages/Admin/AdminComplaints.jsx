@@ -96,15 +96,15 @@ const AdminComplaints = () => {
                 {/* HEADER SECTION */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div>
-                        <h2 style={{
-                            color: theme.colors.text.main,
-                            margin: 0,
-                            fontSize: '26px', // Increased size for better visibility
-                            fontWeight: '700',
-                            letterSpacing: '-0.5px'
-                        }}>
-                            Complaint Management
-                        </h2>
+                        {/*<h2 style={{*/}
+                        {/*    color: theme.colors.text.main,*/}
+                        {/*    margin: 0,*/}
+                        {/*    fontSize: '26px', // Increased size for better visibility*/}
+                        {/*    fontWeight: '700',*/}
+                        {/*    letterSpacing: '-0.5px'*/}
+                        {/*}}>*/}
+                        {/*    Complaint Management*/}
+                        {/*</h2>*/}
                         <p style={{ color: theme.colors.text.gray, fontSize: '15px', marginTop: '4px' }}>
                             Monitor and manage city grievances
                         </p>

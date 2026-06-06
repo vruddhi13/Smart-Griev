@@ -129,14 +129,14 @@ const AdminComplaintAssignmentList = () => {
                     }}
                 >
                     <div>
-                        <h2
-                            style={{
-                                margin: 0,
-                                color: theme.colors.text.main
-                            }}
-                        >
-                            Complaint Assignments
-                        </h2>
+                        {/*<h2*/}
+                        {/*    style={{*/}
+                        {/*        margin: 0,*/}
+                        {/*        color: theme.colors.text.main*/}
+                        {/*    }}*/}
+                        {/*>*/}
+                        {/*    Complaint Assignments*/}
+                        {/*</h2>*/}
 
                         <p
                             style={{

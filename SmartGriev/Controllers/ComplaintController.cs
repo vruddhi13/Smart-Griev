@@ -475,6 +475,7 @@ namespace SmartGriev.Controllers
                 .ToList();
 
             return Ok(assignments);
+        }
         private async Task CreateNotification(int userId, int? complaintId, string title, string message, string type)
         {
             var notification = new Notification

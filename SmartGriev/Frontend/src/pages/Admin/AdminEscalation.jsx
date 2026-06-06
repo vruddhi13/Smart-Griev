@@ -190,18 +190,18 @@ const AdminEscalation = () => {
 
                     <div>
 
-                        <h2 style={{
-                            margin: 0,
-                            color: theme.colors.text.main,
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '10px',
-                            fontSize: '26px',
-                            fontWeight: '700'
-                        }}>
-                            <ShieldAlert size={28} />
-                            Escalation Management
-                        </h2>
+                        {/*<h2 style={{*/}
+                        {/*    margin: 0,*/}
+                        {/*    color: theme.colors.text.main,*/}
+                        {/*    display: 'flex',*/}
+                        {/*    alignItems: 'center',*/}
+                        {/*    gap: '10px',*/}
+                        {/*    fontSize: '26px',*/}
+                        {/*    fontWeight: '700'*/}
+                        {/*}}>*/}
+                        {/*    <ShieldAlert size={28} />*/}
+                        {/*    Escalation Management*/}
+                        {/*</h2>*/}
 
                         <p style={{
                             marginTop: '6px',

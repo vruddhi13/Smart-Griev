@@ -5,12 +5,8 @@ import { Building2, Plus, Trash2, Edit, X, UserX, UserCheck } from 'lucide-react
 import { getDepartments, addDepartment, updateDepartment, deleteDepartment, toggleDepartmentStatus } from "../../services/AdminServices/AdminService"; 
 import usePagination from '../../services/usePagination';
 import Pagination from '../../Components/AdminComponents/Pagination';
-import { showError, showSuccessToast } from "../../services/alertservice";
-import {
-    confirmDelete,
-    showSuccessToast,
-    showError
-} from "../../services/AlertService"; // adjust path if needed
+import { showError, showSuccessToast, confirmDelete } from "../../services/alertservice";
+
 
 const AdminDepartments = () => {
     const [departments, setDepartments] = useState([]);

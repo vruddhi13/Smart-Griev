@@ -233,15 +233,15 @@ const AdminEscalationComplaints = () => {
                 {/* HEADER */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div>
-                        <h2 style={{
-                            color: theme.colors.text.main,
-                            margin: 0,
-                            fontSize: '26px',
-                            fontWeight: '700',
-                            letterSpacing: '-0.5px'
-                        }}>
-                            Escalation Tracking
-                        </h2>
+                        {/*<h2 style={{*/}
+                        {/*    color: theme.colors.text.main,*/}
+                        {/*    margin: 0,*/}
+                        {/*    fontSize: '26px',*/}
+                        {/*    fontWeight: '700',*/}
+                        {/*    letterSpacing: '-0.5px'*/}
+                        {/*}}>*/}
+                        {/*    Escalation Tracking*/}
+                        {/*</h2>*/}
                         <p style={{ color: theme.colors.text.gray, fontSize: '15px', marginTop: '4px' }}>
                             Officer → Department Head → Admin escalation flow
                         </p>

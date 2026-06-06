@@ -127,16 +127,20 @@ export const deleteCategory = async (id) => {
     return await response.json();
 };
 
+// Example validation for your AdminService.js file
 export const getUsers = async () => {
-
-    const response = await fetch(`${API}/users`, {
-        headers: getAuthHeaders()
+    const token = sessionStorage.getItem("token");
+    const response = await fetch("https://localhost:7224/api/admin/users", {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+        }
     });
-
+    
     if (!response.ok) {
-        throw new Error("Failed to fetch users");
+        throw new Error(`HTTP Error: ${response.status}`);
     }
-
     return await response.json();
 };
 
@@ -179,10 +183,6 @@ export const addUser = async (formData) => {
     const response = await fetch(`${API}/users`, {
         method: "POST",
         headers: getAuthHeaders(),
-        body: JSON.stringify(data)
-        headers: {
-            "Content-Type": "application/json"
-        },
         body: JSON.stringify(payload)
     });
 
@@ -206,10 +206,6 @@ export const updateUser = async (id, formData) => {
     const response = await fetch(`${API}/users/${id}`, {
         method: "PUT",
         headers: getAuthHeaders(),
-        body: JSON.stringify(data)
-        headers: {
-            "Content-Type": "application/json"
-        },
         body: JSON.stringify(payload)
     });
 

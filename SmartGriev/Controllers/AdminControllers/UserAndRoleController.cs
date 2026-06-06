@@ -41,7 +41,7 @@ namespace SmartGriev.Controllers.AdminControllers
             return int.Parse(claim.Value);
         } // <-- Fixed: Added missing closing brace here
 
-        [HttpGet("users")]
+        [HttpGet]
         public async Task<IActionResult> GetAllUsers()
         {
             var users = await _userRepository.GetAllUsersAsync();
@@ -105,7 +105,7 @@ namespace SmartGriev.Controllers.AdminControllers
         }
 
         
-        [HttpPut("users/{id}")]
+        [HttpPut("{id:int}")]
         public async Task<IActionResult> UpdateUser(int id, [FromBody] UserRoleListDTO dto)
         {
             var userId = GetUserId();
@@ -128,12 +128,15 @@ namespace SmartGriev.Controllers.AdminControllers
                 user.IsActive
             });
 
-           
-
-            // ROLE FIX
+            // ✅ Basic fields
             user.FullName = dto.Name ?? "";
             user.Email = dto.Email;
             user.MobileNo = dto.Phone ?? "";
+
+            // ✅ ROLE FIX (MAIN PART)
+            user.FullName = dto.Name;
+            user.Email = dto.Email;
+            user.MobileNo = dto.Phone;
             user.RoleId = dto.RoleId;
 
             if (dto.RoleId == 2 || dto.RoleId == 3)
@@ -171,7 +174,7 @@ namespace SmartGriev.Controllers.AdminControllers
             return Ok(new { message = "User updated successfully" });
         }
 
-        [HttpDelete("users/{id}")]
+        [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteUser(int id)
         {
             var userId = GetUserId();
@@ -236,7 +239,7 @@ namespace SmartGriev.Controllers.AdminControllers
             }
         }
 
-        [HttpPost("users")]
+        [HttpPost]
         public async Task<IActionResult> AddUser([FromBody] UserRoleListDTO dto)
         {
             var userId = GetUserId();
@@ -285,7 +288,7 @@ namespace SmartGriev.Controllers.AdminControllers
             return Ok(new { message = "User added successfully" });
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
         public async Task<IActionResult> GetUserById(int id)
         {
             var user = await _userRepository.GetUserById(id);
