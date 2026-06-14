@@ -709,6 +709,8 @@ namespace SmartGriev.Controllers
             {
                 message = "SLA Reminder, Breach and Escalation check completed successfully"
             });
+
+        }
         //complaint Status log 
         [HttpGet("status-logs")]
         public IActionResult GetComplaintStatusLogs()

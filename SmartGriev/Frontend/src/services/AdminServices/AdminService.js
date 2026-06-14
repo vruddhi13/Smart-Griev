@@ -396,6 +396,7 @@ export const getAuditLogs = async () => {
 
     return await response.json();
 };
+
 const handleResponse = async (response) => {
     const data = await response.json().catch(() => null);
 
@@ -468,7 +469,8 @@ export const getComplaintAssignments = async () => {
         }
     );
 };
-export const getNotifications = async (userId) => {
+
+export const getComplaintNotifications = async (userId) => {
     const response = await fetch(
         `https://localhost:7224/api/Complaint/notifications/${userId}`,
         {
@@ -527,6 +529,7 @@ export const clearAllNotifications = async (userId) => {
     );
 
     return res.data;
+}
 
 export const updateAccount = async (data) => {
 
