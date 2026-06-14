@@ -184,7 +184,7 @@ const AdminUserRolePanel = () => {
         nextPage,
         prevPage,
         setCurrentPage
-    } = usePagination(users, 4);
+    } = usePagination(users, 5);
 
     return (
         <AdminLayout pageTitle="Users">

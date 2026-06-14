@@ -33,7 +33,7 @@ const AdminComplaints = () => {
         nextPage,
         prevPage,
         setCurrentPage
-    } = usePagination(complaints, 4);
+    } = usePagination(complaints, 6);
 
     const getPriorityStyle = (priority) => {
         switch (priority?.toLowerCase()) {

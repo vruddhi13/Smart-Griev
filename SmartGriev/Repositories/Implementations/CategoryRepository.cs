@@ -69,7 +69,8 @@ namespace SmartGriev.Repositories.Implementations
                 if (category == null)
                     throw new Exception("Category not found");
 
-                category.IsActive = false;
+                //category.IsActive = false;
+                _context.ComplaintCategories.Remove(category);
 
                 await _context.SaveChangesAsync();
             }

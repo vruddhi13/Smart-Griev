@@ -201,10 +201,10 @@ const AdminHeader = ({ title = "Admin Panel" }) => {
             <div style={{ background: 'white', padding: '10px 20px', borderRadius: '30px', display: 'flex', alignItems: 'center', gap: '20px', boxShadow: theme.shadows.card }}>
 
                 {/* Search Bar */}
-                <div style={{ display: 'flex', alignItems: 'center', background: theme.colors.brand.bg, padding: '8px 15px', borderRadius: '20px' }}>
-                    <Search size={16} color={theme.colors.text.gray} />
-                    <input type="text" placeholder="Search complaints..." style={{ border: 'none', background: 'transparent', outline: 'none', marginLeft: '8px' }} />
-                </div>
+                {/*<div style={{ display: 'flex', alignItems: 'center', background: theme.colors.brand.bg, padding: '8px 15px', borderRadius: '20px' }}>*/}
+                {/*    <Search size={16} color={theme.colors.text.gray} />*/}
+                {/*    <input type="text" placeholder="Search complaints..." style={{ border: 'none', background: 'transparent', outline: 'none', marginLeft: '8px' }} />*/}
+                {/*</div>*/}
 
                 {/* Notification Trigger */}
                 <div style={{ position: 'relative' }}>

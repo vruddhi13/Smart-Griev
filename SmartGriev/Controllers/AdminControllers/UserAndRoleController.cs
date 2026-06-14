@@ -308,11 +308,11 @@ namespace SmartGriev.Controllers.AdminControllers
         }
 
         [HttpPost("update-account")]
-        public async Task<IActionResult> UpdateAdminPassword([FromBody] UpdateAccountDTO dto)
+        public async Task<IActionResult> UpdateAdminPassword([FromBody] AdminChangePasswordDTO dto)
         {
             try
             {
-                var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "user_id");
+                var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "UserId");
 
                 if (userIdClaim == null)
                 {
@@ -335,8 +335,7 @@ namespace SmartGriev.Controllers.AdminControllers
 
                 string oldDataJson = JsonSerializer.Serialize(new { Id = user.UserId, Note = "Password Modification Event Initiated." });
 
-                var passwordHasher = new PasswordHasher<User>();
-                user.PasswordHash = passwordHasher.HashPassword(user, dto.Password);
+                user.PasswordHash = dto.Password;
                 user.UpdatedAt = DateTime.Now;
 
                 await _userRepository.UpdateUser(user);

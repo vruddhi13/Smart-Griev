@@ -33,6 +33,8 @@ import OfficerEscalation from './pages/Officer/OfficerEscalation';
 import DeptHeadEscalation from './pages/DeptHead/DeptHeadEscalation';
 import DeptHeadOfficerList from './pages/DeptHead/DeptHeadOfficerList';
 import AdminComplaintAssignmentList from './pages/Admin/AdminComplaintAssignmentList';
+import AdminComplaintStatusLogList from './pages/Admin/AdminComplaintStatusLogList';
+import AdminRoles from './pages/Admin/AdminRoles';
 
 function App() {
     return (
@@ -64,6 +66,8 @@ function App() {
                 <Route path="/admin/escalations" element={<ProtectedRoute allowedRole="1"><AdminEscalation /></ProtectedRoute>} />
                 <Route path="/admin/escalation-complaints" element={<ProtectedRoute allowedRole="1"><AdminEscalationComplaints /></ProtectedRoute>} />
                 <Route path="/admin/complaint-assignments" element={<ProtectedRoute allowedRole="1"><AdminComplaintAssignmentList /></ProtectedRoute>} />
+                <Route path="/admin/status-logs" element={<ProtectedRoute allowedRole="1"><AdminComplaintStatusLogList /></ProtectedRoute>} />
+                <Route path="/admin/roles" element={<ProtectedRoute allowedRole="1"><AdminRoles /></ProtectedRoute>} />
 
 
                 {/*Officer*/}

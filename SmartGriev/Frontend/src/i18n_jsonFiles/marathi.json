@@ -88,5 +88,54 @@
   "low": "कमी",
   "loading_complaints": "तक्रारी लोड होत आहेत...",
   "view_complaints": "पहा",
-  "evidence": "पुरावा"
+  "evidence": "पुरावा",
+  "ai_chat_bot": "👋 स्मार्टग्रीव्ह (SmartGriev) सपोर्टमध्ये आपले स्वागत आहे. मी तुम्हाला तक्रार नोंदवण्यात, तिची स्थिती तपासण्यात किंवा शहर-सेवेशी संबंधित प्रश्नांची उत्तरे मिळवण्यात मदत करू शकतो. आज मी तुम्हाला कशी मदत करू?",
+
+  "system_diagnostics": "सिस्टम डायग्नोस्टिक्स",
+  "all_time": "सर्वकालीन",
+  "backlog_ratio": "बॅकलॉग प्रमाण",
+  "resolution_efficiency": "निवारण कार्यक्षमता",
+  "active_pipeline_load": "सक्रिय पाइपलाइन लोड",
+  "done": "पूर्ण",
+  "open": "प्रलंबित",
+  "total_tracked_footprint": "एकूण ट्रॅक केलेला डेटा",
+  "cases": "केसेस",
+  "integrity_factor": "⚡ अखंडता घटक: सर्वोत्कृष्ट",
+  "queue_delay": "⚠️ रांगेतील विलंब: नाममात्र",
+
+  "critical_queue_spotlight": "गंभीर केसेस हायलाइट",
+  "live_monitor": "थेट देखरेख (LIVE)",
+  "id": "आयडी",
+  "category": "श्रेणी",
+  "other": "इतर",
+  "no_additional_details": "अतिरिक्त तपशील उपलब्ध नाही.",
+  "status_field": "स्थिती क्षेत्र",
+  "severity_indices": "गंभीरता निर्देशांक",
+  "ingested": "नोंदणीकृत",
+  "inspect_audit_trail": "ऑडिट ट्रेल तपासा",
+  "no_dynamic_assignments": "कोणतीही सक्रिय कामे नोंदवलेली नाहीत.",
+
+  "lifecycle_stream_log": "जीवनचक्र प्रवाह लॉग",
+  "all_streams": "सर्व प्रवाह",
+  "escalations": "वाढवलेल्या केसेस (Escalations)",
+  "no_recent_complaints": "नुकतीच कोणतीही तक्रार दाखल झालेली नाही.",
+  "no_critical_warnings": "कोणत्याही गंभीर टाइमलाइन चेतावणी आढळल्या नाहीत.",
+
+  "complaint_submitted_under": "तक्रार",
+  "submitted_under": "अंतर्गत सबमिट केली",
+  "general_administration": "सामान्य प्रशासन",
+
+  "sla_breach_warning": "SLA उल्लंघन चेतावणी",
+  "requires_immediate_action": "त्वरित कारवाई आवश्यक आहे",
+
+  "description_label": "वर्णन",
+
+  "citizen_badge": "नागरिक बॅज",
+  "dashboard_overview": "तुमचा डॅशबोर्ड आढावा",
+  "processing_distribution": "प्रक्रिया वितरण (Processing Distribution)",
+  "completed_resolved": "पूर्ण आणि निवारण झालेले",
+  "under_active_review": "सक्रिय पुनरावलोकनांतर्गत",
+  "system_info_desk": "सिस्टम माहिती डेस्क",
+  "system_info_description": "आमची स्मार्ट मॅनेजमेंट राउटिंग टूल्स तुमच्या तक्रार तिकिटांना सतत अपडेट करत असतात. उच्च-प्राधान्यतेच्या तक्रारींचा त्यांच्या निवारण कालमर्यादेनुसार सक्रियपणे मागोवा घेतला जातो.",
+  "system_info_tip": "टीप: रिअल-टाइम स्थितीतील बदलांचा इतिहास पाहण्यासाठी रो २ मधील \"जीवनचक्र प्रवाह लॉग\" नक्की तपासा."
 }

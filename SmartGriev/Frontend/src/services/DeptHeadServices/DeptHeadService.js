@@ -84,3 +84,84 @@ export const getDepartmentOfficers = async () => {
         }
     );
 };
+
+/* ================= MY DEPARTMENT ================= */
+export const getMyDepartment = async () => {
+    const token = sessionStorage.getItem("token");
+
+    const res = await axios.get(
+        `${API}/my-department`,
+        {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+    );
+
+    return res.data;
+};
+
+export const getDashboardStats = async () => {
+    const token = sessionStorage.getItem("token");
+
+    const response = await axios.get(
+        `${API}/dashboard-stats`,
+        {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+    );
+
+    return response.data;
+};
+
+export const getOfficerPerformance = async () => {
+    const token = sessionStorage.getItem("token");
+
+    const response = await axios.get(
+        `${API}/officer-performance`,
+        {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+    );
+
+    return response.data;
+};
+
+export const getSlaHealth = async () => {
+    const token = sessionStorage.getItem("token");
+
+    const response = await axios.get(
+        `${API}/sla-health`,
+        {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+    );
+
+    return response.data;
+};
+
+export const changePassword = async (password) => {
+    const token = sessionStorage.getItem("token");
+
+    const response = await fetch(
+        "https://localhost:7224/api/DeptHead/change-password",
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                password
+            })
+        }
+    );
+
+    return await response.json();
+};

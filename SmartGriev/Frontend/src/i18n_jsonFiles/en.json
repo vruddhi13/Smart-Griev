@@ -88,6 +88,53 @@
   "view_complaints": "View",
   "evidence": "Evidence",
 
-  "ai_chat_bot": "👋 Welcome to SmartGriev Support. I can help you file a complaint, check status, or answer city-service queries. How can I assist you today?"
+  "ai_chat_bot": "👋 Welcome to SmartGriev Support. I can help you file a complaint, check status, or answer city-service queries. How can I assist you today?",
 
+  "system_diagnostics": "System Diagnostics",
+  "all_time": "All-Time",
+  "backlog_ratio": "Backlog Ratio",
+  "resolution_efficiency": "Resolution Efficiency",
+  "active_pipeline_load": "Active Pipeline Load",
+  "done": "Done",
+  "open": "Open",
+  "total_tracked_footprint": "Total Tracked Footprint",
+  "cases": "cases",
+  "integrity_factor": "⚡ Integrity Factor: Optimum",
+  "queue_delay": "⚠️ Queue Delay: Nominal",
+
+  "critical_queue_spotlight": "Critical Queue Spotlight",
+  "live_monitor": "LIVE MONITOR",
+  "id": "ID",
+  "category": "Category",
+  "other": "Other",
+  "no_additional_details": "No additional details provided.",
+  "status_field": "STATUS FIELD",
+  "severity_indices": "SEVERITY INDICES",
+  "ingested": "Ingested",
+  "inspect_audit_trail": "Inspect Audit Trail",
+  "no_dynamic_assignments": "No dynamic assignments recorded.",
+
+  "lifecycle_stream_log": "Lifecycle Stream Log",
+  "all_streams": "All Streams",
+  "escalations": "Escalations",
+  "no_recent_complaints": "No recent complaints filed.",
+  "no_critical_warnings": "No critical timeline warnings found.",
+
+  "complaint_submitted_under": "Complaint",
+  "submitted_under": "submitted under",
+  "general_administration": "General Administration",
+
+  "sla_breach_warning": "SLA Breach Warning",
+  "requires_immediate_action": "requires immediate action",
+
+  "description_label": "Description",
+
+  "citizen_badge": "Citizen Badge",
+  "dashboard_overview": "Your Dashboard Overview",
+  "processing_distribution": "Processing Distribution",
+  "completed_resolved": "Completed & Resolved",
+  "under_active_review": "Under Active Review",
+  "system_info_desk": "System Information Desk",
+  "system_info_description": "Our smart management routing tools continuously update your complaint tickets. High-priority filings are actively tracked against resolution timeframes.",
+  "system_info_tip": "Tip: Make sure to check the \"Lifecycle Stream Log\" in Row 2 for real-time status history changes."
 }
