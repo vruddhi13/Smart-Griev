@@ -160,36 +160,6 @@ export const getUserById = async (id) => {
     return result;
 };
 
-export const updateAccount = async (data) => {
-
-    const token = sessionStorage.getItem("token");
-
-    const response = await fetch(
-        `https://localhost:7224/api/admin/users/update-account`,
-        {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`
-            },
-            body: JSON.stringify(data)
-        }
-    );
-
-    let result;
-
-    try {
-        result = await response.json();
-    } catch {
-        throw new Error("Update failed");
-    }
-
-    if (!response.ok) {
-        throw new Error(result.message || "Update failed");
-    }
-
-    return result;
-};
 
 export const CitizenPasswordChange = async (data) => {
 
@@ -217,4 +187,59 @@ export const CitizenPasswordChange = async (data) => {
     }
 
     return result;
+};
+
+
+export const getComplaintStatusLogs = async () => {
+
+    const token = sessionStorage.getItem("token");
+
+    const response = await fetch(
+        `https://localhost:7224/api/complaint/status-logs`,
+        {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`
+            }
+        }
+    );
+
+    let result;
+
+    try {
+        result = await response.json();
+    }
+    catch {
+        throw new Error("Failed to fetch complaint status logs");
+    }
+
+    if (!response.ok) {
+        throw new Error(
+            result.message || "Failed to fetch complaint status logs"
+        );
+    }
+
+    return result;
+};
+
+export const getRoles = async () => {
+    const token = sessionStorage.getItem("token");
+
+    const response = await fetch(
+        "https://localhost:7224/api/identity/Account/roles",
+        {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`
+            }
+        }
+    );
+
+    if (!response.ok) {
+        throw new Error("Failed to fetch roles");
+    }
+
+    return await response.json();
 };

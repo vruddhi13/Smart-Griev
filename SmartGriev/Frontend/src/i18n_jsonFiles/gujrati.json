@@ -88,5 +88,54 @@
   "low": "નીચું",
   "loading_complaints": "ફરિયાદો લોડ થઈ રહી છે...",
   "view_complaints": "જુઓ",
-  "evidence": "પુરાવા"
+  "evidence": "પુરાવા",
+  "ai_chat_bot": "👋 સ્માર્ટગ્રીવ (SmartGriev) સપોર્ટમાં આપનું સ્વાગત છે. હું તમને ફરિયાદ નોંધાવવામાં, તેની સ્થિતિ તપાસવામાં અથવા શહેર-સેવા સંબંધિત પ્રશ્નોના જવાબો મેળવવામાં મદદ કરી શકું છું. આજે હું તમને કેવી રીતે મદદ કરી શકું?",
+
+  "system_diagnostics": "સિસ્ટમ ડાયગ્નોસ્ટિક્સ",
+  "all_time": "સર્વકાલીન",
+  "backlog_ratio": "બેકલોગ રેશિયો",
+  "resolution_efficiency": "નિવારણ કાર્યક્ષમતા",
+  "active_pipeline_load": "સક્રિય પાઇપલાઇન લોડ",
+  "done": "પૂર્ણ",
+  "open": "ખુલ્લું",
+  "total_tracked_footprint": "કુલ ટ્રેક થયેલ ડેટા",
+  "cases": "કેસ",
+  "integrity_factor": "⚡ અખંડિતતા પરિબળ: શ્રેષ્ઠ",
+  "queue_delay": "⚠️ કતારમાં વિલંબ: સામાન્ય",
+
+  "critical_queue_spotlight": "ગંભીર કેસ હાઇલાઇટ",
+  "live_monitor": "લાઇવ મોનિટર",
+  "id": "આઈડી",
+  "category": "શ્રેણી",
+  "other": "અન્ય",
+  "no_additional_details": "કોઈ વધારાની વિગતો ઉપલબ્ધ નથી.",
+  "status_field": "સ્થિતિ ક્ષેત્ર",
+  "severity_indices": "ગંભીરતા સૂચકાંક",
+  "ingested": "દાખલ કરેલ",
+  "inspect_audit_trail": "ઓડિટ ટ્રેલ તપાસો",
+  "no_dynamic_assignments": "કોઈ સક્રિય કામગીરી નોંધાઈ નથી.",
+
+  "lifecycle_stream_log": "જીવનચક્ર પ્રવાહ લોગ",
+  "all_streams": "બધા પ્રવાહ",
+  "escalations": "વધારેલા કેસ (Escalations)",
+  "no_recent_complaints": "તાજેતરમાં કોઈ ફરિયાદ નોંધાઈ નથી.",
+  "no_critical_warnings": "કોઈ ગંભીર ટાઇમલાઇન ચેતવણીઓ મળી નથી.",
+
+  "complaint_submitted_under": "ફરિયાદ",
+  "submitted_under": "હેઠળ સબમિટ કરવામાં આવી",
+  "general_administration": "સામાન્ય વહીવટ",
+
+  "sla_breach_warning": "SLA ઉલ્લંઘન ચેતવણી",
+  "requires_immediate_action": "તાત્કાલિક પગલાં લેવા જરૂરી છે",
+
+  "description_label": "વર્ણન",
+
+  "citizen_badge": "નાગરિક બેજ",
+  "dashboard_overview": "તમારું ડૅશબોર્ડ વિહંગાવલોકન",
+  "processing_distribution": "પ્રક્રિયા વિતરણ (Processing Distribution)",
+  "completed_resolved": "પૂર્ણ અને નિવારણ થયેલ",
+  "under_active_review": "સક્રિય સમીક્ષા હેઠળ",
+  "system_info_desk": "સિસ્ટમ માહિતી ડેસ્ક",
+  "system_info_description": "અમારા સ્માર્ટ મેનેજમેન્ટ રાઉટીંગ ટુલ્સ તમારી ફરિયાદ ટિકિટોને સતત અપડेट કરે છે. ઉચ્ચ અગ્રતા ધરાવતી ફરિયાદોને તેમના નિવારણ સમયમર્યાદાના આધારે સક્રિયપણે ટ્રેક કરવામાં આવે છે.",
+  "system_info_tip": "ટીપ: રીઅલ-ટાઇમ સ્થિતિના ઇતિહાસમાં ફેરફારો જોવા માટે રો ૨ માં આપેલ \"જીવનચક્ર પ્રવાહ લોગ\" અચૂક તપાસો."
 }

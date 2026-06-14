@@ -77,7 +77,7 @@ const AdminSLAMaster = () => {
     };
 
     const handleDelete = async (id) => {
-        if (!window.showError("Are you sure you want to delete this SLA policy?")) return;
+        if (showError("Are you sure you want to delete this SLA policy?")) return;
         const confirmed = await confirmDelete();
         if (!confirmed) return;
 

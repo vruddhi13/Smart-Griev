@@ -20,13 +20,15 @@ namespace SmartGriev.Controllers.Identity
     {
         private readonly IUserRepository _userRepository;
         private readonly IOtpRepository _otpRepository;
+        private readonly Ict2smartGrievDbContext _context;
 
         public AccountController(
             IUserRepository userRepository,
-            IOtpRepository otpRepository)
+            IOtpRepository otpRepository,Ict2smartGrievDbContext context)
         {
             _userRepository = userRepository;
             _otpRepository = otpRepository;
+            _context = context;
         }
 
         // LOGIN
@@ -426,5 +428,22 @@ namespace SmartGriev.Controllers.Identity
             });
         }
 
+        [HttpGet("roles")]
+        public async Task<IActionResult> GetRoles()
+        {
+            var roles = await _context.Roles
+                .Select(r => new
+                {
+                    roleId = r.RoleId,
+                    roleName = r.RoleName,
+                    description = r.Description,
+                    isActive = r.IsActive,
+                    createdAt = r.CreatedAt
+                })
+                .OrderBy(r => r.roleName)
+                .ToListAsync();
+
+            return Ok(roles);
+        }
     }
 }

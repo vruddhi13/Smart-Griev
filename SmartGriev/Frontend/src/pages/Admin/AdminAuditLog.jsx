@@ -98,7 +98,7 @@ const AdminAuditLog = () => {
         nextPage,
         prevPage,
         setCurrentPage
-    } = usePagination(logs, 5);
+    } = usePagination(logs, 10);
 
     // Dictionary dictionary maps backend database property schemas to pristine natural English
     const labelMapping = {

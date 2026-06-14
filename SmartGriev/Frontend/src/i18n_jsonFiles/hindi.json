@@ -88,6 +88,55 @@
   "low": "कम",
   "loading_complaints": "शिकायतें लोड हो रही हैं...",
   "view_complaints": "देखें",
-  "evidence": "साक्ष्य"
+  "evidence": "साक्ष्य",
+
+  "ai_chat_bot": "👋 स्मार्टग्रीव (SmartGriev) सपोर्ट में आपका स्वागत है। मैं शिकायत दर्ज करने, स्थिति की जांच करने या शहर-सेवा से जुड़े प्रश्नों के उत्तर पाने में आपकी सहायता कर सकता हूँ। आज मैं आपकी क्या सहायता करूँ?",
+  "system_diagnostics": "सिस्टम डायग्नोस्टिक्स",
+  "all_time": "सर्वकालीन",
+  "backlog_ratio": "बैकलॉग अनुपात",
+  "resolution_efficiency": "निवारण कार्यक्षमता",
+  "active_pipeline_load": "सक्रिय पाइपलाइन लोड",
+  "done": "पूर्ण",
+  "open": "लंबित",
+  "total_tracked_footprint": "कुल ट्रैक किया गया डेटा",
+  "cases": "मामले",
+  "integrity_factor": "⚡ अखंडता कारक: इष्टतम",
+  "queue_delay": "⚠️ कतार विलंब: नाममात्र",
+
+  "critical_queue_spotlight": "गंभीर मामले हाइलाइट",
+  "live_monitor": "लाइव मॉनिटर",
+  "id": "आईडी",
+  "category": "श्रेणी",
+  "other": "अन्य",
+  "no_additional_details": "कोई अतिरिक्त विवरण प्रदान नहीं किया गया।",
+  "status_field": "स्थिति क्षेत्र",
+  "severity_indices": "गंभीरता सूचकांक",
+  "ingested": "पंजीकृत",
+  "inspect_audit_trail": "ऑडिट ट्रेल की जांच करें",
+  "no_dynamic_assignments": "कोई सक्रिय कार्य दर्ज नहीं किया गया।",
+
+  "lifecycle_stream_log": "लाइफसाइकिल स्ट्रीम लॉग",
+  "all_streams": "सभी स्ट्रीम",
+  "escalations": "एस्केलेशन (बढ़ाए गए मामले)",
+  "no_recent_complaints": "हाल ही में कोई शिकायत दर्ज नहीं की गई।",
+  "no_critical_warnings": "कोई गंभीर टाइमलाइन चेतावनी नहीं मिली।",
+
+  "complaint_submitted_under": "शिकायत",
+  "submitted_under": "के तहत दर्ज की गई",
+  "general_administration": "सामान्य प्रशासन",
+
+  "sla_breach_warning": "SLA उल्लंघन की चेतावनी",
+  "requires_immediate_action": "तत्काल कार्रवाई की आवश्यकता है",
+
+  "description_label": "विवरण",
+
+  "citizen_badge": "नागरिक बैज",
+  "dashboard_overview": "आपका डैशबोर्ड अवलोकन",
+  "processing_distribution": "प्रक्रिया वितरण",
+  "completed_resolved": "पूर्ण और निवारित",
+  "under_active_review": "सक्रिय समीक्षा के अंतर्गत",
+  "system_info_desk": "सिस्टम सूचना डेस्क",
+  "system_info_description": "हमारे स्मार्ट मैनेजमेंट राउटिंग टूल्स आपकी शिकायत टिकटों को लगातार अपडेट करते रहते हैं। उच्च प्राथमिकता वाली शिकायतों को उनके निवारण समय-सीमा के अनुसार सक्रिय रूप से ट्रैक किया जाता है।",
+  "system_info_tip": "सुझाव: रीयल-टाइम स्थिति के इतिहास में बदलावों को देखने के लिए रो २ में दिए गए \"लाइफसाइकिल स्ट्रीम लॉग\" की जांच जरूर करें."
 
 }

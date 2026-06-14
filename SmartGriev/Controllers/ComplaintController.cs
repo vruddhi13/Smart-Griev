@@ -110,6 +110,8 @@ namespace SmartGriev.Controllers
             {
                 // 1. Fetch all complaints for this specific user
                 var complaints = await _context.Complaints
+                    .Include(c => c.Category)
+                    .Include(c => c.Department)
                     .Where(c => c.UserId == userId)
                     .OrderByDescending(c => c.CreatedAt)
                     .ToListAsync();
@@ -130,7 +132,15 @@ namespace SmartGriev.Controllers
                         title = c.Description,
                         status = c.Status,
                         priority = c.PriorityLevel,
-                        date = c.CreatedAt
+                        date = c.CreatedAt,
+
+                        categoryName = c.Category != null
+                        ? c.Category.CategoryName
+                        : "Unknown Category",
+
+                                        departmentName = c.Department != null
+                        ? c.Department.DepartmentName
+                        : "Unassigned Department"
                     })
                 };
 
@@ -207,25 +217,37 @@ namespace SmartGriev.Controllers
 
             return File(bytes, contentType);
         }
-
         [HttpGet("admin-dashboard")]
-        public async Task<IActionResult> GetAdminDashboard()
+        public async Task<IActionResult> GetAdminDashboard([FromQuery] string timeFrame = "year")
         {
             try
             {
-                var complaints = await _context.Complaints
+                var now = DateTime.Now;
+                var today = DateTime.Today;
+
+                // 1. Compute timeframe boundary for chart/trend components
+                DateTime chartStartDate = timeFrame.ToLower() switch
+                {
+                    "week" => today.AddDays(-(int)today.DayOfWeek),
+                    "month" => new DateTime(today.Year, today.Month, 1),
+                    _ => new DateTime(today.Year, 1, 1)
+                };
+
+                // Fixed Baseline for Cards: Always evaluate complaints from the current calendar year
+                DateTime globalCardStartDate = new DateTime(today.Year, 1, 1);
+
+                // 2. Fetch all current year complaints to serve the absolute KPI Summary Cards
+                var globalComplaints = await _context.Complaints
                     .Include(c => c.Department)
                     .Include(c => c.Category)
+                    .Where(c => c.CreatedAt >= globalCardStartDate)
                     .ToListAsync();
 
                 var slas = await _context.SlaMasters
                     .Where(s => s.IsActive)
                     .ToListAsync();
 
-                var now = DateTime.Now;
-                var today = DateTime.Today;
-
-                // 🔹 Helper: Get SLA for a complaint
+                // Safe SLA duration resolver
                 Func<Complaint, int> getSlaHours = (c) =>
                 {
                     var sla = slas.FirstOrDefault(s =>
@@ -233,65 +255,78 @@ namespace SmartGriev.Controllers
                         s.DepartmentId == c.DepartmentId &&
                         s.PriorityLevel == c.PriorityLevel
                     );
-
-                    return sla?.ResolutionHours ?? 72; // fallback = 72 hrs (3 days)
+                    return sla?.ResolutionHours ?? 72;
                 };
 
-                // 🔹 TOP STATS
-                var total = complaints.Count;
+                // 🔹 SCOPE A: FIXED SUMMARY CARD STATS (Calculated using globalComplaints)
+                var total = globalComplaints.Count;
 
-                var slaBreached = complaints.Count(c =>
+                var slaBreached = globalComplaints.Count(c =>
                     c.Status != "Resolved" &&
+                    c.Status != "Rejected" &&
                     now > c.CreatedAt.AddHours(getSlaHours(c))
                 );
 
-                var nearDeadline = complaints.Count(c =>
+                // 1. Near Deadline: Deadline is ahead of us, but within a 24-hour window
+                var nearDeadline = globalComplaints.Count(c =>
                     c.Status != "Resolved" &&
-                    now <= c.CreatedAt.AddHours(getSlaHours(c)) &&
-                    now >= c.CreatedAt.AddHours(getSlaHours(c) - 2) // last 2 hours window
+                    c.Status != "Rejected" &&
+                    c.CreatedAt.AddHours(getSlaHours(c)) > now &&
+                    (c.CreatedAt.AddHours(getSlaHours(c)) - now).TotalHours <= 24
                 );
 
-                var resolvedToday = complaints.Count(c =>
+                // 2. Resolved Today: Matched safely against local calendar day
+                var resolvedToday = globalComplaints.Count(c =>
                     c.Status == "Resolved" &&
                     c.UpdatedAt.HasValue &&
-                    c.UpdatedAt.Value.Date == today
+                    c.UpdatedAt.Value.ToLocalTime().Date == today.Date
                 );
 
-                // 🔹 STATUS DISTRIBUTION
-                var statusData = complaints
-                    .GroupBy(c => c.Status)
-                    .Select(g => new
-                    {
-                        status = g.Key,
-                        count = g.Count()
-                    });
 
-                // 🔹 TREND DATA (last 7 days)
-                var trendData = complaints
-                    .Where(c => c.CreatedAt >= now.AddDays(-7))
+                // 🔹 SCOPE B: DYNAMIC CHART & BREAKDOWN DATA (Filtered down to the selected timeFrame)
+                var filteredComplaints = globalComplaints
+                    .Where(c => c.CreatedAt >= chartStartDate)
+                    .ToList();
+
+                // Perfect Status Distribution (Updates based on selected filter)
+                var statusDistribution = new
+                {
+                    submitted = filteredComplaints.Count(c => c.Status == "Submitted"),
+                    inProgress = filteredComplaints.Count(c => c.Status == "In Progress" || c.Status == "Assigned"),
+                    resolved = filteredComplaints.Count(c => c.Status == "Resolved"),
+                    rejected = filteredComplaints.Count(c => c.Status == "Rejected")
+                };
+
+                // Trend Data (Updates based on selected filter)
+                var trendData = filteredComplaints
                     .GroupBy(c => c.CreatedAt.Date)
                     .Select(g => new
                     {
-                        date = g.Key,
+                        date = g.Key.ToString("yyyy-MM-dd"),
                         count = g.Count()
                     })
-                    .OrderBy(x => x.date);
+                    .OrderBy(x => x.date)
+                    .ToList();
 
-                // 🔹 RECENT COMPLAINTS
-                var recent = complaints
+                // Recent Complaints Table (Updates based on selected filter)
+                var recent = filteredComplaints
                     .OrderByDescending(c => c.CreatedAt)
                     .Take(5)
                     .Select(c => new
                     {
+                        complaintId = c.ComplaintId,
+                        complaintNumber = c.ComplaintNumber,
                         title = c.Description,
-                        dept = c.Department.DepartmentName,
+                        dept = c.Department?.DepartmentName ?? "Unassigned",
                         status = c.Status,
                         priority = c.PriorityLevel,
                         time = c.CreatedAt
-                    });
+                    })
+                    .ToList();
 
-                // 🔹 DEPARTMENT PERFORMANCE
-                var departmentStats = complaints
+                // Department Performance Breakdown (Updates based on selected filter)
+                var departmentStats = filteredComplaints
+                    .Where(c => c.Department != null)
                     .GroupBy(c => c.Department.DepartmentName)
                     .Select(g => new
                     {
@@ -299,17 +334,20 @@ namespace SmartGriev.Controllers
                         total = g.Count(),
                         breach = g.Count(c =>
                             c.Status != "Resolved" &&
+                            c.Status != "Rejected" &&
                             now > c.CreatedAt.AddHours(getSlaHours(c))
                         )
-                    });
+                    })
+                    .ToList();
 
+                // 3. Construct response object combining static card metrics and fluid trend analysis
                 var result = new
                 {
                     total,
                     slaBreached,
                     nearDeadline,
                     resolvedToday,
-                    statusData,
+                    statusDistribution,
                     trendData,
                     recent,
                     departmentStats
@@ -319,7 +357,7 @@ namespace SmartGriev.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+                return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
 
@@ -492,6 +530,38 @@ namespace SmartGriev.Controllers
             _context.Notifications.Add(notification);
 
             await _context.SaveChangesAsync();
+        }
+
+        //complaint Status log 
+        [HttpGet("status-logs")]
+        public IActionResult GetComplaintStatusLogs()
+        {
+            var data = _context.ComplaintStatusLogs
+                .Include(x => x.Complaint)
+                .Include(x => x.ChangedByNavigation)
+                    .ThenInclude(x => x.Role)
+                .OrderByDescending(x => x.ChangedAt)
+                .Select(x => new
+                {
+                    statusLogId = x.StatusLogId,
+                    complaintId = x.ComplaintId,
+                    complaintNumber = x.Complaint.ComplaintNumber,
+
+                    oldStatus = x.OldStatus,
+                    newStatus = x.NewStatus,
+
+                    remarks = x.Remarks,
+                    changedAt = x.ChangedAt,
+
+                    changedBy = new
+                    {
+                        name = x.ChangedByNavigation.FullName,
+                        role = x.ChangedByNavigation.Role.RoleName
+                    }
+                })
+                .ToList();
+
+            return Ok(data);
         }
     }
 }

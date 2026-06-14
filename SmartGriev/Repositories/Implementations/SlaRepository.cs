@@ -65,7 +65,8 @@ namespace SmartGriev.Repositories.Implementations
 
             try
             {
-                sla.IsActive = false;
+                //sla.IsActive = false;
+                _context.SlaMasters.Remove(sla);
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateException)
