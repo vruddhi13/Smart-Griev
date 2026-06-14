@@ -1,6 +1,20 @@
 ﻿import React, { useState, useEffect } from 'react';
-import { Search, Bell, LogOut, MessageSquare, CheckCircle, Calendar, Tag, Star, Smile, Frown, Inbox, X, User } from 'lucide-react';
-import { adminTheme as theme } from '../../services/AdminServices/AdminTheme';
+import {
+    Search,
+    Bell,
+    LogOut,
+    MessageSquare,
+    CheckCircle,
+    Calendar,
+    Tag,
+    Star,
+    Smile,
+    Frown,
+    Inbox,
+    X,
+    User,
+    Trash2
+} from 'lucide-react'; import { adminTheme as theme } from '../../services/AdminServices/AdminTheme';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const AdminHeader = ({ title = "Admin Panel" }) => {
@@ -78,6 +92,33 @@ const AdminHeader = ({ title = "Admin Panel" }) => {
         }
     }, [userId, selectedHistoryItem]);
 
+
+    const deleteNotification = async (id) => {
+        try {
+            const response = await fetch(
+                `https://localhost:7224/api/Notification/${id}`,
+                {
+                    method: "DELETE",
+                    headers: {
+                        "Authorization": `Bearer ${sessionStorage.getItem("token")}`
+                    }
+                }
+            );
+
+            if (response.ok) {
+                setNotifications(prev =>
+                    prev.filter(n => n.notificationId !== id)
+                );
+
+                // Clear selected history item if deleted
+                if (selectedHistoryItem?.notificationId === id) {
+                    setSelectedHistoryItem(null);
+                }
+            }
+        } catch (error) {
+            console.error("Delete notification error:", error);
+        }
+    };
     const fetchAdminProfile = async () => {
         try {
             setLoadingProfile(true);
@@ -279,13 +320,54 @@ const AdminHeader = ({ title = "Admin Panel" }) => {
                                             </div>
 
                                             <div style={{ flex: 1 }}>
-                                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                                    <span style={{ fontSize: '11px', background: '#eff6ff', color: '#2563eb', fontWeight: '700', padding: '2px 8px', borderRadius: '4px' }}>
+                                                <div style={{
+                                                    display: 'flex',
+                                                    justifyContent: 'space-between',
+                                                    alignItems: 'center'
+                                                }}>
+                                                    <span
+                                                        style={{
+                                                            fontSize: '11px',
+                                                            background: '#eff6ff',
+                                                            color: '#2563eb',
+                                                            fontWeight: '700',
+                                                            padding: '2px 8px',
+                                                            borderRadius: '4px'
+                                                        }}
+                                                    >
                                                         {n.complaintCategory}
                                                     </span>
-                                                    <span style={{ fontSize: '11px', color: '#94a3b8' }}>
-                                                        {n.sentAt ? new Date(n.sentAt).toLocaleString() : "No Date"}
-                                                    </span>
+
+                                                    <div
+                                                        style={{
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            gap: '8px'
+                                                        }}
+                                                    >
+                                                        <span
+                                                            style={{
+                                                                fontSize: '11px',
+                                                                color: '#94a3b8'
+                                                            }}
+                                                        >
+                                                            {n.sentAt
+                                                                ? new Date(n.sentAt).toLocaleString()
+                                                                : "No Date"}
+                                                        </span>
+
+                                                        <Trash2
+                                                            size={15}
+                                                            color="#ef4444"
+                                                            style={{
+                                                                cursor: 'pointer'
+                                                            }}
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                deleteNotification(n.notificationId);
+                                                            }}
+                                                        />
+                                                    </div>
                                                 </div>
 
                                                 <div style={{ fontSize: '13px', marginTop: '6px', color: '#334155', fontWeight: '500' }}>
@@ -405,6 +487,7 @@ const AdminHeader = ({ title = "Admin Panel" }) => {
                                                     <div style={{ fontSize: "12px", color: "#64748b", whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', marginTop: '2px' }}>
                                                         {n.comments || n.message}
                                                     </div>
+
                                                 </div>
                                             );
                                         })

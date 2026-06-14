@@ -64,6 +64,33 @@ namespace SmartGriev.Controllers.DepartmentHeadController
 
             await _context.SaveChangesAsync();
 
+
+            // 🔔 Notification for Officer
+            _context.Notifications.Add(new Notification
+            {
+                UserId = model.OfficerId,
+                ComplaintId = complaint.ComplaintId,
+                Title = "Complaint Assigned",
+                Message = $"New complaint assigned: {complaint.ComplaintNumber}",
+                NotificationType = "Complaint",
+                IsRead = false,
+                SentAt = DateTime.Now
+            });
+
+            // 🔔 Notification for Citizen
+            _context.Notifications.Add(new Notification
+            {
+                UserId = complaint.UserId,
+                ComplaintId = complaint.ComplaintId,
+                Title = "Complaint Assigned",
+                Message = $"Your complaint {complaint.ComplaintNumber} has been assigned to an officer.",
+                NotificationType = "Complaint",
+                IsRead = false,
+                SentAt = DateTime.Now
+            });
+
+            await _context.SaveChangesAsync();
+            Console.WriteLine($"OfficerId = {model.OfficerId}");
             return Ok(new
             {
                 success = true,
@@ -71,6 +98,7 @@ namespace SmartGriev.Controllers.DepartmentHeadController
                     ? "Complaint reassigned successfully"
                     : "Complaint assigned successfully"
             });
+
         }
 
         // ==============================

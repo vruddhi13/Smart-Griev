@@ -406,8 +406,64 @@ namespace SmartGriev.Controllers
                 UserAgent = Request.Headers["User-Agent"].ToString()
             });
 
-            await CreateNotification(model.OfficerId,complaint.ComplaintId,"Complaint Assigned",$"New complaint assigned: {complaint.ComplaintNumber}","Complaint");
-            return Ok(new { message = "Complaint assigned successfully" });
+            // Officer Notification
+            // Officer Notification
+            await CreateNotification(
+                model.OfficerId,
+                complaint.ComplaintId,
+                "Complaint Assigned",
+                $"New complaint assigned: {complaint.ComplaintNumber}",
+                "Complaint");
+            Console.WriteLine("Creating Officer Notification");
+            // Citizen Notification
+            await CreateNotification(
+                complaint.UserId,
+                complaint.ComplaintId,
+                "Complaint Assigned",
+                $"Your complaint {complaint.ComplaintNumber} has been assigned to an officer.",
+                "Complaint");
+
+            var sla = await _context.SlaMasters
+                .FirstOrDefaultAsync(s =>
+                    s.DepartmentId == complaint.DepartmentId &&
+                    s.CategoryId == complaint.CategoryId &&
+                    s.PriorityLevel == complaint.PriorityLevel &&
+                    s.IsActive);
+
+            if (sla != null)
+            {
+                await CreateNotification(
+                    model.OfficerId,
+                    complaint.ComplaintId,
+                    "SLA Alert",
+                    $"Resolution Time: {sla.ResolutionHours} Hours, Escalation Time: {sla.EscalationHours} Hours",
+                    "SLA");
+
+                // Create SLA Tracking
+                var tracking = new SLA_Tracking
+                {
+                    ComplaintId = complaint.ComplaintId,
+                    SlaId = sla.SlaId,
+                    AssignedAt = DateTime.Now,
+                    ResolutionDue = DateTime.Now.AddHours(sla.ResolutionHours),
+                    EscalationDue = DateTime.Now.AddHours(sla.EscalationHours),
+                    IsEscalated = false
+                };
+
+
+                _context.SLA_Trackings.Add(tracking);
+
+                // Optional: store due date in complaint table
+                complaint.SlaDueTime =
+                    DateTime.Now.AddHours(sla.ResolutionHours);
+
+                await _context.SaveChangesAsync();
+            }
+
+            return Ok(new
+            {
+                message = "Complaint assigned successfully"
+            });
         }
 
         [HttpGet("get-officers")]
@@ -492,6 +548,129 @@ namespace SmartGriev.Controllers
             _context.Notifications.Add(notification);
 
             await _context.SaveChangesAsync();
+        }
+
+        [HttpGet("notifications/{userId}")]
+        public async Task<IActionResult> GetNotifications(int userId)
+        {
+            var notifications = await _context.Notifications
+                .Where(n => n.UserId == userId)
+                .OrderByDescending(n => n.SentAt)
+                .ToListAsync();
+
+            return Ok(notifications);
+        }
+
+        [HttpPost("check-sla-reminders")]
+        public async Task<IActionResult> CheckSlaReminders()
+        {
+            var now = DateTime.Now;
+
+            var trackings = await _context.SLA_Trackings
+                .Include(t => t.Complaint)
+                .ThenInclude(c => c.Department)
+                .Where(t =>
+                    t.CompletedAt == null &&
+                    t.Complaint.Status != "Resolved")
+                .ToListAsync();
+
+            foreach (var tracking in trackings)
+            {
+                var complaint = tracking.Complaint;
+
+                if (complaint == null || complaint.AssignedTo == null)
+                    continue;
+
+                // =====================================================
+                // 1. SLA REMINDER (Before breach - last 2 hours)
+                // =====================================================
+                var hoursRemaining = (tracking.ResolutionDue - now).TotalHours;
+
+                if (hoursRemaining <= 2 && hoursRemaining > 0)
+                {
+                    bool reminderExists = await _context.Notifications.AnyAsync(n =>
+                        n.ComplaintId == complaint.ComplaintId &&
+                        n.Title == "SLA Reminder");
+
+                    if (!reminderExists)
+                    {
+                        await CreateNotification(
+                            complaint.AssignedTo.Value,
+                            complaint.ComplaintId,
+                            "SLA Reminder",
+                            $"Complaint {complaint.ComplaintNumber} will breach SLA in {Math.Ceiling(hoursRemaining)} hour(s).",
+                            "SLA");
+                    }
+                }
+
+                // =====================================================
+                // 2. SLA BREACH (Trigger escalation START here)
+                // =====================================================
+                if (!tracking.IsEscalated &&
+                    !tracking.IsEscalated && // safe double guard
+                    now >= tracking.ResolutionDue)
+                {
+                    // Mark complaint as breached
+                    complaint.Status = "SLA Breached";
+                    complaint.UpdatedAt = now;
+
+                    // Mark tracking as breached (IMPORTANT FLAG)
+                    tracking.IsEscalated = false; // still not escalated yet
+
+                    // START escalation timer ONLY NOW
+                    if (tracking.EscalationDue == null)
+                    {
+                        tracking.EscalationDue = now.AddHours(2); // escalation window starts AFTER breach
+                    }
+
+                    bool breachExists = await _context.Notifications.AnyAsync(n =>
+                        n.ComplaintId == complaint.ComplaintId &&
+                        n.Title == "SLA Breached");
+
+                    if (!breachExists)
+                    {
+                        await CreateNotification(
+                            complaint.AssignedTo.Value,
+                            complaint.ComplaintId,
+                            "SLA Breached",
+                            $"Complaint {complaint.ComplaintNumber} has exceeded SLA resolution time.",
+                            "SLA");
+                    }
+                }
+
+                // =====================================================
+                // 3. AUTO ESCALATION (ONLY AFTER BREACH)
+                // =====================================================
+                if (tracking.EscalationDue.HasValue &&
+                    now >= tracking.EscalationDue.Value)
+                {
+                    tracking.IsEscalated = true;
+
+                    complaint.Status = "Escalated";
+                    complaint.UpdatedAt = now;
+
+                    bool escalationExists = await _context.Notifications.AnyAsync(n =>
+                        n.ComplaintId == complaint.ComplaintId &&
+                        n.Title == "Complaint Escalated");
+
+                    if (!escalationExists)
+                    {
+                        await CreateNotification(
+                            complaint.AssignedTo.Value,
+                            complaint.ComplaintId,
+                            "Complaint Escalated",
+                            $"Complaint {complaint.ComplaintNumber} has been escalated due to SLA breach.",
+                            "Escalation");
+                    }
+                }
+            }
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new
+            {
+                message = "SLA Reminder, Breach and Escalation check completed successfully"
+            });
         }
     }
 }

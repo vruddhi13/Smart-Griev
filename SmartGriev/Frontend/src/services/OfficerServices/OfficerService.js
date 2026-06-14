@@ -84,11 +84,6 @@ export const updateStatus = async (complaintId, status) => {
     }
 };
 
-// ✅ 3. Get Notifications
-export const getNotifications = async () => {
-    return [];
-};
-
 export const getEscalatedComplaints = async () => {
     const res = await axios.get(
         `${BASE_URL}/Officer/escalated-complaints`,
@@ -116,6 +111,76 @@ export const getComplaintDetails = async (complaintId) => {
     const res = await axios.get(
         `${BASE_URL}/Officer/complaint-details/${complaintId}`,
         getAuthConfig()
+    );
+
+    return res.data;
+};
+
+export const getNotifications = async (userId) => {
+    const res = await axios.get(
+        `https://localhost:7224/api/Notification/${userId}`
+    );
+
+    return res.data;
+};
+
+export const markNotificationRead = async (notificationId) => {
+    const token = sessionStorage.getItem("token");
+
+    const res = await axios.put(
+        `${BASE_URL}/Notification/mark-read/${notificationId}`,
+        {},
+        {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+    );
+
+    return res.data;
+};
+
+export const deleteNotification = async (notificationId) => {
+    const token = sessionStorage.getItem("token");
+
+    const res = await axios.delete(
+        `${BASE_URL}/Notification/${notificationId}`,
+        {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+    );
+
+    return res.data;
+};
+
+export const clearAllNotifications = async (userId) => {
+    const token = sessionStorage.getItem("token");
+
+    const res = await axios.delete(
+        `${BASE_URL}/Notification/clear-all/${userId}`,
+        {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+    );
+
+    return res.data;
+};
+
+export const checkSlaReminders = async () => {
+    const token = sessionStorage.getItem("token");
+
+    const res = await axios.post(
+        `${BASE_URL}/Complaint/check-sla-reminders`,
+        {},
+        {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
     );
 
     return res.data;

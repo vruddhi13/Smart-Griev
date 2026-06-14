@@ -86,5 +86,52 @@ namespace SmartGriev.Controllers
 
             return Ok();
         }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteNotification(int id)
+        {
+            var notification = await _context.Notifications
+                .FindAsync(id);
+
+            if (notification == null)
+                return NotFound(new
+                {
+                    message = "Notification not found"
+                });
+
+            _context.Notifications.Remove(notification);
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new
+            {
+                message = "Notification deleted successfully"
+            });
+        }
+
+        [HttpDelete("clear-all/{userId}")]
+        public async Task<IActionResult> ClearAllNotifications(int userId)
+        {
+            var notifications = await _context.Notifications
+                .Where(n => n.UserId == userId)
+                .ToListAsync();
+
+            if (!notifications.Any())
+            {
+                return Ok(new
+                {
+                    message = "No notifications found"
+                });
+            }
+
+            _context.Notifications.RemoveRange(notifications);
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new
+            {
+                message = "All notifications deleted successfully"
+            });
+        }
     }
 }
