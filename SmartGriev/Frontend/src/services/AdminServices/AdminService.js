@@ -527,4 +527,71 @@ export const clearAllNotifications = async (userId) => {
     );
 
     return res.data;
+
+export const updateAccount = async (data) => {
+
+    const token = sessionStorage.getItem("token");
+
+    const response = await fetch(
+        `https://localhost:7224/api/admin/users/update-account`,
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify(data)
+        }
+    );
+
+    let result;
+
+    try {
+        result = await response.json();
+    } catch {
+        throw new Error("Update failed");
+    }
+
+    if (!response.ok) {
+        throw new Error(result.message || "Update failed");
+    }
+
+    return result;
+};
+
+export const getNotifications = async (userId) => {
+    const response = await fetch(
+        `https://localhost:7224/api/Notification/${userId}`,
+        {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${sessionStorage.getItem("token")}`
+            }
+        }
+    );
+
+    if (!response.ok) {
+        throw new Error("Failed to fetch notifications");
+    }
+
+    return await response.json();
+};
+
+export const markNotificationAsRead = async (notificationId) => {
+    const response = await fetch(
+        `https://localhost:7224/api/Notification/mark-read/${notificationId}`,
+        {
+            method: "PUT",
+            headers: {
+                "Authorization": `Bearer ${sessionStorage.getItem("token")}`
+            }
+        }
+    );
+
+    if (!response.ok) {
+        throw new Error("Failed to mark notification as read");
+    }
+
+    return true;
 };

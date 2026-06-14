@@ -1,11 +1,13 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SmartGriev.DTOs.OfficerDTOs;
 using SmartGriev.Models;
+using SmartGriev.Repositories.Interfaces;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text.Json;
 
 namespace SmartGriev.Controllers.OfficerControllers
 {
@@ -15,10 +17,12 @@ namespace SmartGriev.Controllers.OfficerControllers
     public class OfficerController : ControllerBase
     {
         private readonly Ict2smartGrievDbContext _context;
+        private readonly IAuditRepository _auditRepo;
 
-        public OfficerController(Ict2smartGrievDbContext context)
+        public OfficerController(Ict2smartGrievDbContext context, IAuditRepository auditRepo)
         {
             _context = context;
+            _auditRepo = auditRepo;
         }
 
         // ✅ Get UserId safely
@@ -88,6 +92,8 @@ namespace SmartGriev.Controllers.OfficerControllers
             if (userId == null)
                 return Unauthorized("Invalid user");
 
+
+
             // ✅ Allowed statuses (no helper class)
             var validStatuses = new[]
             {
@@ -107,6 +113,17 @@ namespace SmartGriev.Controllers.OfficerControllers
 
             if (complaint == null)
                 return NotFound("Complaint not found");
+
+            //Audit code 
+            string oldDataJson = JsonSerializer.Serialize(new
+            {
+                complaint.ComplaintId,
+                complaint.Status,
+                complaint.AssignedTo,
+                complaint.PriorityLevel,
+                complaint.ResolvedAt,
+                complaint.ClosedAt
+            }); // end
 
             var oldStatus = complaint.Status;
 
@@ -193,6 +210,17 @@ namespace SmartGriev.Controllers.OfficerControllers
                     assignment.AssignmentStatus = "Rejected";
             }
 
+            // audit code starts here
+            string newDataJson = JsonSerializer.Serialize(new
+            {
+                complaint.ComplaintId,
+                complaint.Status,
+                complaint.AssignedTo,
+                complaint.PriorityLevel,
+                complaint.ResolvedAt,
+                complaint.ClosedAt
+            });
+
             await _context.SaveChangesAsync();
 
             var officer = await _context.Users
@@ -232,6 +260,20 @@ namespace SmartGriev.Controllers.OfficerControllers
                     "StatusUpdate"
                 );
             }
+            var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
+
+            await _auditRepo.AddLog(new AuditLog
+            {
+                UserId = userId.Value,
+                ActionType = "STATUS_UPDATE",
+                EntityName = "Complaint",
+                EntityId = complaint.ComplaintId,
+                OldData = oldDataJson,
+                NewData = newDataJson,
+                Description = $"Complaint status changed from {oldStatus} to {model.Status}",
+                IpAddress = ipAddress,
+                UserAgent = Request.Headers["User-Agent"].ToString()
+            });
 
             return Ok(new { message = "Status updated successfully" });
         }
@@ -250,14 +292,26 @@ namespace SmartGriev.Controllers.OfficerControllers
         }
 
         [HttpPost("update-account")]
-        public IActionResult UpdateAccount([FromBody] UpdateAccountDTO model)
+        public async Task<IActionResult> UpdateAccount([FromBody] UpdateAccountDTO model)
         {
             var userId = GetUserId();
+
+            if (userId == null)
+            {
+                return Unauthorized("Invalid user");
+            }
 
             var user = _context.Users.FirstOrDefault(u => u.UserId == userId);
 
             if (user == null)
                 return NotFound("User not found");
+
+            string oldDataJson = JsonSerializer.Serialize(new
+            {
+                user.UserId,
+                user.Email,
+                user.MobileNo
+            });
 
             if (!string.IsNullOrEmpty(model.Email))
                 user.Email = model.Email;
@@ -270,7 +324,29 @@ namespace SmartGriev.Controllers.OfficerControllers
 
             user.UpdatedAt = DateTime.Now;
 
-            _context.SaveChanges();
+            string newDataJson = JsonSerializer.Serialize(new
+            {
+                user.UserId,
+                user.Email,
+                user.MobileNo
+            });
+
+            var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
+
+            await _context.SaveChangesAsync();
+
+            await _auditRepo.AddLog(new AuditLog
+            {
+                UserId = userId.Value,
+                ActionType = "UPDATE",
+                EntityName = "User",
+                EntityId = user.UserId,
+                OldData = oldDataJson,
+                NewData = newDataJson,
+                Description = $"Officer updated own account",
+                IpAddress = ipAddress,
+                UserAgent = Request.Headers["User-Agent"].ToString()
+            });
 
             return Ok(new { message = "Account updated successfully" });
         }

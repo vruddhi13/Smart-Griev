@@ -180,7 +180,7 @@ namespace SmartGriev.Controllers.AdminControllers
                 IpAddress = ipAddress,
                 UserAgent = Request.Headers["User-Agent"].ToString()
             });
-            return Ok("SLA Deleted");
+            
             try
             {
                 await _slaRepository.DeleteSla(id);
