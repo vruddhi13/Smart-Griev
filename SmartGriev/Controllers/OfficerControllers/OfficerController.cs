@@ -223,6 +223,43 @@ namespace SmartGriev.Controllers.OfficerControllers
 
             await _context.SaveChangesAsync();
 
+            var officer = await _context.Users
+    .FirstOrDefaultAsync(u => u.UserId == userId);
+
+            var departmentHead = await _context.Users
+                .FirstOrDefaultAsync(u =>
+                    u.RoleId == 2 &&
+                    u.DepartmentId == complaint.DepartmentId);
+
+            var admins = await _context.Users
+                .Where(u => u.RoleId == 1)
+                .ToListAsync();
+
+
+            // Department Head Notification
+            if (departmentHead != null)
+            {
+                await CreateNotification(
+                    departmentHead.UserId,
+                    complaint.ComplaintId,
+                    "Complaint Status Updated",
+                    $"{officer?.FullName} changed Complaint {complaint.ComplaintNumber} status from {oldStatus} to {model.Status}",
+                    "StatusUpdate"
+                );
+            }
+
+
+            // Admin Notifications
+            foreach (var admin in admins)
+            {
+                await CreateNotification(
+                    admin.UserId,
+                    complaint.ComplaintId,
+                    "Complaint Status Updated",
+                    $"{officer?.FullName} changed Complaint {complaint.ComplaintNumber} status from {oldStatus} to {model.Status}",
+                    "StatusUpdate"
+                );
+            }
             var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
 
             await _auditRepo.AddLog(new AuditLog
@@ -674,6 +711,30 @@ namespace SmartGriev.Controllers.OfficerControllers
 
             return Ok(history);
         }
+
+        private async Task CreateNotification(
+    int userId,
+    int? complaintId,
+    string title,
+    string message,
+    string type)
+        {
+            var notification = new Notification
+            {
+                UserId = userId,
+                ComplaintId = complaintId,
+                Title = title,
+                Message = message,
+                NotificationType = type,
+                IsRead = false,
+                SentAt = DateTime.Now
+            };
+
+            _context.Notifications.Add(notification);
+
+            await _context.SaveChangesAsync();
+        }
+
 
     }
 }

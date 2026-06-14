@@ -85,6 +85,67 @@ export const getDepartmentOfficers = async () => {
     );
 };
 
+export const getNotifications = async (userId) => {
+    const token = sessionStorage.getItem("token");
+
+    const res = await axios.get(
+        `https://localhost:7224/api/Notification/${userId}`,
+        {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+    );
+
+    return res.data;
+};
+
+export const markNotificationRead = async (notificationId) => {
+    const token = sessionStorage.getItem("token");
+
+    const res = await axios.put(
+        `https://localhost:7224/api/Notification/mark-read/${notificationId}`,
+        {},
+        {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+    );
+
+    return res.data;
+};
+
+export const deleteNotification = async (notificationId) => {
+    const token = sessionStorage.getItem("token");
+
+    const res = await axios.delete(
+        `https://localhost:7224/api/Notification/${notificationId}`,
+        {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+    );
+
+    return res.data;
+};
+
+export const clearAllNotifications = async (userId) => {
+    const token = sessionStorage.getItem("token");
+
+    const res = await axios.delete(
+        `https://localhost:7224/api/Notification/clear-all/${userId}`,
+        {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+    );
+
+    return res.data;
+};
+
 /* ================= MY DEPARTMENT ================= */
 export const getMyDepartment = async () => {
     const token = sessionStorage.getItem("token");

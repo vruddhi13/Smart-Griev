@@ -468,6 +468,65 @@ export const getComplaintAssignments = async () => {
         }
     );
 };
+export const getNotifications = async (userId) => {
+    const response = await fetch(
+        `https://localhost:7224/api/Complaint/notifications/${userId}`,
+        {
+            headers: getAuthHeaders()
+        }
+    );
+
+    if (!response.ok) {
+        throw new Error("Failed to fetch notifications");
+    }
+
+    return await response.json();
+};
+
+export const markNotificationRead = async (notificationId) => {
+    const token = sessionStorage.getItem("token");
+
+    const res = await axios.put(
+        `https://localhost:7224/api/Notification/mark-read/${notificationId}`,
+        {},
+        {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+    );
+
+    return res.data;
+};
+
+export const deleteNotification = async (notificationId) => {
+    const token = sessionStorage.getItem("token");
+
+    const res = await axios.delete(
+        `https://localhost:7224/api/Notification/${notificationId}`,
+        {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+    );
+
+    return res.data;
+};
+
+export const clearAllNotifications = async (userId) => {
+    const token = sessionStorage.getItem("token");
+
+    const res = await axios.delete(
+        `https://localhost:7224/api/Notification/clear-all/${userId}`,
+        {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+    );
+
+    return res.data;
 
 export const updateAccount = async (data) => {
 

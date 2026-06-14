@@ -6,6 +6,7 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SmartGriev.BackendServices;
+using SmartGriev.Controllers.AdminControllers;
 using SmartGriev.Models;
 using SmartGriev.Repositories.Implementations;
 using SmartGriev.Repositories.Interfaces;
@@ -49,6 +50,7 @@ namespace SmartGriev
             builder.Services.AddScoped<IAuditRepository, AuditRepository>();
             builder.Services.AddScoped<IEscalationRepository, EscalationRepository>();
             builder.Services.AddScoped<IDepartmentHeadEscalationRepository, DepartmentHeadEscalationRepository>();
+            builder.Services.AddHostedService<SlaReminderService>();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
