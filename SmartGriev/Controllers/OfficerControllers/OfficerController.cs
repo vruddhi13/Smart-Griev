@@ -690,11 +690,10 @@ namespace SmartGriev.Controllers.OfficerControllers
                         newStatus = new
                         {
                             status = x.NewStatus,
-
-                            user = newAssignment?.AssignedToNavigation?.FullName,
-                            role = newAssignment?.AssignedToNavigation?.Role?.RoleName,
-                            email = newAssignment?.AssignedToNavigation?.Email,
-                            mobile = newAssignment?.AssignedToNavigation?.MobileNo
+                            user = x.ChangedByNavigation?.FullName,
+                            role = x.ChangedByNavigation?.Role?.RoleName,
+                            email = x.ChangedByNavigation?.Email,
+                            mobile = x.ChangedByNavigation?.MobileNo
                         },
 
                         changedBy = new
