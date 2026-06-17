@@ -16,6 +16,7 @@ import {
     Trash2
 } from 'lucide-react'; import { adminTheme as theme } from '../../services/AdminServices/AdminTheme';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { showError, showSuccessToast } from "../../services/alertService";
 
 const AdminHeader = ({ title = "Admin Panel" }) => {
     const navigate = useNavigate();
@@ -182,7 +183,7 @@ const AdminHeader = ({ title = "Admin Panel" }) => {
 
             if (response.ok) {
 
-                alert("Password updated successfully");
+                showSuccessToast("Password updated successfully");
 
                 // Clear fields
                 setNewPassword("");
@@ -195,7 +196,7 @@ const AdminHeader = ({ title = "Admin Panel" }) => {
 
                 const errorData = await response.json();
 
-                alert(errorData.message || "Failed to update password");
+                showError(errorData.message || "Failed to update password");
             }
 
         } catch (error) {
