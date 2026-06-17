@@ -45,11 +45,39 @@ const AdminComplaintStatusLogList = () => {
 
     // Mock/derived counts for the cards based on current logs data
     // (Replace these with real dashboard/API pieces if needed)
+    const latestComplaintStatus = Object.values(
+        logs.reduce((acc, log) => {
+            const existing = acc[log.complaintId];
+
+            if (
+                !existing ||
+                new Date(log.changedAt) > new Date(existing.changedAt)
+            ) {
+                acc[log.complaintId] = log;
+            }
+
+            return acc;
+        }, {})
+    );
+
     const metrics = {
         total: logs.length,
-        escalated: logs.filter(l => l.newStatus?.toLowerCase() === 'escalated').length,
-        inProgress: logs.filter(l => l.newStatus?.toLowerCase() === 'in progress').length,
-        completed: logs.filter(l => l.newStatus?.toLowerCase() === 'completed').length,
+
+        escalated: logs.filter(
+            l =>
+                l.oldStatus?.toLowerCase() === "escalated" ||
+                l.newStatus?.toLowerCase() === "escalated"
+        ).length,
+
+        inProgress: latestComplaintStatus.filter(
+            l =>
+                l.newStatus?.toLowerCase() === "in progress" ||
+                l.newStatus?.toLowerCase() === "assigned"
+        ).length,
+
+        completed: latestComplaintStatus.filter(
+            l => l.newStatus?.toLowerCase() === "resolved"
+        ).length,
     };
 
     const loadStatusLogs = async () => {

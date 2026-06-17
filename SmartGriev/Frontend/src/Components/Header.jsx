@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 
 import { getUserById, CitizenPasswordChange } from "../services/accountservice";
+import { showError, showSuccessToast } from "../services/alertService";
 
 const Header = () => {
     const { language, setLanguage, t } = useTranslationContext();
@@ -127,7 +128,7 @@ const Header = () => {
 
             const result = await CitizenPasswordChange(updateData);
 
-            alert(
+            showSuccessToast(
                 result.message ||
                 "Password changed successfully"
             );
@@ -147,7 +148,7 @@ const Header = () => {
 
             console.log(error);
 
-            alert(
+            showError(
                 error.message ||
                 "Failed to change password"
             );
